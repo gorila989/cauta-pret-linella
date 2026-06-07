@@ -55,9 +55,23 @@ function formatPrice(value) {
   return `${value.toFixed(2)} lei`;
 }
 
+function parseKgUnit(unit) {
+  const match = String(unit || "").match(/^\/\s*([0-9]+(?:\.[0-9]+)?)kg$/i);
+  if (!match) return null;
+  const kg = Number(match[1]);
+  return Number.isFinite(kg) && kg > 0 ? kg : null;
+}
+
+function isWeightedProduce(product) {
+  return categoryFromProduct(product) === "Fructe, legume, muraturi" && parseKgUnit(product.unit);
+}
+
 function productCard(product) {
+  const kgUnit = parseKgUnit(product.unit);
+  const weightedProduce = isWeightedProduce(product);
+  const pricePerKg = weightedProduce ? product.price / kgUnit : product.price;
   const oldPrice = product.old_price
-    ? `<span>${formatPrice(product.old_price)}</span>`
+    ? `<span>${formatPrice(weightedProduce ? product.old_price / kgUnit : product.old_price)}</span>`
     : "";
   const promo = product.discount
     ? `<span class="chip promo">${product.discount}</span>`
@@ -68,7 +82,19 @@ function productCard(product) {
     : product.url
       ? `<span class="chip code-chip" data-url="${escapeHtml(product.url)}">Cod: se incarca</span>`
       : "";
-  const unit = product.unit ? `<span class="chip">${product.unit}</span>` : "";
+  const unit = product.unit ? `<span class="chip">${weightedProduce ? "Pret / kg" : product.unit}</span>` : "";
+  const original = weightedProduce ? `<span class="chip">Pe site: ${formatPrice(product.price)} pentru ${kgUnit}kg</span>` : "";
+  const calculator = weightedProduce
+    ? `
+      <div class="kg-calculator">
+        <label>
+          kg
+          <input class="kg-input" type="number" min="0" step="0.01" inputmode="decimal" data-price-per-kg="${pricePerKg.toFixed(4)}" placeholder="0.00">
+        </label>
+        <strong class="kg-total">0.00 lei</strong>
+      </div>
+    `
+    : "";
   const source = product.url
     ? `<a href="${product.url}" target="_blank" rel="noopener">${escapeHtml(product.name)}</a>`
     : escapeHtml(product.name);
@@ -82,10 +108,12 @@ function productCard(product) {
           ${category}
           ${promo}
           ${code}
+          ${original}
         </div>
+        ${calculator}
       </div>
       <div class="price">
-        <strong>${formatPrice(product.price)}</strong>
+        <strong>${formatPrice(pricePerKg)}</strong>
         ${oldPrice}
       </div>
     </article>
@@ -274,6 +302,15 @@ els.refresh.addEventListener("click", refreshPrices);
 els.loadMore.addEventListener("click", () => {
   state.visibleLimit += 80;
   render();
+});
+els.results.addEventListener("input", (event) => {
+  if (!event.target.classList.contains("kg-input")) return;
+  const input = event.target;
+  const pricePerKg = Number(input.dataset.pricePerKg);
+  const kg = Number(input.value);
+  const total = Number.isFinite(pricePerKg) && Number.isFinite(kg) ? pricePerKg * kg : 0;
+  const output = input.closest(".kg-calculator")?.querySelector(".kg-total");
+  if (output) output.textContent = formatPrice(total);
 });
 
 if ("serviceWorker" in navigator) {

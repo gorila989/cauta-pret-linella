@@ -298,6 +298,37 @@ button {
   text-decoration: line-through;
 }
 
+.kg-calculator {
+  display: flex;
+  align-items: end;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.kg-calculator label {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: none;
+}
+
+.kg-input {
+  display: block;
+  width: 120px;
+  height: 42px;
+  margin-top: 4px;
+  font-size: 16px;
+}
+
+.kg-total {
+  min-width: 112px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--green-soft);
+  color: var(--green);
+  text-align: center;
+}
+
 .empty {
   padding: 20px;
   background: #ffffff;
