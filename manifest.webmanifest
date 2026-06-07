@@ -1,0 +1,17 @@
+{
+  "name": "Cauta Pret",
+  "short_name": "Cauta Pret",
+  "description": "Cauta rapid preturi de produse din baza Linella.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f4f7f5",
+  "theme_color": "#176b4d",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

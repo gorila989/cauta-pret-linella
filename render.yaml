@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: cauta-pret-linella
+    runtime: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python server.py --host 0.0.0.0 --port $PORT --max-pages 300"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.5
