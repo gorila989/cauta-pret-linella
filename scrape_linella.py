@@ -89,7 +89,7 @@ def parse_price_block(block):
 
 def parse_products(page_html):
     products = []
-    seen_names = set()
+    seen_urls = set()
     pattern = re.compile(
         r'<a[^>]+href="(?P<href>/ro/catalog/[^"?]+/[^"?]+[^"]*)"[^>]*>(?P<title>.*?)</a>(?P<tail>.*?)'
         r'(?=<a[^>]+href="/ro/catalog/[^"?]+/[^"?]+|<ul class="pagination"|</body>)',
@@ -97,20 +97,25 @@ def parse_products(page_html):
     )
 
     for match in pattern.finditer(page_html):
-        name = clean_text(match.group("title"))
+        name_match = re.search(r'class="tovar__name"[^>]*>(?P<name>.*?)</h3>', match.group("title"), re.IGNORECASE | re.DOTALL)
+        name = clean_text(name_match.group("name")) if name_match else clean_text(match.group("title"))
         if not name or len(name) < 3:
             continue
+        item_start = max(0, match.start() - 2500)
+        item_end = min(len(page_html), match.end() + 2500)
+        item = page_html[item_start:item_end]
         price_data = parse_price_block(match.group("tail"))
         if not price_data:
             continue
         price, old_price, discount, unit = price_data
-        key = name.lower()
-        if key in seen_names:
-            continue
-        seen_names.add(key)
         product_path = html.unescape(match.group("href")).split("?", 1)[0]
         product_url = urljoin(BASE_URL, product_path)
+        if product_url in seen_urls:
+            continue
+        seen_urls.add(product_url)
         category_slug = category_slug_from_url(product_url)
+        image_match = re.search(r'<img[^>]+src="(?P<src>/public/products/[^"]+)"', item, re.IGNORECASE)
+        code_match = re.search(r'data-SKU="(?P<code>[^"]*)"', item, re.IGNORECASE)
         products.append(
             {
                 "name": name,
@@ -118,9 +123,10 @@ def parse_products(page_html):
                 "old_price": old_price,
                 "discount": discount,
                 "is_promo": bool(discount or old_price),
-                "product_code": "",
+                "product_code": clean_text(code_match.group("code")) if code_match else "",
                 "category_slug": category_slug,
                 "category": pretty_category(category_slug),
+                "image_url": urljoin(BASE_URL, html.unescape(image_match.group("src"))) if image_match else "",
                 "unit": unit,
                 "url": product_url,
             }

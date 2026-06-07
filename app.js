@@ -98,9 +98,13 @@ function productCard(product) {
   const source = product.url
     ? `<a href="${product.url}" target="_blank" rel="noopener">${escapeHtml(product.name)}</a>`
     : escapeHtml(product.name);
+  const image = product.image_url
+    ? `<img class="product-image" src="${escapeHtml(product.image_url)}" alt="${escapeHtml(product.name)}" loading="lazy">`
+    : `<div class="product-image product-image-empty" aria-hidden="true"></div>`;
 
   return `
     <article class="product">
+      ${image}
       <div>
         <h2>${source}</h2>
         <div class="details">
