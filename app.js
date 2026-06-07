@@ -2,6 +2,7 @@ const state = {
   products: [],
   query: "",
   sort: "name",
+  category: "all",
   onlyPromo: false,
   visibleLimit: 80
 };
@@ -14,6 +15,7 @@ const els = {
   results: document.getElementById("results"),
   empty: document.getElementById("emptyState"),
   count: document.getElementById("resultCount"),
+  category: document.getElementById("categoryFilter"),
   sortName: document.getElementById("sortName"),
   sortPrice: document.getElementById("sortPrice"),
   onlyPromo: document.getElementById("onlyPromo"),
@@ -30,6 +32,24 @@ const normalize = (value) =>
     .replace(/[^a-z0-9]+/g, " ")
     .trim();
 
+function categoryFromProduct(product) {
+  if (product.category) return product.category;
+  if (!product.category_slug) return "Fara categorie";
+  return product.category_slug
+    .replace(/^_+/, "")
+    .replace(/_+/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function categorySlugFromUrl(url) {
+  try {
+    const parts = new URL(url).pathname.split("/").filter(Boolean);
+    return parts[2] || "";
+  } catch (error) {
+    return "";
+  }
+}
+
 function formatPrice(value) {
   if (!Number.isFinite(value)) return "-";
   return `${value.toFixed(2)} lei`;
@@ -42,6 +62,7 @@ function productCard(product) {
   const promo = product.discount
     ? `<span class="chip promo">${product.discount}</span>`
     : "";
+  const category = `<span class="chip category-chip">${escapeHtml(categoryFromProduct(product))}</span>`;
   const code = product.product_code
     ? `<span class="chip">Cod: ${escapeHtml(product.product_code)}</span>`
     : product.url
@@ -58,6 +79,7 @@ function productCard(product) {
         <h2>${source}</h2>
         <div class="details">
           ${unit}
+          ${category}
           ${promo}
           ${code}
         </div>
@@ -84,6 +106,7 @@ function render() {
   const words = normalize(state.query).split(" ").filter(Boolean);
   let products = state.products.filter((product) => {
     if (state.onlyPromo && !product.discount && !product.old_price) return false;
+    if (state.category !== "all" && categoryFromProduct(product) !== state.category) return false;
     if (!words.length) return true;
     const haystack = product.search || normalize(`${product.name} ${product.product_code || ""}`);
     return words.every((word) => haystack.includes(word));
@@ -111,8 +134,13 @@ async function loadProducts() {
     const data = await response.json();
     state.products = data.products.map((product) => ({
       ...product,
+      category_slug: product.category_slug || categorySlugFromUrl(product.url),
+      category: product.category || categoryFromProduct({
+        category_slug: product.category_slug || categorySlugFromUrl(product.url)
+      }),
       search: normalize(`${product.name} ${product.product_code || ""}`)
     }));
+    renderCategories();
     const when = data.generated_at ? `Actualizat: ${data.generated_at}` : "Baza incarcata";
     const promoCount = state.products.filter((product) => product.is_promo || product.discount || product.old_price).length;
     els.meta.textContent = `${when}. ${state.products.length} produse, ${promoCount} promotionale.`;
@@ -122,6 +150,21 @@ async function loadProducts() {
     els.empty.hidden = false;
     els.empty.textContent = "Porneste aplicatia printr-un server local sau actualizeaza baza de date.";
   }
+}
+
+function renderCategories() {
+  const categories = [...new Map(
+    state.products
+      .map((product) => categoryFromProduct(product))
+      .filter(Boolean)
+      .map((name) => [name, name])
+  ).values()].sort((a, b) => a.localeCompare(b, "ro"));
+
+  els.category.innerHTML = [
+    `<option value="all">Toate categoriile</option>`,
+    ...categories.map((name) => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`)
+  ].join("");
+  els.category.value = state.category;
 }
 
 function loadVisibleCodes() {
@@ -192,6 +235,11 @@ async function refreshPrices() {
 els.form.addEventListener("submit", (event) => event.preventDefault());
 els.input.addEventListener("input", () => {
   state.query = els.input.value;
+  state.visibleLimit = 80;
+  render();
+});
+els.category.addEventListener("change", () => {
+  state.category = els.category.value;
   state.visibleLimit = 80;
   render();
 });

@@ -7,13 +7,42 @@ import re
 import time
 import urllib.request
 from pathlib import Path
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 BASE_URL = "https://linella.md"
 DEFAULT_SOURCE_URL = "https://linella.md/ro/catalog"
 USER_AGENT = "Mozilla/5.0 (compatible; CautaPret/1.0; +https://linella.md/)"
+
+
+CATEGORY_NAMES = {
+    "picnic": "Picnic. Vacanta",
+    "_distractie_de_vara": "Picnic. Vacanta",
+    "cadouri": "Cadouri. Totul pentru sarbatori",
+    "literatura_pentru_copii": "Carti",
+    "literatura_de_dezvoltare_personala": "Carti",
+    "romane": "Carti",
+    "legume": "Fructe, legume, muraturi",
+    "fructe": "Fructe, legume, muraturi",
+    "fructe_uscate_532": "Fructe, legume, muraturi",
+    "muraturi": "Fructe, legume, muraturi",
+    "fel_principal": "Culinarie",
+    "patiserie": "Panificatie",
+    "paine": "Panificatie",
+    "paine_uscata_i_expandata": "Panificatie",
+    "produse_de_cofetarie": "Produse de cofetarie",
+    "deserturi": "Produse de cofetarie",
+    "biscuiti_i_fursecuri": "Produse de cofetarie",
+    "salamuri_fiert-afumate": "Mezeluri si crenvursti",
+    "crenvursti": "Mezeluri si crenvursti",
+    "lapte": "Produse lactate",
+    "iaurturi": "Produse lactate",
+    "cascaval": "Cascaval",
+    "oua": "Oua",
+    "carne": "Carne",
+    "congelate_din_carne": "Carne",
+}
 
 
 def fetch(url):
@@ -26,6 +55,19 @@ def clean_text(value):
     value = re.sub(r"<[^>]+>", " ", value)
     value = html.unescape(value)
     return re.sub(r"\s+", " ", value).strip()
+
+
+def pretty_category(slug):
+    if not slug:
+        return "Fara categorie"
+    if slug in CATEGORY_NAMES:
+        return CATEGORY_NAMES[slug]
+    return slug.strip("_").replace("_", " ").capitalize()
+
+
+def category_slug_from_url(url):
+    parts = [part for part in urlparse(url).path.split("/") if part]
+    return parts[2] if len(parts) > 2 else ""
 
 
 def parse_price_block(block):
@@ -67,6 +109,8 @@ def parse_products(page_html):
             continue
         seen_names.add(key)
         product_path = html.unescape(match.group("href")).split("?", 1)[0]
+        product_url = urljoin(BASE_URL, product_path)
+        category_slug = category_slug_from_url(product_url)
         products.append(
             {
                 "name": name,
@@ -75,8 +119,10 @@ def parse_products(page_html):
                 "discount": discount,
                 "is_promo": bool(discount or old_price),
                 "product_code": "",
+                "category_slug": category_slug,
+                "category": pretty_category(category_slug),
                 "unit": unit,
-                "url": urljoin(BASE_URL, product_path),
+                "url": product_url,
             }
         )
     return products
