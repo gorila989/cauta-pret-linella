@@ -281,6 +281,15 @@ button {
   text-align: center;
 }
 
+.load-more {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  margin-top: 12px;
+  background: var(--green);
+  color: #ffffff;
+}
+
 @media (max-width: 560px) {
   .app {
     padding: 12px;

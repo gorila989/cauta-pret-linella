@@ -119,7 +119,7 @@ def save_products(data):
 
 
 class Handler(SimpleHTTPRequestHandler):
-    def __init__(self, *args, max_pages=65, sleep_seconds=0.1, **kwargs):
+    def __init__(self, *args, max_pages=300, sleep_seconds=0.1, **kwargs):
         self.max_pages = max_pages
         self.sleep_seconds = sleep_seconds
         super().__init__(*args, directory=str(ROOT), **kwargs)
@@ -188,7 +188,7 @@ def main():
     parser = argparse.ArgumentParser(description="Cauta Pret backend server.")
     parser.add_argument("--host", default="0.0.0.0")
     parser.add_argument("--port", type=int, default=int(os.environ.get("PORT", "8080")))
-    parser.add_argument("--max-pages", type=int, default=65)
+    parser.add_argument("--max-pages", type=int, default=300)
     parser.add_argument("--sleep", type=float, default=0.1)
     args = parser.parse_args()
 

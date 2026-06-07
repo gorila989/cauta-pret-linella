@@ -3,7 +3,7 @@ const state = {
   query: "",
   sort: "name",
   onlyPromo: false,
-  codeObserver: null
+  visibleLimit: 80
 };
 
 const els = {
@@ -18,7 +18,8 @@ const els = {
   sortPrice: document.getElementById("sortPrice"),
   onlyPromo: document.getElementById("onlyPromo"),
   refresh: document.getElementById("refreshButton"),
-  refreshStatus: document.getElementById("refreshStatus")
+  refreshStatus: document.getElementById("refreshStatus"),
+  loadMore: document.getElementById("loadMoreButton")
 };
 
 const normalize = (value) =>
@@ -94,10 +95,12 @@ function render() {
     products = products.sort((a, b) => a.name.localeCompare(b.name, "ro"));
   }
 
-  const visible = products.slice(0, 80);
+  const visible = products.slice(0, state.visibleLimit);
   els.count.textContent = String(products.length);
   els.results.innerHTML = visible.map(productCard).join("");
   els.empty.hidden = products.length > 0;
+  els.loadMore.hidden = products.length <= visible.length;
+  els.loadMore.textContent = `Mai multe (${visible.length}/${products.length})`;
   loadVisibleCodes();
 }
 
@@ -136,7 +139,16 @@ async function fetchProductCode(chip) {
     const response = await fetch(`api/code?url=${encodeURIComponent(url)}`, { cache: "no-store" });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
-    chip.textContent = data.product_code ? `Cod: ${data.product_code}` : "Cod: -";
+    if (data.product_code) {
+      chip.textContent = `Cod: ${data.product_code}`;
+      const product = state.products.find((item) => item.url === url);
+      if (product) {
+        product.product_code = data.product_code;
+        product.search = normalize(`${product.name} ${product.product_code}`);
+      }
+    } else {
+      chip.textContent = "Cod: -";
+    }
   } catch (error) {
     chip.textContent = "Cod: disponibil online";
   }
@@ -180,32 +192,41 @@ async function refreshPrices() {
 els.form.addEventListener("submit", (event) => event.preventDefault());
 els.input.addEventListener("input", () => {
   state.query = els.input.value;
+  state.visibleLimit = 80;
   render();
 });
 els.clear.addEventListener("click", () => {
   els.input.value = "";
   state.query = "";
+  state.visibleLimit = 80;
   els.input.focus();
   render();
 });
 els.sortName.addEventListener("click", () => {
   state.sort = "name";
+  state.visibleLimit = 80;
   els.sortName.classList.add("active");
   els.sortPrice.classList.remove("active");
   render();
 });
 els.sortPrice.addEventListener("click", () => {
   state.sort = "price";
+  state.visibleLimit = 80;
   els.sortPrice.classList.add("active");
   els.sortName.classList.remove("active");
   render();
 });
 els.onlyPromo.addEventListener("click", () => {
   state.onlyPromo = !state.onlyPromo;
+  state.visibleLimit = 80;
   els.onlyPromo.classList.toggle("active", state.onlyPromo);
   render();
 });
 els.refresh.addEventListener("click", refreshPrices);
+els.loadMore.addEventListener("click", () => {
+  state.visibleLimit += 80;
+  render();
+});
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
