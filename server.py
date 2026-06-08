@@ -14,6 +14,7 @@ import scrape_linella
 
 ROOT = Path(__file__).resolve().parent
 PRODUCTS_FILE = ROOT / "products.json"
+CHANGES_FILE = ROOT / "changes.json"
 SCRAPER_FILE = ROOT / "scrape_linella.py"
 SOURCE_URL = "https://linella.md/ro/catalog"
 
@@ -58,6 +59,8 @@ def refresh_products(max_pages, sleep_seconds):
         started_at=now(),
         finished_at=None,
     )
+    previous = load_products_file()
+    previous_products = previous.get("products", []) if previous else []
     command = [
         sys.executable,
         str(SCRAPER_FILE),
@@ -84,6 +87,8 @@ def refresh_products(max_pages, sleep_seconds):
             message = completed.stderr.strip().splitlines()[-1:] or ["Actualizarea a esuat."]
             set_status(running=False, success=False, message=message[0], finished_at=now())
             return
+        current = load_products_file() or {"products": []}
+        write_changes(previous, current)
         count = count_products()
         set_status(
             running=False,
@@ -101,6 +106,50 @@ def count_products():
     with PRODUCTS_FILE.open("r", encoding="utf-8") as file:
         data = json.load(file)
     return len(data.get("products", []))
+
+
+def load_products_file():
+    if not PRODUCTS_FILE.exists():
+        return None
+    with PRODUCTS_FILE.open("r", encoding="utf-8") as file:
+        return json.load(file)
+
+
+def product_key(product):
+    return product.get("url") or product.get("product_code") or product.get("name")
+
+
+def write_changes(previous, current):
+    previous = previous or {"generated_at": None, "products": []}
+    old_by_key = {product_key(product): product for product in previous.get("products", []) if product_key(product)}
+    new_by_key = {product_key(product): product for product in current.get("products", []) if product_key(product)}
+
+    upserts = []
+    for key, product in new_by_key.items():
+        if old_by_key.get(key) != product:
+            upserts.append(product)
+
+    deleted = [key for key in old_by_key if key not in new_by_key]
+    payload = {
+        "base_generated_at": previous.get("generated_at"),
+        "generated_at": current.get("generated_at"),
+        "source": current.get("source"),
+        "full_count": len(current.get("products", [])),
+        "upserts": upserts,
+        "deleted": deleted,
+    }
+    CHANGES_FILE.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def manifest_payload():
+    data = load_products_file()
+    if not data:
+        return {"generated_at": None, "count": 0, "source": SOURCE_URL}
+    return {
+        "generated_at": data.get("generated_at"),
+        "count": len(data.get("products", [])),
+        "source": data.get("source"),
+    }
 
 
 def find_product_by_url(product_url):
@@ -134,6 +183,21 @@ class Handler(SimpleHTTPRequestHandler):
                 json_response(self, 404, {"error": "products.json nu exista"})
                 return
             body = PRODUCTS_FILE.read_bytes()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+        if path == "/api/manifest":
+            json_response(self, 200, manifest_payload())
+            return
+        if path == "/api/changes":
+            if not CHANGES_FILE.exists():
+                json_response(self, 404, {"error": "changes.json nu exista"})
+                return
+            body = CHANGES_FILE.read_bytes()
             self.send_response(200)
             self.send_header("Content-Type", "application/json; charset=utf-8")
             self.send_header("Cache-Control", "no-store")

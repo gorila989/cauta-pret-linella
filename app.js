@@ -175,22 +175,61 @@ function render() {
 }
 
 async function loadProducts() {
-  try {
-    const response = await fetchProducts();
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const data = await response.json();
-    await saveOfflineProducts(data);
-    applyProducts(data, false);
-  } catch (error) {
-    const data = await loadOfflineProducts();
-    if (data) {
-      applyProducts(data, true);
-      return;
-    }
-    els.meta.textContent = "Nu pot incarca baza de produse.";
-    els.empty.hidden = false;
-    els.empty.textContent = "Deschide aplicatia o data cand serverul merge, ca sa salveze baza pentru offline.";
+  const offlineData = await loadOfflineProducts();
+  if (offlineData) {
+    applyProducts(offlineData, true);
   }
+
+  try {
+    const data = await syncProducts(offlineData);
+    if (data) {
+      await saveOfflineProducts(data);
+      applyProducts(data, false);
+    }
+  } catch (error) {
+    if (!offlineData) {
+      els.meta.textContent = "Nu pot incarca baza de produse.";
+      els.empty.hidden = false;
+      els.empty.textContent = "Deschide aplicatia o data cand serverul merge, ca sa salveze baza pentru offline.";
+    }
+  }
+}
+
+async function syncProducts(offlineData) {
+  const manifestResponse = await fetch("api/manifest", { cache: "no-store" }).catch(() => null);
+  if (manifestResponse && manifestResponse.ok) {
+    const manifest = await manifestResponse.json();
+    if (offlineData && manifest.generated_at === offlineData.generated_at) {
+      return null;
+    }
+
+    const changesResponse = await fetch("api/changes", { cache: "no-store" }).catch(() => null);
+    if (offlineData && changesResponse && changesResponse.ok) {
+      const changes = await changesResponse.json();
+      if (changes.base_generated_at === offlineData.generated_at) {
+        return applyChanges(offlineData, changes);
+      }
+    }
+  }
+
+  const response = await fetchProducts();
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  return response.json();
+}
+
+function applyChanges(baseData, changes) {
+  const byKey = new Map(baseData.products.map((product) => [product.url || product.product_code || product.name, product]));
+  for (const key of changes.deleted || []) {
+    byKey.delete(key);
+  }
+  for (const product of changes.upserts || []) {
+    byKey.set(product.url || product.product_code || product.name, product);
+  }
+  return {
+    source: changes.source || baseData.source,
+    generated_at: changes.generated_at,
+    products: [...byKey.values()].sort((a, b) => a.name.localeCompare(b.name, "ro"))
+  };
 }
 
 function applyProducts(data, offline) {
