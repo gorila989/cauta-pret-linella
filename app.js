@@ -4,7 +4,8 @@ const state = {
   sort: "name",
   category: "all",
   onlyPromo: false,
-  visibleLimit: 80
+  visibleLimit: 30,
+  hasUserFilter: false
 };
 
 const els = {
@@ -99,7 +100,7 @@ function productCard(product) {
     ? `<a href="${product.url}" target="_blank" rel="noopener">${escapeHtml(product.name)}</a>`
     : escapeHtml(product.name);
   const image = product.image_url
-    ? `<img class="product-image" src="${escapeHtml(product.image_url)}" alt="${escapeHtml(product.name)}" loading="lazy">`
+    ? `<img class="product-image" src="${escapeHtml(product.image_url)}" alt="${escapeHtml(product.name)}" loading="lazy" decoding="async" fetchpriority="low">`
     : `<div class="product-image product-image-empty" aria-hidden="true"></div>`;
 
   return `
@@ -136,6 +137,16 @@ function escapeHtml(value) {
 
 function render() {
   const words = normalize(state.query).split(" ").filter(Boolean);
+  state.hasUserFilter = words.length > 0 || state.category !== "all" || state.onlyPromo;
+  if (!state.hasUserFilter) {
+    els.count.textContent = String(state.products.length);
+    els.results.innerHTML = "";
+    els.loadMore.hidden = true;
+    els.empty.hidden = false;
+    els.empty.textContent = "Scrie numele produsului sau alege o categorie.";
+    return;
+  }
+
   let products = state.products.filter((product) => {
     if (state.onlyPromo && !product.discount && !product.old_price) return false;
     if (state.category !== "all" && categoryFromProduct(product) !== state.category) return false;
@@ -267,44 +278,44 @@ async function refreshPrices() {
 els.form.addEventListener("submit", (event) => event.preventDefault());
 els.input.addEventListener("input", () => {
   state.query = els.input.value;
-  state.visibleLimit = 80;
+  state.visibleLimit = 30;
   render();
 });
 els.category.addEventListener("change", () => {
   state.category = els.category.value;
-  state.visibleLimit = 80;
+  state.visibleLimit = 30;
   render();
 });
 els.clear.addEventListener("click", () => {
   els.input.value = "";
   state.query = "";
-  state.visibleLimit = 80;
+  state.visibleLimit = 30;
   els.input.focus();
   render();
 });
 els.sortName.addEventListener("click", () => {
   state.sort = "name";
-  state.visibleLimit = 80;
+  state.visibleLimit = 30;
   els.sortName.classList.add("active");
   els.sortPrice.classList.remove("active");
   render();
 });
 els.sortPrice.addEventListener("click", () => {
   state.sort = "price";
-  state.visibleLimit = 80;
+  state.visibleLimit = 30;
   els.sortPrice.classList.add("active");
   els.sortName.classList.remove("active");
   render();
 });
 els.onlyPromo.addEventListener("click", () => {
   state.onlyPromo = !state.onlyPromo;
-  state.visibleLimit = 80;
+  state.visibleLimit = 30;
   els.onlyPromo.classList.toggle("active", state.onlyPromo);
   render();
 });
 els.refresh.addEventListener("click", refreshPrices);
 els.loadMore.addEventListener("click", () => {
-  state.visibleLimit += 80;
+  state.visibleLimit += 30;
   render();
 });
 els.results.addEventListener("input", (event) => {

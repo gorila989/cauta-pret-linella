@@ -1,10 +1,9 @@
-const CACHE_NAME = "cauta-pret-v8";
+const CACHE_NAME = "cauta-pret-v9";
 const ASSETS = [
   "./",
   "./index.html",
   "./styles.css",
   "./app.js",
-  "./products.json",
   "./manifest.webmanifest",
   "./icon.svg"
 ];
