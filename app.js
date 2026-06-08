@@ -8,6 +8,10 @@ const state = {
   hasUserFilter: false
 };
 
+const DB_NAME = "cauta-pret-offline";
+const DB_STORE = "cache";
+const PRODUCTS_CACHE_KEY = "products";
+
 const els = {
   meta: document.getElementById("meta"),
   form: document.getElementById("searchForm"),
@@ -175,23 +179,87 @@ async function loadProducts() {
     const response = await fetchProducts();
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
-    state.products = data.products.map((product) => ({
-      ...product,
-      category_slug: product.category_slug || categorySlugFromUrl(product.url),
-      category: product.category || categoryFromProduct({
-        category_slug: product.category_slug || categorySlugFromUrl(product.url)
-      }),
-      search: normalize(`${product.name} ${product.product_code || ""}`)
-    }));
-    renderCategories();
-    const when = data.generated_at ? `Actualizat: ${data.generated_at}` : "Baza incarcata";
-    const promoCount = state.products.filter((product) => product.is_promo || product.discount || product.old_price).length;
-    els.meta.textContent = `${when}. ${state.products.length} produse, ${promoCount} promotionale.`;
-    render();
+    await saveOfflineProducts(data);
+    applyProducts(data, false);
   } catch (error) {
-    els.meta.textContent = "Nu pot incarca products.json.";
+    const data = await loadOfflineProducts();
+    if (data) {
+      applyProducts(data, true);
+      return;
+    }
+    els.meta.textContent = "Nu pot incarca baza de produse.";
     els.empty.hidden = false;
-    els.empty.textContent = "Porneste aplicatia printr-un server local sau actualizeaza baza de date.";
+    els.empty.textContent = "Deschide aplicatia o data cand serverul merge, ca sa salveze baza pentru offline.";
+  }
+}
+
+function applyProducts(data, offline) {
+  state.products = data.products.map((product) => ({
+    ...product,
+    category_slug: product.category_slug || categorySlugFromUrl(product.url),
+    category: product.category || categoryFromProduct({
+      category_slug: product.category_slug || categorySlugFromUrl(product.url)
+    }),
+    search: normalize(`${product.name} ${product.product_code || ""}`)
+  }));
+  renderCategories();
+  const when = data.generated_at ? `Actualizat: ${data.generated_at}` : "Baza incarcata";
+  const promoCount = state.products.filter((product) => product.is_promo || product.discount || product.old_price).length;
+  const mode = offline ? "Offline" : "Online";
+  els.meta.textContent = `${mode}. ${when}. ${state.products.length} produse, ${promoCount} promotionale.`;
+  render();
+}
+
+function openOfflineDb() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, 1);
+    request.onupgradeneeded = () => {
+      request.result.createObjectStore(DB_STORE);
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function saveOfflineProducts(data) {
+  try {
+    const db = await openOfflineDb();
+    await new Promise((resolve, reject) => {
+      const transaction = db.transaction(DB_STORE, "readwrite");
+      transaction.objectStore(DB_STORE).put(data, PRODUCTS_CACHE_KEY);
+      transaction.oncomplete = resolve;
+      transaction.onerror = () => reject(transaction.error);
+    });
+    db.close();
+  } catch (error) {
+    try {
+      localStorage.setItem(PRODUCTS_CACHE_KEY, JSON.stringify(data));
+    } catch (localError) {
+      // Offline cache is best effort; the app still works online.
+    }
+  }
+}
+
+async function loadOfflineProducts() {
+  try {
+    const db = await openOfflineDb();
+    const data = await new Promise((resolve, reject) => {
+      const transaction = db.transaction(DB_STORE, "readonly");
+      const request = transaction.objectStore(DB_STORE).get(PRODUCTS_CACHE_KEY);
+      request.onsuccess = () => resolve(request.result || null);
+      request.onerror = () => reject(request.error);
+    });
+    db.close();
+    if (data) return data;
+  } catch (error) {
+    // Fall through to localStorage fallback.
+  }
+
+  try {
+    const raw = localStorage.getItem(PRODUCTS_CACHE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (error) {
+    return null;
   }
 }
 
