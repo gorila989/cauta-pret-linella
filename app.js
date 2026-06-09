@@ -4,6 +4,7 @@ const state = {
   sort: "name",
   category: "all",
   onlyPromo: false,
+  discountPercent: "all",
   visibleLimit: 30,
   hasUserFilter: false
 };
@@ -21,6 +22,7 @@ const els = {
   empty: document.getElementById("emptyState"),
   count: document.getElementById("resultCount"),
   category: document.getElementById("categoryFilter"),
+  discount: document.getElementById("discountFilter"),
   sortName: document.getElementById("sortName"),
   sortPrice: document.getElementById("sortPrice"),
   onlyPromo: document.getElementById("onlyPromo"),
@@ -58,6 +60,26 @@ function categorySlugFromUrl(url) {
 function formatPrice(value) {
   if (!Number.isFinite(value)) return "-";
   return `${value.toFixed(2)} lei`;
+}
+
+function normalizePercentNumber(value) {
+  if (!Number.isFinite(value) || value <= 0) return null;
+  return Number(value.toFixed(Number.isInteger(value) ? 0 : 1));
+}
+
+function discountPercentFromProduct(product) {
+  const match = String(product.discount || "").match(/([0-9]+(?:[.,][0-9]+)?)\s*%/);
+  if (match) {
+    return normalizePercentNumber(Number(match[1].replace(",", ".")));
+  }
+  if (Number.isFinite(product.old_price) && Number.isFinite(product.price) && product.old_price > product.price) {
+    return normalizePercentNumber(((product.old_price - product.price) / product.old_price) * 100);
+  }
+  return null;
+}
+
+function formatPercent(value) {
+  return `${String(value).replace(".", ",")}%`;
 }
 
 function parseKgUnit(unit) {
@@ -150,7 +172,7 @@ function escapeHtml(value) {
 
 function render() {
   const words = normalize(state.query).split(" ").filter(Boolean);
-  state.hasUserFilter = words.length > 0 || state.category !== "all" || state.onlyPromo;
+  state.hasUserFilter = words.length > 0 || state.category !== "all" || state.onlyPromo || state.discountPercent !== "all";
   if (!state.hasUserFilter) {
     els.count.textContent = String(state.products.length);
     els.results.innerHTML = "";
@@ -162,6 +184,7 @@ function render() {
 
   let products = state.products.filter((product) => {
     if (state.onlyPromo && !product.discount && !product.old_price) return false;
+    if (state.discountPercent !== "all" && String(discountPercentFromProduct(product)) !== state.discountPercent) return false;
     if (state.category !== "all" && categoryFromProduct(product) !== state.category) return false;
     if (!words.length) return true;
     const haystack = product.search || normalize(`${product.name} ${product.product_code || ""}`);
@@ -251,6 +274,7 @@ function applyProducts(data, offline) {
     search: normalize(`${product.name} ${product.product_code || ""}`)
   }));
   renderCategories();
+  renderDiscountOptions();
   const when = data.generated_at ? `Actualizat: ${data.generated_at}` : "Baza incarcata";
   const promoCount = state.products.filter((product) => product.is_promo || product.discount || product.old_price).length;
   const mode = offline ? "Offline" : "Online";
@@ -324,6 +348,27 @@ function renderCategories() {
     ...categories.map((name) => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`)
   ].join("");
   els.category.value = state.category;
+}
+
+function renderDiscountOptions() {
+  const percents = [...new Map(
+    state.products
+      .map(discountPercentFromProduct)
+      .filter((value) => value !== null)
+      .sort((a, b) => b - a)
+      .map((value) => [String(value), value])
+  ).values()];
+
+  if (state.discountPercent !== "all" && !percents.some((value) => String(value) === state.discountPercent)) {
+    state.discountPercent = "all";
+  }
+
+  els.discount.innerHTML = [
+    `<option value="all">Toate reducerile</option>`,
+    ...percents.map((value) => `<option value="${value}">${formatPercent(value)}</option>`)
+  ].join("");
+  els.discount.value = state.discountPercent;
+  els.discount.disabled = !state.onlyPromo || percents.length === 0;
 }
 
 function loadVisibleCodes() {
@@ -402,6 +447,16 @@ els.category.addEventListener("change", () => {
   state.visibleLimit = 30;
   render();
 });
+els.discount.addEventListener("change", () => {
+  state.discountPercent = els.discount.value;
+  if (state.discountPercent !== "all") {
+    state.onlyPromo = true;
+    els.onlyPromo.classList.add("active");
+    els.discount.disabled = false;
+  }
+  state.visibleLimit = 30;
+  render();
+});
 els.clear.addEventListener("click", () => {
   els.input.value = "";
   state.query = "";
@@ -425,6 +480,11 @@ els.sortPrice.addEventListener("click", () => {
 });
 els.onlyPromo.addEventListener("click", () => {
   state.onlyPromo = !state.onlyPromo;
+  if (!state.onlyPromo) {
+    state.discountPercent = "all";
+    els.discount.value = "all";
+  }
+  els.discount.disabled = !state.onlyPromo;
   state.visibleLimit = 30;
   els.onlyPromo.classList.toggle("active", state.onlyPromo);
   render();
