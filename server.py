@@ -5,7 +5,7 @@ import os
 import subprocess
 import sys
 import threading
-from datetime import datetime
+from datetime import datetime, timedelta
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
@@ -30,6 +30,19 @@ status = {
 
 def now():
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+
+def tomorrow():
+    return (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")
+
+
+def is_future_date(value):
+    if not value:
+        return False
+    try:
+        return datetime.strptime(value, "%Y-%m-%d %H:%M:%S") > datetime.now()
+    except ValueError:
+        return False
 
 
 def json_response(handler, code, payload):
@@ -60,7 +73,6 @@ def refresh_products(max_pages, sleep_seconds):
         finished_at=None,
     )
     previous = load_products_file()
-    previous_products = previous.get("products", []) if previous else []
     command = [
         sys.executable,
         str(SCRAPER_FILE),
@@ -121,12 +133,22 @@ def product_key(product):
 
 def write_changes(previous, current):
     previous = previous or {"generated_at": None, "products": []}
+    had_previous_catalog = bool(previous.get("generated_at"))
     old_by_key = {product_key(product): product for product in previous.get("products", []) if product_key(product)}
     new_by_key = {product_key(product): product for product in current.get("products", []) if product_key(product)}
 
     upserts = []
     for key, product in new_by_key.items():
-        if old_by_key.get(key) != product:
+        old_product = old_by_key.get(key)
+        if old_product is None:
+            if had_previous_catalog:
+                product["new_until"] = tomorrow()
+        elif is_future_date(old_product.get("new_until")):
+            product["new_until"] = old_product["new_until"]
+        else:
+            product.pop("new_until", None)
+
+        if old_product != product:
             upserts.append(product)
 
     deleted = [key for key in old_by_key if key not in new_by_key]
@@ -138,6 +160,7 @@ def write_changes(previous, current):
         "upserts": upserts,
         "deleted": deleted,
     }
+    save_products(current)
     CHANGES_FILE.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
 

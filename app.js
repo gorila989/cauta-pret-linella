@@ -71,9 +71,16 @@ function isWeightedProduce(product) {
   return categoryFromProduct(product) === "Fructe, legume, muraturi" && parseKgUnit(product.unit);
 }
 
+function isNewProduct(product) {
+  if (!product.new_until) return false;
+  const expires = Date.parse(String(product.new_until).replace(" ", "T"));
+  return Number.isFinite(expires) && expires > Date.now();
+}
+
 function productCard(product) {
   const kgUnit = parseKgUnit(product.unit);
   const weightedProduce = isWeightedProduce(product);
+  const productIsNew = isNewProduct(product);
   const pricePerKg = weightedProduce ? product.price / kgUnit : product.price;
   const oldPrice = product.old_price
     ? `<span>${formatPrice(weightedProduce ? product.old_price / kgUnit : product.old_price)}</span>`
@@ -81,6 +88,7 @@ function productCard(product) {
   const promo = product.discount
     ? `<span class="chip promo">${product.discount}</span>`
     : "";
+  const newChip = productIsNew ? `<span class="chip new-chip">Nou</span>` : "";
   const category = `<span class="chip category-chip">${escapeHtml(categoryFromProduct(product))}</span>`;
   const code = product.product_code
     ? `<span class="chip">Cod: ${escapeHtml(product.product_code)}</span>`
@@ -108,11 +116,12 @@ function productCard(product) {
     : `<div class="product-image product-image-empty" aria-hidden="true"></div>`;
 
   return `
-    <article class="product">
+    <article class="product${productIsNew ? " new-product" : ""}">
       ${image}
       <div>
         <h2>${source}</h2>
         <div class="details">
+          ${newChip}
           ${unit}
           ${category}
           ${promo}

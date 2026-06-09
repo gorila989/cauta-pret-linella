@@ -236,6 +236,11 @@ button {
   border-radius: 8px;
 }
 
+.product.new-product {
+  background: #fff9e8;
+  border-color: #f2b84b;
+}
+
 .product-image {
   width: 72px;
   height: 72px;
@@ -285,6 +290,12 @@ button {
 .promo {
   background: #ffe8e8;
   color: var(--red);
+}
+
+.new-chip {
+  background: #fff0b8;
+  color: #735400;
+  font-weight: 700;
 }
 
 .category-chip {
