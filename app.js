@@ -72,9 +72,6 @@ function discountPercentFromProduct(product) {
   if (match) {
     return normalizePercentNumber(Number(match[1].replace(",", ".")));
   }
-  if (Number.isFinite(product.old_price) && Number.isFinite(product.price) && product.old_price > product.price) {
-    return normalizePercentNumber(((product.old_price - product.price) / product.old_price) * 100);
-  }
   return null;
 }
 
