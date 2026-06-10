@@ -1,4 +1,4 @@
-const CACHE_NAME = "cauta-pret-v15";
+const CACHE_NAME = "cauta-pret-v16";
 const ASSETS = [
   "./",
   "./index.html",
@@ -9,6 +9,7 @@ const ASSETS = [
 ];
 
 self.addEventListener("install", (event) => {
+  self.skipWaiting();
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));
 });
 
@@ -16,8 +17,14 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))
-    )
+    ).then(() => self.clients.claim())
   );
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener("fetch", (event) => {
@@ -29,7 +36,7 @@ self.addEventListener("fetch", (event) => {
 
   if (url.pathname === "/api/products") {
     event.respondWith(
-      fetch(event.request)
+      fetch(event.request, { cache: "no-store" })
         .then((response) => {
           const copy = response.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
@@ -41,12 +48,12 @@ self.addEventListener("fetch", (event) => {
   }
 
   if (url.pathname.startsWith("/api/")) {
-    event.respondWith(fetch(event.request));
+    event.respondWith(fetch(event.request, { cache: "no-store" }));
     return;
   }
 
   event.respondWith(
-    fetch(event.request)
+    fetch(event.request, { cache: "no-store" })
       .then((response) => {
         const copy = response.clone();
         caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
