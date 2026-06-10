@@ -15,10 +15,15 @@
         <div class="mark" aria-hidden="true">
           <span></span>
         </div>
-        <div>
+        <div class="brand-copy">
           <h1>Cauta Pret</h1>
           <p id="meta">Se incarca baza de produse...</p>
         </div>
+        <label class="theme-switch" for="themeToggle">
+          <span>Tema</span>
+          <input id="themeToggle" type="checkbox" role="switch" aria-label="Tema intunecata">
+          <span class="theme-slider" aria-hidden="true"></span>
+        </label>
       </div>
 
       <form id="searchForm" class="search-form">
@@ -33,6 +38,13 @@
         <label for="categoryFilter">Categorie</label>
         <select id="categoryFilter">
           <option value="all">Toate categoriile</option>
+        </select>
+      </div>
+
+      <div class="category-row">
+        <label for="subcategoryFilter">Diviziune</label>
+        <select id="subcategoryFilter" disabled>
+          <option value="all">Alege categoria</option>
         </select>
       </div>
 

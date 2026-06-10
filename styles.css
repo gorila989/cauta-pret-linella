@@ -10,7 +10,29 @@
   --red: #ba2f2f;
   --gold: #f3b743;
   --blue: #2f6f9f;
+  --field: #fbfdfc;
+  --tool-bg: #edf2ef;
+  --product-bg: #ffffff;
+  --shadow: rgba(25, 45, 35, 0.08);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+body.dark-theme {
+  color-scheme: dark;
+  --bg: #0f1512;
+  --panel: #17211c;
+  --ink: #eef7f2;
+  --muted: #a8b8b0;
+  --line: #2c3b34;
+  --green: #62d39d;
+  --green-soft: #1f3b30;
+  --red: #ff8b8b;
+  --gold: #f5c15d;
+  --blue: #76b7ee;
+  --field: #101813;
+  --tool-bg: #223029;
+  --product-bg: #141d18;
+  --shadow: rgba(0, 0, 0, 0.32);
 }
 
 * {
@@ -38,13 +60,73 @@ body {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 8px;
-  box-shadow: 0 18px 60px rgba(25, 45, 35, 0.08);
+  box-shadow: 0 18px 60px var(--shadow);
 }
 
 .brand-row {
   display: flex;
   align-items: center;
   gap: 14px;
+}
+
+.brand-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.theme-switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.theme-switch input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  min-width: 1px;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+}
+
+.theme-slider {
+  position: relative;
+  width: 48px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--tool-bg);
+  border: 1px solid var(--line);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.theme-slider::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.theme-switch input:checked + .theme-slider {
+  background: var(--green);
+  border-color: var(--green);
+}
+
+.theme-switch input:checked + .theme-slider::after {
+  transform: translateX(20px);
+  background: #0f1512;
 }
 
 .mark {
@@ -110,7 +192,7 @@ input {
   padding: 0 16px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #fbfdfc;
+  background: var(--field);
   color: var(--ink);
   font-size: 18px;
   outline: none;
@@ -122,7 +204,7 @@ select {
   padding: 0 12px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #fbfdfc;
+  background: var(--field);
   color: var(--ink);
   font-size: 16px;
   outline: none;
@@ -153,7 +235,7 @@ button {
 #clearButton {
   width: 44px;
   height: 52px;
-  background: #edf2ef;
+  background: var(--tool-bg);
   color: var(--muted);
   font-size: 22px;
 }
@@ -168,18 +250,18 @@ button {
 .tool {
   min-height: 38px;
   padding: 0 14px;
-  background: #edf2ef;
-  color: #33423a;
+  background: var(--tool-bg);
+  color: var(--ink);
 }
 
 .tool.active {
   background: var(--green);
-  color: #ffffff;
+  color: var(--panel);
 }
 
 .tool.refresh {
   background: var(--blue);
-  color: #ffffff;
+  color: var(--panel);
 }
 
 .tool:disabled {
@@ -204,7 +286,7 @@ button {
 .summary > div {
   min-height: 70px;
   padding: 14px;
-  background: #ffffff;
+  background: var(--product-bg);
   border: 1px solid var(--line);
   border-radius: 8px;
 }
@@ -235,7 +317,7 @@ button {
   align-items: center;
   min-height: 92px;
   padding: 14px;
-  background: #ffffff;
+  background: var(--product-bg);
   border: 1px solid var(--line);
   border-radius: 8px;
 }
@@ -245,12 +327,17 @@ button {
   border-color: #f2b84b;
 }
 
+body.dark-theme .product.new-product {
+  background: #2d2410;
+  border-color: var(--gold);
+}
+
 .product-image {
   width: 72px;
   height: 72px;
   object-fit: contain;
   border-radius: 8px;
-  background: #f7faf8;
+  background: var(--field);
   border: 1px solid var(--line);
 }
 
@@ -288,7 +375,7 @@ button {
 .chip {
   padding: 4px 8px;
   border-radius: 999px;
-  background: #edf2ef;
+  background: var(--tool-bg);
 }
 
 .promo {
@@ -305,6 +392,11 @@ button {
 .category-chip {
   background: var(--green-soft);
   color: var(--green);
+}
+
+.subcategory-chip {
+  background: var(--field);
+  color: var(--muted);
 }
 
 .price {
@@ -359,7 +451,7 @@ button {
 
 .empty {
   padding: 20px;
-  background: #ffffff;
+  background: var(--product-bg);
   border: 1px dashed var(--line);
   border-radius: 8px;
   color: var(--muted);
@@ -372,7 +464,7 @@ button {
   min-height: 48px;
   margin-top: 12px;
   background: var(--green);
-  color: #ffffff;
+  color: var(--panel);
 }
 
 @media (max-width: 560px) {
@@ -386,6 +478,14 @@ button {
 
   h1 {
     font-size: 24px;
+  }
+
+  .brand-row {
+    align-items: flex-start;
+  }
+
+  .theme-switch {
+    margin-top: 4px;
   }
 
   .summary {

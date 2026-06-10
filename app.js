@@ -3,6 +3,7 @@ const state = {
   query: "",
   sort: "name",
   category: "all",
+  subcategory: "all",
   onlyPromo: false,
   discountPercent: "all",
   visibleLimit: 30,
@@ -22,14 +23,60 @@ const els = {
   empty: document.getElementById("emptyState"),
   count: document.getElementById("resultCount"),
   category: document.getElementById("categoryFilter"),
+  subcategory: document.getElementById("subcategoryFilter"),
   discount: document.getElementById("discountFilter"),
   sortName: document.getElementById("sortName"),
   sortPrice: document.getElementById("sortPrice"),
   onlyPromo: document.getElementById("onlyPromo"),
   refresh: document.getElementById("refreshButton"),
   refreshStatus: document.getElementById("refreshStatus"),
-  loadMore: document.getElementById("loadMoreButton")
+  loadMore: document.getElementById("loadMoreButton"),
+  theme: document.getElementById("themeToggle")
 };
+
+const THEME_KEY = "cauta-pret-theme";
+
+const SITE_CATEGORY_GROUPS = [
+  ["Picnic. Vacanta", ["picnic", "vacanta"]],
+  ["Cadouri. Totul pentru sarbatori", ["cadouri", "sarbatori", "pungi cadou", "idei de cadouri"]],
+  ["Carti", ["carti", "literatura", "fictiune", "fantasy", "detectiv", "romane", "drama", "filosofie", "istorie", "memorii", "biografii"]],
+  ["Fructe, legume, muraturi", ["fructe, legume, muraturi", "fructe", "legume", "salate verde", "verdeturi", "muraturi"]],
+  ["Culinarie", ["culinarie", "fel principal", "salate", "to go", "placinde", "placinte", "vertutas"]],
+  ["Panificatie", ["panificatie", "paine", "patiserie", "colaci", "lavas", "pita", "chifle", "croissante", "khachapuri", "covrigi", "gogosi"]],
+  ["Produse de cofetarie", ["produse de cofetarie", "torturi", "prajituri", "deserturi"]],
+  ["Mezeluri si crenvursti", ["mezeluri", "parizer", "crenvursti", "safalade", "afumaturi", "sunca", "salamuri", "toba", "slanina"]],
+  ["Produse lactate", ["produse lactate", "lapte", "chefir", "iaurturi", "smantana", "branza de vaci", "branza feta", "tofu", "frisca", "lapte condensat", "unt", "margarina"]],
+  ["Cascaval", ["cascaval", "branza tare", "mozzarella", "branza moale", "branza procesata", "tartina"]],
+  ["Oua", ["oua"]],
+  ["Carne", ["carne", "carne proaspata", "carne tocata", "marinate", "carnaciori", "mici"]],
+  ["Peste", ["peste", "fructe de mare", "icre"]],
+  ["Dulciuri", ["dulciuri", "bomboane", "ciocolate", "ciocolata", "batoane", "caramele", "drajeuri", "gume", "biscuiti", "turte", "napolitane", "muffin", "chec", "panettone", "blaturi", "diabetici", "crema de ciocolata"]],
+  ["Ceai si cafea", ["ceai", "cafea", "cacao", "cappucinno", "cicoare"]],
+  ["Crupe si boboase", ["orez", "hrisca", "bulgur", "arpacas", "mei", "gris", "arnaut", "malai", "couscous", "grau", "orz", "mazare", "linte", "naut", "fasole", "crupe"]],
+  ["Bacanie", ["bacanie", "sushi", "zahar", "sare", "paste", "faina", "pesmet", "fulgi", "cereale", "muesli", "granola", "ulei", "maioneza", "ketchup", "sosuri", "dressing", "bors", "otet", "alimente instant", "condimente", "mirodenii", "articole pentru copt", "jeleu", "kissel"]],
+  ["Conserve", ["conserve", "masline", "pateuri", "ciuperci", "miere"]],
+  ["Produse congelate", ["congelate", "aluat congelat", "pizza", "pelmeni", "coltunasi", "inghetata", "gheata"]],
+  ["Nuci, fructe uscate si seminte", ["fructe uscate", "nuci", "seminte", "amestecuri de nuci"]],
+  ["Snack-uri", ["snack", "chipsuri", "nachos", "sticks", "crackers", "pesmeti", "popcorn", "arahide", "fistic", "gustari"]],
+  ["Bauturi nealcoolice", ["apa minerala", "bauturi racoritoare", "suc", "nectar", "energizante"]],
+  ["Bauturi alcoolice", ["vin", "divin", "votca", "vodca", "whiskey", "rom", "tequila", "gin", "brandy", "lichior", "balsam", "vermut", "aperol", "bere", "alcoolice"]],
+  ["Produse chimice de uz casnic", ["detergenti", "curatenia suprafetelor", "masina de spalat", "repelente", "odorizanti"]],
+  ["Produse cosmetice", ["parfumerie", "machiaj", "creme", "ser", "masti", "plasturi cosmetici", "demachiere", "vopsea", "tonice", "solara"]],
+  ["Igiena si ingrijire", ["sapun", "ingrijire corp", "ingrijire par", "igiena orala", "igiena intima", "bumbac", "barbatilor", "servetele umede", "trusa de prim ajutor"]],
+  ["Lumea copiilor", ["alimentatia copiilor", "scutece", "accesorii pentru copii", "mamici", "jucarii", "produse cosmetice igiena protectie"]],
+  ["Papetarie", ["papetarie", "caiete", "blocnotes", "agende", "desen", "creativitate", "rechizite"]],
+  ["Hrana & Accesorii animale", ["hrana pisici", "hrana caini", "animale", "asternut"]],
+  ["Totul pentru CASA MODERNA", ["casa moderna", "depozitare si organizarea spatiului", "accesorii pentru baie", "decor", "lumanari", "flori artificiale"]],
+  ["Bucatarie", ["bucatarie", "vesela", "accesorii pentru bucatarie", "unica folosinta", "depozitarea alimentelor", "termosuri"]],
+  ["Bunuri gospodaresti", ["produse din hartie", "folie", "curatenie in casa", "inventar curatenie", "mese de calcat", "uscatoare de rufe", "scari", "unelte", "saci menajeri"]],
+  ["Imbracaminte. Incaltaminte. Accesorii. Textile", ["imbracaminte", "incaltaminte", "colanti", "sosete", "galanterie", "textile", "ingrijire si depozitare"]],
+  ["Totul pentru masina", ["auto", "masina"]],
+  ["Electrocasnice. Iluminat", ["tehnica de bucatarie", "tehnica pentru casa", "tehnica pentru frumusete", "electrice", "lampi", "lanterne", "baterii"]],
+  ["Tehnica Audio-Video", ["casti", "bluetooth", "audio-video"]],
+  ["Sport", ["sport"]],
+  ["Plante de casa. Gradina. Livada", ["plante", "substrat", "ingrasamant", "ghivece"]],
+  ["Cartele SIM, Bilete de loterie", ["cartele", "loterie"]]
+];
 
 const normalize = (value) =>
   value
@@ -55,6 +102,34 @@ function categorySlugFromUrl(url) {
   } catch (error) {
     return "";
   }
+}
+
+function labelFromSlug(slug) {
+  return String(slug || "")
+    .replace(/^_+/, "")
+    .replace(/_+/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase()) || "Fara diviziune";
+}
+
+function subcategoryFromProduct(product) {
+  return product.subcategory_name || categoryFromProduct(product);
+}
+
+function mainCategoryFromName(name) {
+  const key = normalize(name || "");
+  for (const [groupName, terms] of SITE_CATEGORY_GROUPS) {
+    if (terms.some((term) => {
+      const termKey = normalize(term);
+      return key === termKey || key.includes(termKey) || termKey.includes(key);
+    })) {
+      return groupName;
+    }
+  }
+  return name || "Fara categorie";
+}
+
+function mainCategoryFromProduct(product) {
+  return product.main_category || mainCategoryFromName(categoryFromProduct(product));
 }
 
 function formatPrice(value) {
@@ -87,7 +162,7 @@ function parseKgUnit(unit) {
 }
 
 function isWeightedProduce(product) {
-  return categoryFromProduct(product) === "Fructe, legume, muraturi" && parseKgUnit(product.unit);
+  return mainCategoryFromProduct(product) === "Fructe, legume, muraturi" && parseKgUnit(product.unit);
 }
 
 function isNewProduct(product) {
@@ -108,7 +183,12 @@ function productCard(product) {
     ? `<span class="chip promo">${product.discount}</span>`
     : "";
   const newChip = productIsNew ? `<span class="chip new-chip">Nou</span>` : "";
-  const category = `<span class="chip category-chip">${escapeHtml(categoryFromProduct(product))}</span>`;
+  const mainCategory = mainCategoryFromProduct(product);
+  const subcategoryName = subcategoryFromProduct(product);
+  const category = `<span class="chip category-chip">${escapeHtml(mainCategory)}</span>`;
+  const subcategory = mainCategory !== subcategoryName
+    ? `<span class="chip subcategory-chip">${escapeHtml(subcategoryName)}</span>`
+    : "";
   const code = product.product_code
     ? `<span class="chip">Cod: ${escapeHtml(product.product_code)}</span>`
     : product.url
@@ -143,6 +223,7 @@ function productCard(product) {
           ${newChip}
           ${unit}
           ${category}
+          ${subcategory}
           ${promo}
           ${code}
           ${original}
@@ -169,7 +250,12 @@ function escapeHtml(value) {
 
 function render() {
   const words = normalize(state.query).split(" ").filter(Boolean);
-  state.hasUserFilter = words.length > 0 || state.category !== "all" || state.onlyPromo || state.discountPercent !== "all";
+  state.hasUserFilter =
+    words.length > 0 ||
+    state.category !== "all" ||
+    state.subcategory !== "all" ||
+    state.onlyPromo ||
+    state.discountPercent !== "all";
   if (!state.hasUserFilter) {
     els.count.textContent = String(state.products.length);
     els.results.innerHTML = "";
@@ -182,7 +268,8 @@ function render() {
   let products = state.products.filter((product) => {
     if (state.onlyPromo && !product.discount && !product.old_price) return false;
     if (state.discountPercent !== "all" && String(discountPercentFromProduct(product)) !== state.discountPercent) return false;
-    if (state.category !== "all" && categoryFromProduct(product) !== state.category) return false;
+    if (state.category !== "all" && mainCategoryFromProduct(product) !== state.category) return false;
+    if (state.subcategory !== "all" && product.subcategory_key !== state.subcategory) return false;
     if (!words.length) return true;
     const haystack = product.search || normalize(`${product.name} ${product.product_code || ""}`);
     return words.every((word) => haystack.includes(word));
@@ -262,15 +349,22 @@ function applyChanges(baseData, changes) {
 }
 
 function applyProducts(data, offline) {
-  state.products = data.products.map((product) => ({
-    ...product,
-    category_slug: product.category_slug || categorySlugFromUrl(product.url),
-    category: product.category || categoryFromProduct({
-      category_slug: product.category_slug || categorySlugFromUrl(product.url)
-    }),
-    search: normalize(`${product.name} ${product.product_code || ""}`)
-  }));
+  state.products = data.products.map((product) => {
+    const categorySlug = product.category_slug || categorySlugFromUrl(product.url);
+    const subcategoryName = product.category || labelFromSlug(categorySlug);
+    return {
+      ...product,
+      category_slug: categorySlug,
+      subcategory_slug: categorySlug,
+      subcategory_key: categorySlug || normalize(subcategoryName),
+      subcategory_name: subcategoryName,
+      category: subcategoryName,
+      main_category: mainCategoryFromName(subcategoryName),
+      search: normalize(`${product.name} ${product.product_code || ""}`)
+    };
+  });
   renderCategories();
+  renderSubcategories();
   renderDiscountOptions();
   const when = data.generated_at ? `Actualizat: ${data.generated_at}` : "Baza incarcata";
   const promoCount = state.products.filter((product) => product.is_promo || product.discount || product.old_price).length;
@@ -335,7 +429,7 @@ async function loadOfflineProducts() {
 function renderCategories() {
   const categories = [...new Map(
     state.products
-      .map((product) => categoryFromProduct(product))
+      .map((product) => mainCategoryFromProduct(product))
       .filter(Boolean)
       .map((name) => [name, name])
   ).values()].sort((a, b) => a.localeCompare(b, "ro"));
@@ -345,6 +439,26 @@ function renderCategories() {
     ...categories.map((name) => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`)
   ].join("");
   els.category.value = state.category;
+}
+
+function renderSubcategories() {
+  const subcategories = [...new Map(
+    state.products
+      .filter((product) => state.category === "all" || mainCategoryFromProduct(product) === state.category)
+      .map((product) => [product.subcategory_key, subcategoryFromProduct(product)])
+      .filter(([slug]) => Boolean(slug))
+  ).entries()].sort((a, b) => a[1].localeCompare(b[1], "ro"));
+
+  if (state.subcategory !== "all" && !subcategories.some(([slug]) => slug === state.subcategory)) {
+    state.subcategory = "all";
+  }
+
+  els.subcategory.innerHTML = [
+    `<option value="all">${state.category === "all" ? "Alege categoria" : "Toate diviziunile"}</option>`,
+    ...subcategories.map(([slug, name]) => `<option value="${escapeHtml(slug)}">${escapeHtml(name)}</option>`)
+  ].join("");
+  els.subcategory.value = state.subcategory;
+  els.subcategory.disabled = state.category === "all" || subcategories.length === 0;
 }
 
 function renderDiscountOptions() {
@@ -433,6 +547,27 @@ async function refreshPrices() {
   }
 }
 
+function applyTheme(theme) {
+  const dark = theme === "dark";
+  document.body.classList.toggle("dark-theme", dark);
+  els.theme.checked = dark;
+  try {
+    localStorage.setItem(THEME_KEY, dark ? "dark" : "light");
+  } catch (error) {
+    // Theme preference is optional.
+  }
+}
+
+function loadTheme() {
+  try {
+    return localStorage.getItem(THEME_KEY) || "light";
+  } catch (error) {
+    return "light";
+  }
+}
+
+applyTheme(loadTheme());
+
 els.form.addEventListener("submit", (event) => event.preventDefault());
 els.input.addEventListener("input", () => {
   state.query = els.input.value;
@@ -441,6 +576,13 @@ els.input.addEventListener("input", () => {
 });
 els.category.addEventListener("change", () => {
   state.category = els.category.value;
+  state.subcategory = "all";
+  state.visibleLimit = 30;
+  renderSubcategories();
+  render();
+});
+els.subcategory.addEventListener("change", () => {
+  state.subcategory = els.subcategory.value;
   state.visibleLimit = 30;
   render();
 });
@@ -490,6 +632,9 @@ els.refresh.addEventListener("click", refreshPrices);
 els.loadMore.addEventListener("click", () => {
   state.visibleLimit += 30;
   render();
+});
+els.theme.addEventListener("change", () => {
+  applyTheme(els.theme.checked ? "dark" : "light");
 });
 els.results.addEventListener("input", (event) => {
   if (!event.target.classList.contains("kg-input")) return;
