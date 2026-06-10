@@ -13,6 +13,7 @@ const state = {
 const DB_NAME = "cauta-pret-offline";
 const DB_STORE = "cache";
 const PRODUCTS_CACHE_KEY = "products";
+const NEW_SUBCATEGORY = "__new_products__";
 
 const els = {
   meta: document.getElementById("meta"),
@@ -31,7 +32,11 @@ const els = {
   refresh: document.getElementById("refreshButton"),
   refreshStatus: document.getElementById("refreshStatus"),
   loadMore: document.getElementById("loadMoreButton"),
-  theme: document.getElementById("themeToggle")
+  theme: document.getElementById("themeToggle"),
+  imageModal: document.getElementById("imageModal"),
+  imageModalImg: document.getElementById("imageModalImg"),
+  imageModalTitle: document.getElementById("imageModalTitle"),
+  imageModalClose: document.getElementById("imageModalClose")
 };
 
 const THEME_KEY = "cauta-pret-theme";
@@ -211,7 +216,9 @@ function productCard(product) {
     ? `<a href="${product.url}" target="_blank" rel="noopener">${escapeHtml(product.name)}</a>`
     : escapeHtml(product.name);
   const image = product.image_url
-    ? `<img class="product-image" src="${escapeHtml(product.image_url)}" alt="${escapeHtml(product.name)}" loading="lazy" decoding="async" fetchpriority="low">`
+    ? `<button class="image-button" type="button" data-image-url="${escapeHtml(product.image_url)}" data-image-title="${escapeHtml(product.name)}">
+        <img class="product-image" src="${escapeHtml(product.image_url)}" alt="${escapeHtml(product.name)}" loading="lazy" decoding="async" fetchpriority="low">
+      </button>`
     : `<div class="product-image product-image-empty" aria-hidden="true"></div>`;
 
   return `
@@ -269,7 +276,8 @@ function render() {
     if (state.onlyPromo && !product.discount && !product.old_price) return false;
     if (state.discountPercent !== "all" && String(discountPercentFromProduct(product)) !== state.discountPercent) return false;
     if (state.category !== "all" && mainCategoryFromProduct(product) !== state.category) return false;
-    if (state.subcategory !== "all" && product.subcategory_key !== state.subcategory) return false;
+    if (state.subcategory === NEW_SUBCATEGORY && !isNewProduct(product)) return false;
+    if (state.subcategory !== "all" && state.subcategory !== NEW_SUBCATEGORY && product.subcategory_key !== state.subcategory) return false;
     if (!words.length) return true;
     const haystack = product.search || normalize(`${product.name} ${product.product_code || ""}`);
     return words.every((word) => haystack.includes(word));
@@ -442,6 +450,7 @@ function renderCategories() {
 }
 
 function renderSubcategories() {
+  const hasNewProducts = state.products.some(isNewProduct);
   const subcategories = [...new Map(
     state.products
       .filter((product) => state.category === "all" || mainCategoryFromProduct(product) === state.category)
@@ -449,16 +458,24 @@ function renderSubcategories() {
       .filter(([slug]) => Boolean(slug))
   ).entries()].sort((a, b) => a[1].localeCompare(b[1], "ro"));
 
-  if (state.subcategory !== "all" && !subcategories.some(([slug]) => slug === state.subcategory)) {
+  if (
+    state.subcategory !== "all" &&
+    state.subcategory !== NEW_SUBCATEGORY &&
+    !subcategories.some(([slug]) => slug === state.subcategory)
+  ) {
+    state.subcategory = "all";
+  }
+  if (state.subcategory === NEW_SUBCATEGORY && !hasNewProducts) {
     state.subcategory = "all";
   }
 
   els.subcategory.innerHTML = [
     `<option value="all">${state.category === "all" ? "Alege categoria" : "Toate diviziunile"}</option>`,
+    hasNewProducts ? `<option value="${NEW_SUBCATEGORY}">Nou</option>` : "",
     ...subcategories.map(([slug, name]) => `<option value="${escapeHtml(slug)}">${escapeHtml(name)}</option>`)
   ].join("");
   els.subcategory.value = state.subcategory;
-  els.subcategory.disabled = state.category === "all" || subcategories.length === 0;
+  els.subcategory.disabled = !hasNewProducts && (state.category === "all" || subcategories.length === 0);
 }
 
 function renderDiscountOptions() {
@@ -566,6 +583,22 @@ function loadTheme() {
   }
 }
 
+function openImageModal(url, title) {
+  if (!url) return;
+  els.imageModalImg.src = url;
+  els.imageModalImg.alt = title || "Poza produs";
+  els.imageModalTitle.textContent = title || "";
+  els.imageModal.hidden = false;
+  document.body.classList.add("modal-open");
+}
+
+function closeImageModal() {
+  els.imageModal.hidden = true;
+  els.imageModalImg.src = "";
+  els.imageModalTitle.textContent = "";
+  document.body.classList.remove("modal-open");
+}
+
 applyTheme(loadTheme());
 
 els.form.addEventListener("submit", (event) => event.preventDefault());
@@ -644,6 +677,18 @@ els.results.addEventListener("input", (event) => {
   const total = Number.isFinite(pricePerKg) && Number.isFinite(kg) ? pricePerKg * kg : 0;
   const output = input.closest(".kg-calculator")?.querySelector(".kg-total");
   if (output) output.textContent = formatPrice(total);
+});
+els.results.addEventListener("click", (event) => {
+  const button = event.target.closest(".image-button");
+  if (!button) return;
+  openImageModal(button.dataset.imageUrl, button.dataset.imageTitle);
+});
+els.imageModalClose.addEventListener("click", closeImageModal);
+els.imageModal.addEventListener("click", (event) => {
+  if (event.target === els.imageModal) closeImageModal();
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && !els.imageModal.hidden) closeImageModal();
 });
 
 if ("serviceWorker" in navigator) {

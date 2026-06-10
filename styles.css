@@ -49,6 +49,10 @@ body {
   color: var(--ink);
 }
 
+body.modal-open {
+  overflow: hidden;
+}
+
 .app {
   width: min(920px, 100%);
   margin: 0 auto;
@@ -341,6 +345,20 @@ body.dark-theme .product.new-product {
   border: 1px solid var(--line);
 }
 
+.image-button {
+  display: block;
+  width: 72px;
+  height: 72px;
+  padding: 0;
+  background: transparent;
+  border-radius: 8px;
+}
+
+.image-button:focus-visible {
+  outline: 3px solid var(--green);
+  outline-offset: 3px;
+}
+
 .product-image-empty {
   display: block;
 }
@@ -467,6 +485,47 @@ body.dark-theme .product.new-product {
   color: var(--panel);
 }
 
+.image-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  gap: 12px;
+  padding: 22px;
+  background: rgba(0, 0, 0, 0.78);
+}
+
+.image-modal[hidden] {
+  display: none;
+}
+
+.image-modal img {
+  max-width: min(92vw, 760px);
+  max-height: 76vh;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.image-modal p {
+  max-width: min(92vw, 760px);
+  color: #ffffff;
+  font-weight: 700;
+  text-align: center;
+}
+
+.image-modal-close {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  width: 44px;
+  height: 44px;
+  background: #ffffff;
+  color: #111111;
+  font-size: 24px;
+}
+
 @media (max-width: 560px) {
   .app {
     padding: 12px;
@@ -497,6 +556,11 @@ body.dark-theme .product.new-product {
   }
 
   .product-image {
+    width: 86px;
+    height: 86px;
+  }
+
+  .image-button {
     width: 86px;
     height: 86px;
   }
