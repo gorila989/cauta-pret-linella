@@ -32,15 +32,24 @@ def now():
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
-def tomorrow():
-    return (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")
+def today():
+    return datetime.now().strftime("%Y-%m-%d")
 
 
-def is_future_date(value):
+def end_of_today():
+    return datetime.now().replace(hour=23, minute=59, second=59, microsecond=0).strftime("%Y-%m-%d %H:%M:%S")
+
+
+def marker_is_today(product):
+    marker = product.get("new_on")
+    if marker:
+        return marker == today()
+    value = product.get("new_until")
     if not value:
         return False
     try:
-        return datetime.strptime(value, "%Y-%m-%d %H:%M:%S") > datetime.now()
+        created_at = datetime.strptime(value, "%Y-%m-%d %H:%M:%S") - timedelta(days=1)
+        return created_at.strftime("%Y-%m-%d") == today()
     except ValueError:
         return False
 
@@ -142,10 +151,13 @@ def write_changes(previous, current):
         old_product = old_by_key.get(key)
         if old_product is None:
             if had_previous_catalog:
-                product["new_until"] = tomorrow()
-        elif is_future_date(old_product.get("new_until")):
-            product["new_until"] = old_product["new_until"]
+                product["new_on"] = today()
+                product["new_until"] = end_of_today()
+        elif marker_is_today(old_product):
+            product["new_on"] = old_product.get("new_on") or today()
+            product["new_until"] = end_of_today()
         else:
+            product.pop("new_on", None)
             product.pop("new_until", None)
 
         if old_product != product:

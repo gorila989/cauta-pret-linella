@@ -29,6 +29,9 @@ const els = {
   sortName: document.getElementById("sortName"),
   sortPrice: document.getElementById("sortPrice"),
   onlyPromo: document.getElementById("onlyPromo"),
+  camera: document.getElementById("cameraButton"),
+  cameraInput: document.getElementById("cameraInput"),
+  cameraStatus: document.getElementById("cameraStatus"),
   refresh: document.getElementById("refreshButton"),
   refreshStatus: document.getElementById("refreshStatus"),
   loadMore: document.getElementById("loadMoreButton"),
@@ -41,6 +44,7 @@ const els = {
 };
 
 const THEME_KEY = "cauta-pret-theme";
+const TESSERACT_URL = "https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";
 
 const SITE_CATEGORY_GROUPS = [
   ["Fructe, fructe de padure, Legume, Muraturi", ["fructe, legume, muraturi", "fructe", "fructe de padure", "legume", "salate verde", "verdeturi", "muraturi"]],
@@ -143,6 +147,43 @@ function discountPercentFromProduct(product) {
   return null;
 }
 
+function applySearchText(text) {
+  const query = String(text || "").trim();
+  if (!query) return;
+  els.input.value = query;
+  state.query = query;
+  state.visibleLimit = 30;
+  render();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function searchTokens(text) {
+  return [...new Set(
+    normalize(text)
+      .split(" ")
+      .filter((word) => word.length >= 3 && !["produs", "masa", "net", "gram", "grame", "fabricat"].includes(word))
+  )];
+}
+
+function bestProductFromText(text) {
+  const tokens = searchTokens(text);
+  if (!tokens.length) return null;
+  let best = null;
+  let bestScore = 0;
+  for (const product of state.products) {
+    const haystack = product.search || normalize(`${product.name} ${product.product_code || ""}`);
+    let score = 0;
+    for (const token of tokens) {
+      if (haystack.includes(token)) score += token.length;
+    }
+    if (score > bestScore) {
+      best = product;
+      bestScore = score;
+    }
+  }
+  return bestScore >= 8 ? best : null;
+}
+
 function formatPercent(value) {
   return `${String(value).replace(".", ",")}%`;
 }
@@ -158,10 +199,21 @@ function isWeightedProduce(product) {
   return mainCategoryFromProduct(product) === "Fructe, fructe de padure, Legume, Muraturi" && parseKgUnit(product.unit);
 }
 
+function localDateValue(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 function isNewProduct(product) {
+  const today = localDateValue(new Date());
+  if (product.new_on) return product.new_on === today;
   if (!product.new_until) return false;
   const expires = Date.parse(String(product.new_until).replace(" ", "T"));
-  return Number.isFinite(expires) && expires > Date.now();
+  if (!Number.isFinite(expires)) return false;
+  const created = new Date(expires - 24 * 60 * 60 * 1000);
+  return localDateValue(created) === today;
 }
 
 function productCard(product) {
@@ -587,6 +639,87 @@ function updateScrollTopButton() {
   els.scrollTop.hidden = window.scrollY < 500;
 }
 
+function setCameraStatus(message) {
+  els.cameraStatus.textContent = message || "";
+}
+
+function loadScriptOnce(src) {
+  return new Promise((resolve, reject) => {
+    const existing = document.querySelector(`script[src="${src}"]`);
+    if (existing) {
+      if (window.Tesseract) resolve();
+      else existing.addEventListener("load", resolve, { once: true });
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = src;
+    script.async = true;
+    script.onload = resolve;
+    script.onerror = () => reject(new Error("Nu pot incarca citirea textului."));
+    document.head.appendChild(script);
+  });
+}
+
+async function scanBarcode(file) {
+  if (!("BarcodeDetector" in window)) return "";
+  const bitmap = await createImageBitmap(file);
+  try {
+    const detector = new BarcodeDetector({
+      formats: ["ean_13", "ean_8", "upc_a", "upc_e", "code_128", "qr_code"]
+    });
+    const codes = await detector.detect(bitmap);
+    return codes[0]?.rawValue || "";
+  } finally {
+    bitmap.close();
+  }
+}
+
+async function readTextFromPhoto(file) {
+  await loadScriptOnce(TESSERACT_URL);
+  if (!window.Tesseract) throw new Error("Citirea textului nu este disponibila.");
+  const result = await window.Tesseract.recognize(file, "ron+eng");
+  return result?.data?.text || "";
+}
+
+async function handleCameraFile(file) {
+  if (!file) return;
+  els.camera.disabled = true;
+  setCameraStatus("Citesc poza...");
+  try {
+    const code = await scanBarcode(file).catch(() => "");
+    if (code) {
+      applySearchText(code);
+      if (els.count.textContent !== "0") {
+        setCameraStatus(`Am gasit codul: ${code}`);
+        return;
+      }
+      setCameraStatus("Codul nu este in baza. Incerc sa citesc textul...");
+    }
+
+    setCameraStatus("Citesc textul din poza. Prima data poate dura mai mult...");
+    const text = await readTextFromPhoto(file);
+    const best = bestProductFromText(text);
+    if (best) {
+      applySearchText(best.name);
+      setCameraStatus("Am cautat produsul cel mai apropiat din poza.");
+      return;
+    }
+
+    const tokens = searchTokens(text).slice(0, 5).join(" ");
+    if (tokens) {
+      applySearchText(tokens);
+      setCameraStatus("Am citit cateva cuvinte si le-am pus in cautare.");
+      return;
+    }
+    setCameraStatus("Nu am putut citi textul. Fa poza mai aproape, la denumire.");
+  } catch (error) {
+    setCameraStatus("Nu am putut citi poza. Incearca pe Render cu internet.");
+  } finally {
+    els.camera.disabled = false;
+    els.cameraInput.value = "";
+  }
+}
+
 applyTheme(loadTheme());
 
 els.form.addEventListener("submit", (event) => event.preventDefault());
@@ -648,6 +781,12 @@ els.onlyPromo.addEventListener("click", () => {
   state.visibleLimit = 30;
   els.onlyPromo.classList.toggle("active", state.onlyPromo);
   render();
+});
+els.camera.addEventListener("click", () => {
+  els.cameraInput.click();
+});
+els.cameraInput.addEventListener("change", () => {
+  handleCameraFile(els.cameraInput.files[0]);
 });
 els.refresh.addEventListener("click", refreshPrices);
 els.loadMore.addEventListener("click", () => {

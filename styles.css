@@ -39,6 +39,18 @@ body.dark-theme {
   box-sizing: border-box;
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -268,16 +280,26 @@ button {
   color: var(--panel);
 }
 
+.tool.camera {
+  background: var(--gold);
+  color: #2d2410;
+}
+
 .tool:disabled {
   cursor: wait;
   opacity: 0.6;
 }
 
-.refresh-status {
+.refresh-status,
+.camera-status {
   min-height: 18px;
   margin-top: 10px;
   color: var(--muted);
   font-size: 13px;
+}
+
+.camera-status {
+  margin-top: 4px;
 }
 
 .summary {
