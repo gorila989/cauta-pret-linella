@@ -526,6 +526,29 @@ body.dark-theme .product.new-product {
   font-size: 24px;
 }
 
+.scroll-top {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 40;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: var(--green);
+  color: var(--panel);
+  font-size: 28px;
+  box-shadow: 0 10px 26px var(--shadow);
+}
+
+.scroll-top[hidden] {
+  display: none;
+}
+
+.scroll-top:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+
 @media (max-width: 560px) {
   .app {
     padding: 12px;
@@ -567,5 +590,10 @@ body.dark-theme .product.new-product {
 
   .price {
     text-align: left;
+  }
+
+  .scroll-top {
+    right: 14px;
+    bottom: 14px;
   }
 }

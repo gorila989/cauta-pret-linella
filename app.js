@@ -36,18 +36,16 @@ const els = {
   imageModal: document.getElementById("imageModal"),
   imageModalImg: document.getElementById("imageModalImg"),
   imageModalTitle: document.getElementById("imageModalTitle"),
-  imageModalClose: document.getElementById("imageModalClose")
+  imageModalClose: document.getElementById("imageModalClose"),
+  scrollTop: document.getElementById("scrollTopButton")
 };
 
 const THEME_KEY = "cauta-pret-theme";
 
 const SITE_CATEGORY_GROUPS = [
-  ["Picnic. Vacanta", ["picnic", "vacanta"]],
-  ["Cadouri. Totul pentru sarbatori", ["cadouri", "sarbatori", "pungi cadou", "idei de cadouri"]],
-  ["Carti", ["carti", "literatura", "fictiune", "fantasy", "detectiv", "romane", "drama", "filosofie", "istorie", "memorii", "biografii"]],
-  ["Fructe, legume, muraturi", ["fructe, legume, muraturi", "fructe", "legume", "salate verde", "verdeturi", "muraturi"]],
+  ["Fructe, fructe de padure, Legume, Muraturi", ["fructe, legume, muraturi", "fructe", "fructe de padure", "legume", "salate verde", "verdeturi", "muraturi"]],
   ["Culinarie", ["culinarie", "fel principal", "salate", "to go", "placinde", "placinte", "vertutas"]],
-  ["Panificatie", ["panificatie", "paine", "patiserie", "colaci", "lavas", "pita", "chifle", "croissante", "khachapuri", "covrigi", "gogosi"]],
+  ["Produse Panificatie", ["panificatie", "paine", "patiserie", "colaci", "lavas", "pita", "chifle", "croissante", "khachapuri", "covrigi", "gogosi"]],
   ["Produse de cofetarie", ["produse de cofetarie", "torturi", "prajituri", "deserturi"]],
   ["Mezeluri si crenvursti", ["mezeluri", "parizer", "crenvursti", "safalade", "afumaturi", "sunca", "salamuri", "toba", "slanina"]],
   ["Produse lactate", ["produse lactate", "lapte", "chefir", "iaurturi", "smantana", "branza de vaci", "branza feta", "tofu", "frisca", "lapte condensat", "unt", "margarina"]],
@@ -59,7 +57,7 @@ const SITE_CATEGORY_GROUPS = [
   ["Ceai si cafea", ["ceai", "cafea", "cacao", "cappucinno", "cicoare"]],
   ["Crupe si boboase", ["orez", "hrisca", "bulgur", "arpacas", "mei", "gris", "arnaut", "malai", "couscous", "grau", "orz", "mazare", "linte", "naut", "fasole", "crupe"]],
   ["Bacanie", ["bacanie", "sushi", "zahar", "sare", "paste", "faina", "pesmet", "fulgi", "cereale", "muesli", "granola", "ulei", "maioneza", "ketchup", "sosuri", "dressing", "bors", "otet", "alimente instant", "condimente", "mirodenii", "articole pentru copt", "jeleu", "kissel"]],
-  ["Conserve", ["conserve", "masline", "pateuri", "ciuperci", "miere"]],
+  ["Conserve", ["conserve", "masline", "pateuri", "ciuperci", "miere", "magiun", "gem", "dulceturi"]],
   ["Produse congelate", ["congelate", "aluat congelat", "pizza", "pelmeni", "coltunasi", "inghetata", "gheata"]],
   ["Nuci, fructe uscate si seminte", ["fructe uscate", "nuci", "seminte", "amestecuri de nuci"]],
   ["Snack-uri", ["snack", "chipsuri", "nachos", "sticks", "crackers", "pesmeti", "popcorn", "arahide", "fistic", "gustari"]],
@@ -68,20 +66,10 @@ const SITE_CATEGORY_GROUPS = [
   ["Produse chimice de uz casnic", ["detergenti", "curatenia suprafetelor", "masina de spalat", "repelente", "odorizanti"]],
   ["Produse cosmetice", ["parfumerie", "machiaj", "creme", "ser", "masti", "plasturi cosmetici", "demachiere", "vopsea", "tonice", "solara"]],
   ["Igiena si ingrijire", ["sapun", "ingrijire corp", "ingrijire par", "igiena orala", "igiena intima", "bumbac", "barbatilor", "servetele umede", "trusa de prim ajutor"]],
-  ["Lumea copiilor", ["alimentatia copiilor", "scutece", "accesorii pentru copii", "mamici", "jucarii", "produse cosmetice igiena protectie"]],
-  ["Papetarie", ["papetarie", "caiete", "blocnotes", "agende", "desen", "creativitate", "rechizite"]],
-  ["Hrana & Accesorii animale", ["hrana pisici", "hrana caini", "animale", "asternut"]],
-  ["Totul pentru CASA MODERNA", ["casa moderna", "depozitare si organizarea spatiului", "accesorii pentru baie", "decor", "lumanari", "flori artificiale"]],
-  ["Bucatarie", ["bucatarie", "vesela", "accesorii pentru bucatarie", "unica folosinta", "depozitarea alimentelor", "termosuri"]],
-  ["Bunuri gospodaresti", ["produse din hartie", "folie", "curatenie in casa", "inventar curatenie", "mese de calcat", "uscatoare de rufe", "scari", "unelte", "saci menajeri"]],
-  ["Imbracaminte. Incaltaminte. Accesorii. Textile", ["imbracaminte", "incaltaminte", "colanti", "sosete", "galanterie", "textile", "ingrijire si depozitare"]],
-  ["Totul pentru masina", ["auto", "masina"]],
-  ["Electrocasnice. Iluminat", ["tehnica de bucatarie", "tehnica pentru casa", "tehnica pentru frumusete", "electrice", "lampi", "lanterne", "baterii"]],
-  ["Tehnica Audio-Video", ["casti", "bluetooth", "audio-video"]],
-  ["Sport", ["sport"]],
-  ["Plante de casa. Gradina. Livada", ["plante", "substrat", "ingrasamant", "ghivece"]],
-  ["Cartele SIM, Bilete de loterie", ["cartele", "loterie"]]
+  ["Hrana & Accesorii animale", ["hrana pisici", "hrana caini", "animale", "asternut"]]
 ];
+
+const VISIBLE_MAIN_CATEGORIES = SITE_CATEGORY_GROUPS.map(([name]) => name);
 
 const normalize = (value) =>
   value
@@ -130,7 +118,7 @@ function mainCategoryFromName(name) {
       return groupName;
     }
   }
-  return name || "Fara categorie";
+  return "Altele";
 }
 
 function mainCategoryFromProduct(product) {
@@ -167,7 +155,7 @@ function parseKgUnit(unit) {
 }
 
 function isWeightedProduce(product) {
-  return mainCategoryFromProduct(product) === "Fructe, legume, muraturi" && parseKgUnit(product.unit);
+  return mainCategoryFromProduct(product) === "Fructe, fructe de padure, Legume, Muraturi" && parseKgUnit(product.unit);
 }
 
 function isNewProduct(product) {
@@ -435,12 +423,8 @@ async function loadOfflineProducts() {
 }
 
 function renderCategories() {
-  const categories = [...new Map(
-    state.products
-      .map((product) => mainCategoryFromProduct(product))
-      .filter(Boolean)
-      .map((name) => [name, name])
-  ).values()].sort((a, b) => a.localeCompare(b, "ro"));
+  const available = new Set(state.products.map((product) => mainCategoryFromProduct(product)));
+  const categories = VISIBLE_MAIN_CATEGORIES.filter((name) => available.has(name));
 
   els.category.innerHTML = [
     `<option value="all">Toate categoriile</option>`,
@@ -599,6 +583,10 @@ function closeImageModal() {
   document.body.classList.remove("modal-open");
 }
 
+function updateScrollTopButton() {
+  els.scrollTop.hidden = window.scrollY < 500;
+}
+
 applyTheme(loadTheme());
 
 els.form.addEventListener("submit", (event) => event.preventDefault());
@@ -666,6 +654,10 @@ els.loadMore.addEventListener("click", () => {
   state.visibleLimit += 30;
   render();
 });
+els.scrollTop.addEventListener("click", () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+window.addEventListener("scroll", updateScrollTopButton, { passive: true });
 els.theme.addEventListener("change", () => {
   applyTheme(els.theme.checked ? "dark" : "light");
 });
