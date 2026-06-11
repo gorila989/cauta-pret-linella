@@ -6,8 +6,12 @@ const state = {
   subcategory: "all",
   onlyPromo: false,
   discountPercent: "all",
+  listMode: "all",
   visibleLimit: 30,
-  hasUserFilter: false
+  hasUserFilter: false,
+  favorites: new Set(),
+  shoppingList: new Set(),
+  priceHistory: {}
 };
 
 const DB_NAME = "cauta-pret-offline";
@@ -29,9 +33,12 @@ const els = {
   sortName: document.getElementById("sortName"),
   sortPrice: document.getElementById("sortPrice"),
   onlyPromo: document.getElementById("onlyPromo"),
+  favorites: document.getElementById("favoritesButton"),
+  shoppingList: document.getElementById("shoppingListButton"),
   refresh: document.getElementById("refreshButton"),
   refreshStatus: document.getElementById("refreshStatus"),
   loadMore: document.getElementById("loadMoreButton"),
+  shoppingTotal: document.getElementById("shoppingTotal"),
   theme: document.getElementById("themeToggle"),
   imageModal: document.getElementById("imageModal"),
   imageModalImg: document.getElementById("imageModalImg"),
@@ -41,6 +48,9 @@ const els = {
 };
 
 const THEME_KEY = "cauta-pret-theme";
+const FAVORITES_KEY = "cauta-pret-favorites";
+const SHOPPING_LIST_KEY = "cauta-pret-shopping-list";
+const PRICE_HISTORY_KEY = "cauta-pret-price-history";
 
 const SITE_CATEGORY_GROUPS = [
   ["Fructe, fructe de padure, Legume, Muraturi", ["fructe, legume, muraturi", "fructe", "fructe de padure", "legume", "salate verde", "verdeturi", "muraturi"]],
@@ -78,6 +88,95 @@ const normalize = (value) =>
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/g, " ")
     .trim();
+
+function productKey(product) {
+  return product.url || product.product_code || product.name;
+}
+
+function loadJsonStorage(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch (error) {
+    return fallback;
+  }
+}
+
+function saveJsonStorage(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
+    // Local storage is best effort.
+  }
+}
+
+function loadUserLists() {
+  state.favorites = new Set(loadJsonStorage(FAVORITES_KEY, []));
+  state.shoppingList = new Set(loadJsonStorage(SHOPPING_LIST_KEY, []));
+  state.priceHistory = loadJsonStorage(PRICE_HISTORY_KEY, {});
+}
+
+function saveFavorites() {
+  saveJsonStorage(FAVORITES_KEY, [...state.favorites]);
+}
+
+function saveShoppingList() {
+  saveJsonStorage(SHOPPING_LIST_KEY, [...state.shoppingList]);
+}
+
+function savePriceHistory() {
+  saveJsonStorage(PRICE_HISTORY_KEY, state.priceHistory);
+}
+
+function priceChangeForProduct(product) {
+  const history = state.priceHistory[productKey(product)] || [];
+  if (history.length < 2) return null;
+  const previous = history[history.length - 2];
+  const current = history[history.length - 1];
+  if (!Number.isFinite(previous.price) || !Number.isFinite(current.price) || previous.price === current.price) return null;
+  return {
+    diff: current.price - previous.price,
+    previous: previous.price,
+    current: current.price
+  };
+}
+
+function updatePriceHistory(products, generatedAt) {
+  const stamp = generatedAt || localDateValue(new Date());
+  let changed = false;
+  for (const product of products) {
+    if (!Number.isFinite(product.price)) continue;
+    const key = productKey(product);
+    const history = state.priceHistory[key] || [];
+    const last = history[history.length - 1];
+    if (!last || last.price !== product.price || last.generated_at !== stamp) {
+      history.push({ price: product.price, generated_at: stamp });
+      state.priceHistory[key] = history.slice(-6);
+      changed = true;
+    }
+  }
+  if (changed) savePriceHistory();
+}
+
+function updateShoppingSummary() {
+  let total = 0;
+  let count = 0;
+  for (const product of state.products) {
+    if (state.shoppingList.has(productKey(product))) {
+      total += Number.isFinite(product.price) ? product.price : 0;
+      count += 1;
+    }
+  }
+  els.shoppingTotal.textContent = `${formatPrice(total)} (${count})`;
+}
+
+function setListMode(mode) {
+  state.listMode = state.listMode === mode ? "all" : mode;
+  state.visibleLimit = 30;
+  els.favorites.classList.toggle("active", state.listMode === "favorites");
+  els.shoppingList.classList.toggle("active", state.listMode === "shopping");
+  render();
+}
 
 function categoryFromProduct(product) {
   if (product.category) return product.category;
@@ -143,43 +242,6 @@ function discountPercentFromProduct(product) {
   return null;
 }
 
-function applySearchText(text) {
-  const query = String(text || "").trim();
-  if (!query) return;
-  els.input.value = query;
-  state.query = query;
-  state.visibleLimit = 30;
-  render();
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-function searchTokens(text) {
-  return [...new Set(
-    normalize(text)
-      .split(" ")
-      .filter((word) => word.length >= 3 && !["produs", "masa", "net", "gram", "grame", "fabricat"].includes(word))
-  )];
-}
-
-function bestProductFromText(text) {
-  const tokens = searchTokens(text);
-  if (!tokens.length) return null;
-  let best = null;
-  let bestScore = 0;
-  for (const product of state.products) {
-    const haystack = product.search || normalize(`${product.name} ${product.product_code || ""}`);
-    let score = 0;
-    for (const token of tokens) {
-      if (haystack.includes(token)) score += token.length;
-    }
-    if (score > bestScore) {
-      best = product;
-      bestScore = score;
-    }
-  }
-  return bestScore >= 8 ? best : null;
-}
-
 function formatPercent(value) {
   return `${String(value).replace(".", ",")}%`;
 }
@@ -213,9 +275,13 @@ function isNewProduct(product) {
 }
 
 function productCard(product) {
+  const key = productKey(product);
   const kgUnit = parseKgUnit(product.unit);
   const weightedProduce = isWeightedProduce(product);
   const productIsNew = isNewProduct(product);
+  const isFavorite = state.favorites.has(key);
+  const isInList = state.shoppingList.has(key);
+  const priceChange = priceChangeForProduct(product);
   const pricePerKg = weightedProduce ? product.price / kgUnit : product.price;
   const oldPrice = product.old_price
     ? `<span>${formatPrice(weightedProduce ? product.old_price / kgUnit : product.old_price)}</span>`
@@ -224,6 +290,11 @@ function productCard(product) {
     ? `<span class="chip promo">${product.discount}</span>`
     : "";
   const newChip = productIsNew ? `<span class="chip new-chip">Nou</span>` : "";
+  const priceChangeChip = priceChange
+    ? `<span class="chip ${priceChange.diff > 0 ? "price-up" : "price-down"}">
+        ${priceChange.diff > 0 ? "Scumpit" : "Ieftinit"}: ${formatPrice(Math.abs(priceChange.diff))}. Era ${formatPrice(priceChange.previous)}
+      </span>`
+    : "";
   const mainCategory = mainCategoryFromProduct(product);
   const subcategoryName = subcategoryFromProduct(product);
   const category = `<span class="chip category-chip">${escapeHtml(mainCategory)}</span>`;
@@ -258,12 +329,13 @@ function productCard(product) {
     : `<div class="product-image product-image-empty" aria-hidden="true"></div>`;
 
   return `
-    <article class="product${productIsNew ? " new-product" : ""}">
+    <article class="product${productIsNew ? " new-product" : ""}" data-key="${escapeHtml(key)}">
       ${image}
       <div>
         <h2>${source}</h2>
         <div class="details">
           ${newChip}
+          ${priceChangeChip}
           ${unit}
           ${category}
           ${subcategory}
@@ -272,6 +344,14 @@ function productCard(product) {
           ${original}
         </div>
         ${calculator}
+        <div class="product-actions">
+          <button class="mini-action favorite-action${isFavorite ? " active" : ""}" type="button" data-action="favorite">
+            ${isFavorite ? "Favorit salvat" : "Favorit"}
+          </button>
+          <button class="mini-action list-action${isInList ? " active" : ""}" type="button" data-action="shopping">
+            ${isInList ? "In lista" : "Adauga in lista"}
+          </button>
+        </div>
       </div>
       <div class="price">
         <strong>${formatPrice(pricePerKg)}</strong>
@@ -298,17 +378,22 @@ function render() {
     state.category !== "all" ||
     state.subcategory !== "all" ||
     state.onlyPromo ||
-    state.discountPercent !== "all";
+    state.discountPercent !== "all" ||
+    state.listMode !== "all";
   if (!state.hasUserFilter) {
     els.count.textContent = String(state.products.length);
     els.results.innerHTML = "";
     els.loadMore.hidden = true;
     els.empty.hidden = false;
     els.empty.textContent = "Scrie numele produsului sau alege o categorie.";
+    updateShoppingSummary();
     return;
   }
 
   let products = state.products.filter((product) => {
+    const key = productKey(product);
+    if (state.listMode === "favorites" && !state.favorites.has(key)) return false;
+    if (state.listMode === "shopping" && !state.shoppingList.has(key)) return false;
     if (state.onlyPromo && !product.discount && !product.old_price) return false;
     if (state.discountPercent !== "all" && String(discountPercentFromProduct(product)) !== state.discountPercent) return false;
     if (state.category !== "all" && mainCategoryFromProduct(product) !== state.category) return false;
@@ -329,8 +414,14 @@ function render() {
   els.count.textContent = String(products.length);
   els.results.innerHTML = visible.map(productCard).join("");
   els.empty.hidden = products.length > 0;
+  els.empty.textContent = state.listMode === "favorites"
+    ? "Nu ai produse favorite."
+    : state.listMode === "shopping"
+      ? "Lista mea este goala."
+      : "Nu am gasit produsul. Incearca un nume mai scurt sau actualizeaza baza de date.";
   els.loadMore.hidden = products.length <= visible.length;
   els.loadMore.textContent = `Mai multe (${visible.length}/${products.length})`;
+  updateShoppingSummary();
   loadVisibleCodes();
 }
 
@@ -407,6 +498,7 @@ function applyProducts(data, offline) {
       search: normalize(`${product.name} ${product.product_code || ""}`)
     };
   });
+  updatePriceHistory(state.products, data.generated_at);
   renderCategories();
   renderSubcategories();
   renderDiscountOptions();
@@ -635,6 +727,7 @@ function updateScrollTopButton() {
   els.scrollTop.hidden = window.scrollY < 500;
 }
 
+loadUserLists();
 applyTheme(loadTheme());
 
 els.form.addEventListener("submit", (event) => event.preventDefault());
@@ -697,6 +790,8 @@ els.onlyPromo.addEventListener("click", () => {
   els.onlyPromo.classList.toggle("active", state.onlyPromo);
   render();
 });
+els.favorites.addEventListener("click", () => setListMode("favorites"));
+els.shoppingList.addEventListener("click", () => setListMode("shopping"));
 els.refresh.addEventListener("click", refreshPrices);
 els.loadMore.addEventListener("click", () => {
   state.visibleLimit += 30;
@@ -719,6 +814,25 @@ els.results.addEventListener("input", (event) => {
   if (output) output.textContent = formatPrice(total);
 });
 els.results.addEventListener("click", (event) => {
+  const action = event.target.closest("[data-action]");
+  if (action) {
+    const card = action.closest(".product");
+    const key = card?.dataset.key;
+    if (!key) return;
+    if (action.dataset.action === "favorite") {
+      if (state.favorites.has(key)) state.favorites.delete(key);
+      else state.favorites.add(key);
+      saveFavorites();
+    }
+    if (action.dataset.action === "shopping") {
+      if (state.shoppingList.has(key)) state.shoppingList.delete(key);
+      else state.shoppingList.add(key);
+      saveShoppingList();
+    }
+    render();
+    return;
+  }
+
   const button = event.target.closest(".image-button");
   if (!button) return;
   openImageModal(button.dataset.imageUrl, button.dataset.imageTitle);

@@ -294,7 +294,7 @@ button {
 
 .summary {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 10px;
   margin: 14px 0;
 }
@@ -419,6 +419,18 @@ body.dark-theme .product.new-product {
   font-weight: 700;
 }
 
+.price-up {
+  background: #ffe8e8;
+  color: var(--red);
+  font-weight: 700;
+}
+
+.price-down {
+  background: #e1f6ea;
+  color: var(--green);
+  font-weight: 700;
+}
+
 .category-chip {
   background: var(--green-soft);
   color: var(--green);
@@ -477,6 +489,26 @@ body.dark-theme .product.new-product {
   background: var(--green-soft);
   color: var(--green);
   text-align: center;
+}
+
+.product-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.mini-action {
+  min-height: 34px;
+  padding: 0 10px;
+  background: var(--tool-bg);
+  color: var(--ink);
+  font-size: 13px;
+}
+
+.mini-action.active {
+  background: var(--green);
+  color: var(--panel);
 }
 
 .empty {
