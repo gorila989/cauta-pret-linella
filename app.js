@@ -29,9 +29,6 @@ const els = {
   sortName: document.getElementById("sortName"),
   sortPrice: document.getElementById("sortPrice"),
   onlyPromo: document.getElementById("onlyPromo"),
-  camera: document.getElementById("cameraButton"),
-  cameraInput: document.getElementById("cameraInput"),
-  cameraStatus: document.getElementById("cameraStatus"),
   refresh: document.getElementById("refreshButton"),
   refreshStatus: document.getElementById("refreshStatus"),
   loadMore: document.getElementById("loadMoreButton"),
@@ -40,21 +37,10 @@ const els = {
   imageModalImg: document.getElementById("imageModalImg"),
   imageModalTitle: document.getElementById("imageModalTitle"),
   imageModalClose: document.getElementById("imageModalClose"),
-  cropModal: document.getElementById("cropModal"),
-  cropCanvas: document.getElementById("cropCanvas"),
-  cropRect: document.getElementById("cropRect"),
-  cropX: document.getElementById("cropX"),
-  cropY: document.getElementById("cropY"),
-  cropW: document.getElementById("cropW"),
-  cropH: document.getElementById("cropH"),
-  cropCancel: document.getElementById("cropCancel"),
-  cropRead: document.getElementById("cropRead"),
   scrollTop: document.getElementById("scrollTopButton")
 };
 
 const THEME_KEY = "cauta-pret-theme";
-const TESSERACT_URL = "https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";
-let cropState = null;
 
 const SITE_CATEGORY_GROUPS = [
   ["Fructe, fructe de padure, Legume, Muraturi", ["fructe, legume, muraturi", "fructe", "fructe de padure", "legume", "salate verde", "verdeturi", "muraturi"]],
@@ -649,165 +635,6 @@ function updateScrollTopButton() {
   els.scrollTop.hidden = window.scrollY < 500;
 }
 
-function cropValues() {
-  const x = Number(els.cropX.value);
-  const y = Number(els.cropY.value);
-  const w = Math.min(Number(els.cropW.value), 100 - x);
-  const h = Math.min(Number(els.cropH.value), 100 - y);
-  return { x, y, w: Math.max(10, w), h: Math.max(10, h) };
-}
-
-function updateCropRect() {
-  const { x, y, w, h } = cropValues();
-  els.cropRect.style.left = `${x}%`;
-  els.cropRect.style.top = `${y}%`;
-  els.cropRect.style.width = `${w}%`;
-  els.cropRect.style.height = `${h}%`;
-}
-
-function drawCropPreview() {
-  if (!cropState?.image) return;
-  const context = els.cropCanvas.getContext("2d");
-  const image = cropState.image;
-  const maxWidth = Math.min(window.innerWidth - 44, 760);
-  const scale = Math.min(1, maxWidth / image.naturalWidth);
-  els.cropCanvas.width = Math.round(image.naturalWidth * scale);
-  els.cropCanvas.height = Math.round(image.naturalHeight * scale);
-  context.drawImage(image, 0, 0, els.cropCanvas.width, els.cropCanvas.height);
-  updateCropRect();
-}
-
-function openCropSelector(file) {
-  return new Promise((resolve) => {
-    const image = new Image();
-    const objectUrl = URL.createObjectURL(file);
-    cropState = { file, image, objectUrl, resolve };
-    image.onload = () => {
-      els.cropModal.hidden = false;
-      document.body.classList.add("modal-open");
-      drawCropPreview();
-      setCameraStatus("Ajusteaza dreptunghiul peste denumire, apoi apasa Citeste textul.");
-    };
-    image.onerror = () => {
-      URL.revokeObjectURL(objectUrl);
-      cropState = null;
-      resolve(null);
-    };
-    image.src = objectUrl;
-  });
-}
-
-function closeCropSelector(result) {
-  const state = cropState;
-  els.cropModal.hidden = true;
-  document.body.classList.remove("modal-open");
-  cropState = null;
-  if (state?.objectUrl) URL.revokeObjectURL(state.objectUrl);
-  if (state?.resolve) state.resolve(result || null);
-}
-
-async function makeCroppedBlob() {
-  if (!cropState?.image) return null;
-  const { x, y, w, h } = cropValues();
-  const image = cropState.image;
-  const sx = Math.round((x / 100) * image.naturalWidth);
-  const sy = Math.round((y / 100) * image.naturalHeight);
-  const sw = Math.round((w / 100) * image.naturalWidth);
-  const sh = Math.round((h / 100) * image.naturalHeight);
-  const canvas = document.createElement("canvas");
-  canvas.width = Math.max(1, sw);
-  canvas.height = Math.max(1, sh);
-  canvas.getContext("2d").drawImage(image, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
-  return new Promise((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.95));
-}
-
-function setCameraStatus(message) {
-  els.cameraStatus.textContent = message || "";
-}
-
-function loadScriptOnce(src) {
-  return new Promise((resolve, reject) => {
-    const existing = document.querySelector(`script[src="${src}"]`);
-    if (existing) {
-      if (window.Tesseract) resolve();
-      else existing.addEventListener("load", resolve, { once: true });
-      return;
-    }
-    const script = document.createElement("script");
-    script.src = src;
-    script.async = true;
-    script.onload = resolve;
-    script.onerror = () => reject(new Error("Nu pot incarca citirea textului."));
-    document.head.appendChild(script);
-  });
-}
-
-async function scanBarcode(file) {
-  if (!("BarcodeDetector" in window)) return "";
-  const bitmap = await createImageBitmap(file);
-  try {
-    const detector = new BarcodeDetector({
-      formats: ["ean_13", "ean_8", "upc_a", "upc_e", "code_128", "qr_code"]
-    });
-    const codes = await detector.detect(bitmap);
-    return codes[0]?.rawValue || "";
-  } finally {
-    bitmap.close();
-  }
-}
-
-async function readTextFromPhoto(file) {
-  await loadScriptOnce(TESSERACT_URL);
-  if (!window.Tesseract) throw new Error("Citirea textului nu este disponibila.");
-  const result = await window.Tesseract.recognize(file, "ron+eng");
-  return result?.data?.text || "";
-}
-
-async function handleCameraFile(file) {
-  if (!file) return;
-  els.camera.disabled = true;
-  setCameraStatus("Citesc poza...");
-  try {
-    const code = await scanBarcode(file).catch(() => "");
-    if (code) {
-      applySearchText(code);
-      if (els.count.textContent !== "0") {
-        setCameraStatus(`Am gasit codul: ${code}`);
-        return;
-      }
-      setCameraStatus("Codul nu este in baza. Incerc sa citesc textul...");
-    }
-
-    const cropped = await openCropSelector(file);
-    if (!cropped) {
-      setCameraStatus("Citirea a fost anulata.");
-      return;
-    }
-
-    setCameraStatus("Citesc textul din dreptunghi. Prima data poate dura mai mult...");
-    const text = await readTextFromPhoto(cropped);
-    const best = bestProductFromText(text);
-    if (best) {
-      applySearchText(best.name);
-      setCameraStatus("Am cautat produsul cel mai apropiat din poza.");
-      return;
-    }
-
-    const tokens = searchTokens(text).slice(0, 5).join(" ");
-    if (tokens) {
-      applySearchText(tokens);
-      setCameraStatus("Am citit cateva cuvinte si le-am pus in cautare.");
-      return;
-    }
-    setCameraStatus("Nu am putut citi textul. Fa poza mai aproape, la denumire.");
-  } catch (error) {
-    setCameraStatus("Nu am putut citi poza. Incearca pe Render cu internet.");
-  } finally {
-    els.camera.disabled = false;
-    els.cameraInput.value = "";
-  }
-}
-
 applyTheme(loadTheme());
 
 els.form.addEventListener("submit", (event) => event.preventDefault());
@@ -870,23 +697,6 @@ els.onlyPromo.addEventListener("click", () => {
   els.onlyPromo.classList.toggle("active", state.onlyPromo);
   render();
 });
-els.camera.addEventListener("click", () => {
-  els.cameraInput.click();
-});
-els.cameraInput.addEventListener("change", () => {
-  handleCameraFile(els.cameraInput.files[0]);
-});
-[els.cropX, els.cropY, els.cropW, els.cropH].forEach((input) => {
-  input.addEventListener("input", updateCropRect);
-});
-els.cropCancel.addEventListener("click", () => closeCropSelector(null));
-els.cropRead.addEventListener("click", async () => {
-  els.cropRead.disabled = true;
-  const cropped = await makeCroppedBlob();
-  els.cropRead.disabled = false;
-  closeCropSelector(cropped);
-});
-window.addEventListener("resize", drawCropPreview);
 els.refresh.addEventListener("click", refreshPrices);
 els.loadMore.addEventListener("click", () => {
   state.visibleLimit += 30;

@@ -59,12 +59,9 @@
         <button id="sortName" type="button" class="tool active">A-Z</button>
         <button id="sortPrice" type="button" class="tool">Pret mic</button>
         <button id="onlyPromo" type="button" class="tool">Reduceri</button>
-        <button id="cameraButton" type="button" class="tool camera">Camera</button>
         <button id="refreshButton" type="button" class="tool refresh">Actualizeaza</button>
       </div>
-      <input id="cameraInput" class="visually-hidden" type="file" accept="image/*" capture="environment">
       <p id="refreshStatus" class="refresh-status" aria-live="polite"></p>
-      <p id="cameraStatus" class="camera-status" aria-live="polite"></p>
     </section>
 
     <section class="summary" aria-live="polite">
@@ -90,25 +87,6 @@
   </div>
 
   <button id="scrollTopButton" class="scroll-top" type="button" aria-label="Sus" hidden>↑</button>
-
-  <div id="cropModal" class="crop-modal" hidden>
-    <div class="crop-box">
-      <div class="crop-preview">
-        <canvas id="cropCanvas"></canvas>
-        <div id="cropRect" class="crop-rect" aria-hidden="true"></div>
-      </div>
-      <div class="crop-controls">
-        <label>Stanga <input id="cropX" type="range" min="0" max="100" value="15"></label>
-        <label>Sus <input id="cropY" type="range" min="0" max="100" value="25"></label>
-        <label>Latime <input id="cropW" type="range" min="10" max="100" value="70"></label>
-        <label>Inaltime <input id="cropH" type="range" min="10" max="100" value="30"></label>
-      </div>
-      <div class="crop-actions">
-        <button id="cropCancel" type="button" class="tool">Anuleaza</button>
-        <button id="cropRead" type="button" class="tool camera">Citeste textul</button>
-      </div>
-    </div>
-  </div>
 
   <script src="app.js"></script>
 </body>
