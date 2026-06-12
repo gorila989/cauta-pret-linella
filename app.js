@@ -9,8 +9,7 @@ const state = {
   listMode: "all",
   visibleLimit: 30,
   hasUserFilter: false,
-  favorites: new Set(),
-  shoppingList: new Set(),
+  collectedCodes: new Set(),
   priceHistory: {}
 };
 
@@ -33,12 +32,11 @@ const els = {
   sortName: document.getElementById("sortName"),
   sortPrice: document.getElementById("sortPrice"),
   onlyPromo: document.getElementById("onlyPromo"),
-  favorites: document.getElementById("favoritesButton"),
-  shoppingList: document.getElementById("shoppingListButton"),
+  codes: document.getElementById("codesButton"),
   refresh: document.getElementById("refreshButton"),
   refreshStatus: document.getElementById("refreshStatus"),
   loadMore: document.getElementById("loadMoreButton"),
-  shoppingTotal: document.getElementById("shoppingTotal"),
+  codesTotal: document.getElementById("codesTotal"),
   theme: document.getElementById("themeToggle"),
   imageModal: document.getElementById("imageModal"),
   imageModalImg: document.getElementById("imageModalImg"),
@@ -48,8 +46,7 @@ const els = {
 };
 
 const THEME_KEY = "cauta-pret-theme";
-const FAVORITES_KEY = "cauta-pret-favorites";
-const SHOPPING_LIST_KEY = "cauta-pret-shopping-list";
+const COLLECTED_CODES_KEY = "cauta-pret-collected-codes";
 const PRICE_HISTORY_KEY = "cauta-pret-price-history";
 
 const SITE_CATEGORY_GROUPS = [
@@ -111,17 +108,12 @@ function saveJsonStorage(key, value) {
 }
 
 function loadUserLists() {
-  state.favorites = new Set(loadJsonStorage(FAVORITES_KEY, []));
-  state.shoppingList = new Set(loadJsonStorage(SHOPPING_LIST_KEY, []));
+  state.collectedCodes = new Set(loadJsonStorage(COLLECTED_CODES_KEY, []));
   state.priceHistory = loadJsonStorage(PRICE_HISTORY_KEY, {});
 }
 
-function saveFavorites() {
-  saveJsonStorage(FAVORITES_KEY, [...state.favorites]);
-}
-
-function saveShoppingList() {
-  saveJsonStorage(SHOPPING_LIST_KEY, [...state.shoppingList]);
+function saveCollectedCodes() {
+  saveJsonStorage(COLLECTED_CODES_KEY, [...state.collectedCodes]);
 }
 
 function savePriceHistory() {
@@ -158,23 +150,14 @@ function updatePriceHistory(products, generatedAt) {
   if (changed) savePriceHistory();
 }
 
-function updateShoppingSummary() {
-  let total = 0;
-  let count = 0;
-  for (const product of state.products) {
-    if (state.shoppingList.has(productKey(product))) {
-      total += Number.isFinite(product.price) ? product.price : 0;
-      count += 1;
-    }
-  }
-  els.shoppingTotal.textContent = `${formatPrice(total)} (${count})`;
+function updateCodesSummary() {
+  els.codesTotal.textContent = String(state.collectedCodes.size);
 }
 
 function setListMode(mode) {
   state.listMode = state.listMode === mode ? "all" : mode;
   state.visibleLimit = 30;
-  els.favorites.classList.toggle("active", state.listMode === "favorites");
-  els.shoppingList.classList.toggle("active", state.listMode === "shopping");
+  els.codes.classList.toggle("active", state.listMode === "codes");
   render();
 }
 
@@ -279,8 +262,7 @@ function productCard(product) {
   const kgUnit = parseKgUnit(product.unit);
   const weightedProduce = isWeightedProduce(product);
   const productIsNew = isNewProduct(product);
-  const isFavorite = state.favorites.has(key);
-  const isInList = state.shoppingList.has(key);
+  const collectedCode = product.product_code && state.collectedCodes.has(product.product_code);
   const priceChange = priceChangeForProduct(product);
   const pricePerKg = weightedProduce ? product.price / kgUnit : product.price;
   const oldPrice = product.old_price
@@ -345,11 +327,8 @@ function productCard(product) {
         </div>
         ${calculator}
         <div class="product-actions">
-          <button class="mini-action favorite-action${isFavorite ? " active" : ""}" type="button" data-action="favorite">
-            ${isFavorite ? "Favorit salvat" : "Favorit"}
-          </button>
-          <button class="mini-action list-action${isInList ? " active" : ""}" type="button" data-action="shopping">
-            ${isInList ? "In lista" : "Adauga in lista"}
+          <button class="mini-action code-action${collectedCode ? " active" : ""}" type="button" data-action="code">
+            ${collectedCode ? "Cod salvat" : "Adauga cod"}
           </button>
         </div>
       </div>
@@ -386,14 +365,12 @@ function render() {
     els.loadMore.hidden = true;
     els.empty.hidden = false;
     els.empty.textContent = "Scrie numele produsului sau alege o categorie.";
-    updateShoppingSummary();
+    updateCodesSummary();
     return;
   }
 
   let products = state.products.filter((product) => {
-    const key = productKey(product);
-    if (state.listMode === "favorites" && !state.favorites.has(key)) return false;
-    if (state.listMode === "shopping" && !state.shoppingList.has(key)) return false;
+    if (state.listMode === "codes" && !state.collectedCodes.has(product.product_code)) return false;
     if (state.onlyPromo && !product.discount && !product.old_price) return false;
     if (state.discountPercent !== "all" && String(discountPercentFromProduct(product)) !== state.discountPercent) return false;
     if (state.category !== "all" && mainCategoryFromProduct(product) !== state.category) return false;
@@ -414,14 +391,12 @@ function render() {
   els.count.textContent = String(products.length);
   els.results.innerHTML = visible.map(productCard).join("");
   els.empty.hidden = products.length > 0;
-  els.empty.textContent = state.listMode === "favorites"
-    ? "Nu ai produse favorite."
-    : state.listMode === "shopping"
-      ? "Lista mea este goala."
-      : "Nu am gasit produsul. Incearca un nume mai scurt sau actualizeaza baza de date.";
+  els.empty.textContent = state.listMode === "codes"
+    ? "Nu ai coduri colectate."
+    : "Nu am gasit produsul. Incearca un nume mai scurt sau actualizeaza baza de date.";
   els.loadMore.hidden = products.length <= visible.length;
   els.loadMore.textContent = `Mai multe (${visible.length}/${products.length})`;
-  updateShoppingSummary();
+  updateCodesSummary();
   loadVisibleCodes();
 }
 
@@ -491,7 +466,7 @@ function applyProducts(data, offline) {
       ...product,
       category_slug: categorySlug,
       subcategory_slug: categorySlug,
-      subcategory_key: categorySlug || normalize(subcategoryName),
+      subcategory_key: normalize(subcategoryName),
       subcategory_name: subcategoryName,
       category: subcategoryName,
       main_category: mainCategoryFromName(subcategoryName),
@@ -630,21 +605,28 @@ function loadVisibleCodes() {
   }
 }
 
+async function loadProductCode(product) {
+  if (product.product_code) return product.product_code;
+  if (!product.url) return "";
+  const response = await fetch(`api/code?url=${encodeURIComponent(product.url)}`, { cache: "no-store" });
+  if (!response.ok) return "";
+  const data = await response.json();
+  if (data.product_code) {
+    product.product_code = data.product_code;
+    product.search = normalize(`${product.name} ${product.product_code}`);
+  }
+  return product.product_code || "";
+}
+
 async function fetchProductCode(chip) {
   const url = chip.dataset.url;
   if (!url || chip.dataset.loading === "1") return;
   chip.dataset.loading = "1";
   try {
-    const response = await fetch(`api/code?url=${encodeURIComponent(url)}`, { cache: "no-store" });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const data = await response.json();
-    if (data.product_code) {
-      chip.textContent = `Cod: ${data.product_code}`;
-      const product = state.products.find((item) => item.url === url);
-      if (product) {
-        product.product_code = data.product_code;
-        product.search = normalize(`${product.name} ${product.product_code}`);
-      }
+    const product = state.products.find((item) => item.url === url);
+    const code = product ? await loadProductCode(product) : "";
+    if (code) {
+      chip.textContent = `Cod: ${code}`;
     } else {
       chip.textContent = "Cod: -";
     }
@@ -790,8 +772,7 @@ els.onlyPromo.addEventListener("click", () => {
   els.onlyPromo.classList.toggle("active", state.onlyPromo);
   render();
 });
-els.favorites.addEventListener("click", () => setListMode("favorites"));
-els.shoppingList.addEventListener("click", () => setListMode("shopping"));
+els.codes.addEventListener("click", () => setListMode("codes"));
 els.refresh.addEventListener("click", refreshPrices);
 els.loadMore.addEventListener("click", () => {
   state.visibleLimit += 30;
@@ -813,21 +794,25 @@ els.results.addEventListener("input", (event) => {
   const output = input.closest(".kg-calculator")?.querySelector(".kg-total");
   if (output) output.textContent = formatPrice(total);
 });
-els.results.addEventListener("click", (event) => {
+els.results.addEventListener("click", async (event) => {
   const action = event.target.closest("[data-action]");
   if (action) {
     const card = action.closest(".product");
     const key = card?.dataset.key;
     if (!key) return;
-    if (action.dataset.action === "favorite") {
-      if (state.favorites.has(key)) state.favorites.delete(key);
-      else state.favorites.add(key);
-      saveFavorites();
-    }
-    if (action.dataset.action === "shopping") {
-      if (state.shoppingList.has(key)) state.shoppingList.delete(key);
-      else state.shoppingList.add(key);
-      saveShoppingList();
+    if (action.dataset.action === "code") {
+      const product = state.products.find((item) => productKey(item) === key);
+      if (!product) return;
+      action.disabled = true;
+      const code = await loadProductCode(product).catch(() => "");
+      action.disabled = false;
+      if (!code) {
+        els.refreshStatus.textContent = "Nu am gasit cod pentru acest produs.";
+        return;
+      }
+      if (state.collectedCodes.has(code)) state.collectedCodes.delete(code);
+      else state.collectedCodes.add(code);
+      saveCollectedCodes();
     }
     render();
     return;
