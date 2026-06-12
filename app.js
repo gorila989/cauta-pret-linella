@@ -33,6 +33,7 @@ const els = {
   sortPrice: document.getElementById("sortPrice"),
   onlyPromo: document.getElementById("onlyPromo"),
   codes: document.getElementById("codesButton"),
+  exportCodes: document.getElementById("exportCodesButton"),
   refresh: document.getElementById("refreshButton"),
   refreshStatus: document.getElementById("refreshStatus"),
   loadMore: document.getElementById("loadMoreButton"),
@@ -159,6 +160,46 @@ function setListMode(mode) {
   state.visibleLimit = 30;
   els.codes.classList.toggle("active", state.listMode === "codes");
   render();
+}
+
+function csvCell(value) {
+  return `"${String(value ?? "").replace(/"/g, '""')}"`;
+}
+
+function exportCollectedCodes() {
+  const rows = state.products
+    .filter((product) => product.product_code && state.collectedCodes.has(product.product_code))
+    .sort((a, b) => a.name.localeCompare(b.name, "ro"));
+
+  if (!rows.length) {
+    els.refreshStatus.textContent = "Nu ai coduri colectate pentru export.";
+    return;
+  }
+
+  const header = ["Cod produs", "Produs", "Pret", "Categorie", "Diviziune", "Link"];
+  const lines = [
+    header.map(csvCell).join(";"),
+    ...rows.map((product) => [
+      product.product_code,
+      product.name,
+      Number.isFinite(product.price) ? product.price.toFixed(2) : "",
+      mainCategoryFromProduct(product),
+      subcategoryFromProduct(product),
+      product.url || ""
+    ].map(csvCell).join(";"))
+  ];
+
+  const date = localDateValue(new Date());
+  const blob = new Blob([`\ufeff${lines.join("\r\n")}`], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `coduri-produse-${date}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+  els.refreshStatus.textContent = `Am descarcat ${rows.length} coduri.`;
 }
 
 function categoryFromProduct(product) {
@@ -773,6 +814,7 @@ els.onlyPromo.addEventListener("click", () => {
   render();
 });
 els.codes.addEventListener("click", () => setListMode("codes"));
+els.exportCodes.addEventListener("click", exportCollectedCodes);
 els.refresh.addEventListener("click", refreshPrices);
 els.loadMore.addEventListener("click", () => {
   state.visibleLimit += 30;
