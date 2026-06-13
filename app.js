@@ -10,7 +10,9 @@ const state = {
   visibleLimit: 30,
   hasUserFilter: false,
   collectedCodes: new Set(),
-  priceHistory: {}
+  priceHistory: {},
+  barcodeLinks: {},
+  pendingBarcodeBindKey: ""
 };
 
 const DB_NAME = "cauta-pret-offline";
@@ -34,6 +36,8 @@ const els = {
   onlyPromo: document.getElementById("onlyPromo"),
   codes: document.getElementById("codesButton"),
   exportCodes: document.getElementById("exportCodesButton"),
+  scanBarcode: document.getElementById("scanBarcodeButton"),
+  barcodeInput: document.getElementById("barcodeInput"),
   refresh: document.getElementById("refreshButton"),
   refreshStatus: document.getElementById("refreshStatus"),
   loadMore: document.getElementById("loadMoreButton"),
@@ -49,6 +53,7 @@ const els = {
 const THEME_KEY = "cauta-pret-theme";
 const COLLECTED_CODES_KEY = "cauta-pret-collected-codes";
 const PRICE_HISTORY_KEY = "cauta-pret-price-history";
+const BARCODE_LINKS_KEY = "cauta-pret-barcode-links";
 
 const SITE_CATEGORY_GROUPS = [
   ["Fructe, fructe de padure, Legume, Muraturi", ["fructe, legume, muraturi", "fructe", "fructe de padure", "legume", "salate verde", "verdeturi", "muraturi"]],
@@ -111,6 +116,7 @@ function saveJsonStorage(key, value) {
 function loadUserLists() {
   state.collectedCodes = new Set(loadJsonStorage(COLLECTED_CODES_KEY, []));
   state.priceHistory = loadJsonStorage(PRICE_HISTORY_KEY, {});
+  state.barcodeLinks = loadJsonStorage(BARCODE_LINKS_KEY, {});
 }
 
 function saveCollectedCodes() {
@@ -119,6 +125,10 @@ function saveCollectedCodes() {
 
 function savePriceHistory() {
   saveJsonStorage(PRICE_HISTORY_KEY, state.priceHistory);
+}
+
+function saveBarcodeLinks() {
+  saveJsonStorage(BARCODE_LINKS_KEY, state.barcodeLinks);
 }
 
 function priceChangeForProduct(product) {
@@ -176,11 +186,12 @@ function exportCollectedCodes() {
     return;
   }
 
-  const header = ["Cod produs", "Produs", "Pret", "Categorie", "Diviziune", "Link"];
+  const header = ["Cod produs", "Cod de bare", "Produs", "Pret", "Categorie", "Diviziune", "Link"];
   const lines = [
     header.map(csvCell).join(";"),
     ...rows.map((product) => [
       product.product_code,
+      barcodeForProduct(product),
       product.name,
       Number.isFinite(product.price) ? product.price.toFixed(2) : "",
       mainCategoryFromProduct(product),
@@ -200,6 +211,106 @@ function exportCollectedCodes() {
   link.remove();
   URL.revokeObjectURL(url);
   els.refreshStatus.textContent = `Am descarcat ${rows.length} coduri.`;
+}
+
+function barcodeLinkedForProduct(product) {
+  return Boolean(barcodeForProduct(product));
+}
+
+function barcodeForProduct(product) {
+  const key = productKey(product);
+  const match = Object.entries(state.barcodeLinks).find(([, link]) =>
+    link.product_key === key || (product.product_code && link.product_code === product.product_code)
+  );
+  return match ? match[0] : "";
+}
+
+async function scanBarcodeFromFile(file) {
+  if (!file) return "";
+  if (!("BarcodeDetector" in window)) {
+    els.refreshStatus.textContent = "Telefonul/browserul nu suporta scanarea codului de bare.";
+    return "";
+  }
+  const bitmap = await createImageBitmap(file);
+  try {
+    const detector = new BarcodeDetector({
+      formats: ["ean_13", "ean_8", "upc_a", "upc_e", "code_128", "qr_code"]
+    });
+    const codes = await detector.detect(bitmap);
+    return codes[0]?.rawValue || "";
+  } finally {
+    bitmap.close();
+  }
+}
+
+function showProductFromBarcodeLink(link, barcode) {
+  const product = state.products.find((item) =>
+    productKey(item) === link.product_key || (link.product_code && item.product_code === link.product_code)
+  );
+  if (!product) {
+    els.refreshStatus.textContent = `Codul ${barcode} este legat, dar produsul nu este in baza actuala.`;
+    return;
+  }
+  els.input.value = product.name;
+  state.query = product.name;
+  state.category = "all";
+  state.subcategory = "all";
+  state.onlyPromo = false;
+  state.discountPercent = "all";
+  state.listMode = "all";
+  state.visibleLimit = 30;
+  els.onlyPromo.classList.remove("active");
+  els.codes.classList.remove("active");
+  renderCategories();
+  renderSubcategories();
+  renderDiscountOptions();
+  render();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  els.refreshStatus.textContent = `Gasit dupa cod de bare: ${barcode}`;
+}
+
+function startBarcodeScan(productKeyToBind = "") {
+  state.pendingBarcodeBindKey = productKeyToBind;
+  els.barcodeInput.value = "";
+  els.barcodeInput.click();
+}
+
+async function handleBarcodeFile(file) {
+  if (!file) return;
+  els.refreshStatus.textContent = "Scanez codul de bare...";
+  const barcode = await scanBarcodeFromFile(file).catch(() => "");
+  els.barcodeInput.value = "";
+  if (!barcode) {
+    els.refreshStatus.textContent = "Nu am citit codul de bare. Fa poza mai aproape si clar.";
+    state.pendingBarcodeBindKey = "";
+    return;
+  }
+
+  if (state.pendingBarcodeBindKey) {
+    const product = state.products.find((item) => productKey(item) === state.pendingBarcodeBindKey);
+    state.pendingBarcodeBindKey = "";
+    if (!product) {
+      els.refreshStatus.textContent = "Produsul pentru legare nu mai este gasit.";
+      return;
+    }
+    const productCode = await loadProductCode(product).catch(() => product.product_code || "");
+    state.barcodeLinks[barcode] = {
+      product_key: productKey(product),
+      product_code: productCode,
+      name: product.name
+    };
+    saveBarcodeLinks();
+    els.refreshStatus.textContent = `Codul de bare ${barcode} a fost legat de produs.`;
+    render();
+    return;
+  }
+
+  const link = state.barcodeLinks[barcode];
+  if (!link) {
+    els.refreshStatus.textContent = `Cod necunoscut: ${barcode}. Cauta produsul manual si apasa Leaga bare.`;
+    return;
+  }
+  showProductFromBarcodeLink(link, barcode);
 }
 
 function categoryFromProduct(product) {
@@ -271,14 +382,15 @@ function formatPercent(value) {
 }
 
 function parseKgUnit(unit) {
-  const match = String(unit || "").match(/^\/\s*([0-9]+(?:\.[0-9]+)?)kg$/i);
+  const match = String(unit || "").match(/^\/\s*([0-9]+(?:[.,][0-9]+)?)\s*kg$/i);
   if (!match) return null;
-  const kg = Number(match[1]);
+  const kg = Number(match[1].replace(",", "."));
   return Number.isFinite(kg) && kg > 0 ? kg : null;
 }
 
 function isWeightedProduce(product) {
-  return mainCategoryFromProduct(product) === "Fructe, fructe de padure, Legume, Muraturi" && parseKgUnit(product.unit);
+  const kg = parseKgUnit(product.unit);
+  return kg && kg !== 1;
 }
 
 function localDateValue(date) {
@@ -304,6 +416,8 @@ function productCard(product) {
   const weightedProduce = isWeightedProduce(product);
   const productIsNew = isNewProduct(product);
   const collectedCode = product.product_code && state.collectedCodes.has(product.product_code);
+  const linkedBarcode = barcodeLinkedForProduct(product);
+  const barcode = barcodeForProduct(product);
   const priceChange = priceChangeForProduct(product);
   const pricePerKg = weightedProduce ? product.price / kgUnit : product.price;
   const oldPrice = product.old_price
@@ -329,8 +443,9 @@ function productCard(product) {
     : product.url
       ? `<span class="chip code-chip" data-url="${escapeHtml(product.url)}">Cod: se incarca</span>`
       : "";
-  const unit = product.unit ? `<span class="chip">${weightedProduce ? "Pret / kg" : product.unit}</span>` : "";
-  const original = weightedProduce ? `<span class="chip">Pe site: ${formatPrice(product.price)} pentru ${kgUnit}kg</span>` : "";
+  const barcodeChip = barcode ? `<span class="chip">Bare: ${escapeHtml(barcode)}</span>` : "";
+  const unit = product.unit ? `<span class="chip">${weightedProduce ? "Pret calculat / kg" : product.unit}</span>` : "";
+  const original = weightedProduce ? `<span class="chip">Pret site: ${formatPrice(product.price)} pentru ${kgUnit}kg</span>` : "";
   const calculator = weightedProduce
     ? `
       <div class="kg-calculator">
@@ -364,12 +479,16 @@ function productCard(product) {
           ${subcategory}
           ${promo}
           ${code}
+          ${barcodeChip}
           ${original}
         </div>
         ${calculator}
         <div class="product-actions">
           <button class="mini-action code-action${collectedCode ? " active" : ""}" type="button" data-action="code">
             ${collectedCode ? "Cod salvat" : "Adauga cod"}
+          </button>
+          <button class="mini-action barcode-action${linkedBarcode ? " active" : ""}" type="button" data-action="bind-barcode">
+            ${linkedBarcode ? "Bare legat" : "Leaga bare"}
           </button>
         </div>
       </div>
@@ -815,6 +934,10 @@ els.onlyPromo.addEventListener("click", () => {
 });
 els.codes.addEventListener("click", () => setListMode("codes"));
 els.exportCodes.addEventListener("click", exportCollectedCodes);
+els.scanBarcode.addEventListener("click", () => startBarcodeScan());
+els.barcodeInput.addEventListener("change", () => {
+  handleBarcodeFile(els.barcodeInput.files[0]);
+});
 els.refresh.addEventListener("click", refreshPrices);
 els.loadMore.addEventListener("click", () => {
   state.visibleLimit += 30;
@@ -855,6 +978,10 @@ els.results.addEventListener("click", async (event) => {
       if (state.collectedCodes.has(code)) state.collectedCodes.delete(code);
       else state.collectedCodes.add(code);
       saveCollectedCodes();
+    }
+    if (action.dataset.action === "bind-barcode") {
+      startBarcodeScan(key);
+      return;
     }
     render();
     return;
