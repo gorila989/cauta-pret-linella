@@ -562,6 +562,8 @@ function escapeHtml(value) {
 
 function render() {
   const words = normalize(state.query).split(" ").filter(Boolean);
+  const codeQuery = normalizeProductCodeValue(state.query);
+  const strictCodeSearch = /^[0-9]+$/.test(codeQuery);
   state.hasUserFilter =
     words.length > 0 ||
     state.category !== "all" ||
@@ -587,6 +589,9 @@ function render() {
     if (state.subcategory === NEW_SUBCATEGORY && !isNewProduct(product)) return false;
     if (state.subcategory !== "all" && state.subcategory !== NEW_SUBCATEGORY && product.subcategory_key !== state.subcategory) return false;
     if (!words.length) return true;
+    if (strictCodeSearch) {
+      return normalizeProductCodeValue(product.product_code) === codeQuery;
+    }
     const haystack = product.search || normalize(`${product.name} ${product.product_code || ""}`);
     return words.every((word) => haystack.includes(word));
   });
