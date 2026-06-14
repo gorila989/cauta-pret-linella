@@ -178,6 +178,20 @@ function csvCell(value) {
   return `"${String(value ?? "").replace(/"/g, '""')}"`;
 }
 
+function cleanExcelCell(value) {
+  if (value === null || value === undefined) return "";
+  if (typeof value === "number" && Number.isInteger(value)) return String(value);
+  return String(value).trim().replace(/\.0$/, "");
+}
+
+function normalizeBarcodeValue(value) {
+  return cleanExcelCell(value).toUpperCase().replace(/[^A-Z0-9]/g, "");
+}
+
+function normalizeProductCodeValue(value) {
+  return cleanExcelCell(value).replace(/\s+/g, "");
+}
+
 function loadScriptOnce(src) {
   return new Promise((resolve, reject) => {
     const existing = document.querySelector(`script[src="${src}"]`);
@@ -215,9 +229,15 @@ async function importBarcodeExcel(file) {
 
     const map = {};
     for (const row of rows.slice(1)) {
-      const barcode = String(row[barcodeIndex] || "").trim();
-      const productCode = String(row[productCodeIndex] || "").trim();
-      if (barcode && productCode) map[barcode] = productCode;
+      const barcode = normalizeBarcodeValue(row[barcodeIndex]);
+      const productCode = normalizeProductCodeValue(row[productCodeIndex]);
+      if (barcode && productCode) {
+        map[barcode] = productCode;
+        const barcodeWithoutLeadingZeros = barcode.replace(/^0+/, "");
+        if (barcodeWithoutLeadingZeros && !map[barcodeWithoutLeadingZeros]) {
+          map[barcodeWithoutLeadingZeros] = productCode;
+        }
+      }
     }
     state.barcodeExcelMap = map;
     saveBarcodeExcelMap();
@@ -267,10 +287,10 @@ function exportCollectedCodes() {
 }
 
 function barcodeForProduct(product) {
-  const code = String(product.product_code || "").trim();
+  const code = normalizeProductCodeValue(product.product_code);
   if (!code) return "";
   const match = Object.entries(state.barcodeExcelMap).find(([, productCode]) =>
-    String(productCode).trim() === code
+    normalizeProductCodeValue(productCode) === code
   );
   return match ? match[0] : "";
 }
@@ -294,8 +314,8 @@ async function scanBarcodeFromFile(file) {
 }
 
 function showProductFromProductCode(productCode, barcode) {
-  const normalizedProductCode = String(productCode || "").trim();
-  const product = state.products.find((item) => String(item.product_code || "").trim() === normalizedProductCode);
+  const normalizedProductCode = normalizeProductCodeValue(productCode);
+  const product = state.products.find((item) => normalizeProductCodeValue(item.product_code) === normalizedProductCode);
   if (!product) return false;
   els.input.value = normalizedProductCode;
   state.query = normalizedProductCode;
@@ -331,7 +351,11 @@ async function handleBarcodeFile(file) {
     return;
   }
 
-  const productCode = String(state.barcodeExcelMap[barcode] || "").trim();
+  const normalizedBarcode = normalizeBarcodeValue(barcode);
+  const barcodeWithoutLeadingZeros = normalizedBarcode.replace(/^0+/, "");
+  const productCode = normalizeProductCodeValue(
+    state.barcodeExcelMap[normalizedBarcode] || state.barcodeExcelMap[barcodeWithoutLeadingZeros]
+  );
   if (!productCode) {
     els.refreshStatus.textContent = "Produsul nu a fost găsit.";
     return;
