@@ -11,8 +11,7 @@ const state = {
   hasUserFilter: false,
   collectedCodes: new Set(),
   priceHistory: {},
-  barcodeLinks: {},
-  pendingBarcodeBindKey: ""
+  barcodeExcelMap: {}
 };
 
 const DB_NAME = "cauta-pret-offline";
@@ -36,6 +35,8 @@ const els = {
   onlyPromo: document.getElementById("onlyPromo"),
   codes: document.getElementById("codesButton"),
   exportCodes: document.getElementById("exportCodesButton"),
+  importExcel: document.getElementById("importExcelButton"),
+  excelInput: document.getElementById("excelInput"),
   scanBarcode: document.getElementById("scanBarcodeButton"),
   barcodeInput: document.getElementById("barcodeInput"),
   refresh: document.getElementById("refreshButton"),
@@ -53,7 +54,8 @@ const els = {
 const THEME_KEY = "cauta-pret-theme";
 const COLLECTED_CODES_KEY = "cauta-pret-collected-codes";
 const PRICE_HISTORY_KEY = "cauta-pret-price-history";
-const BARCODE_LINKS_KEY = "cauta-pret-barcode-links";
+const BARCODE_EXCEL_MAP_KEY = "cauta-pret-barcode-excel-map";
+const XLSX_URL = "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js";
 
 const SITE_CATEGORY_GROUPS = [
   ["Fructe, fructe de padure, Legume, Muraturi", ["fructe, legume, muraturi", "fructe", "fructe de padure", "legume", "salate verde", "verdeturi", "muraturi"]],
@@ -116,7 +118,7 @@ function saveJsonStorage(key, value) {
 function loadUserLists() {
   state.collectedCodes = new Set(loadJsonStorage(COLLECTED_CODES_KEY, []));
   state.priceHistory = loadJsonStorage(PRICE_HISTORY_KEY, {});
-  state.barcodeLinks = loadJsonStorage(BARCODE_LINKS_KEY, {});
+  state.barcodeExcelMap = loadJsonStorage(BARCODE_EXCEL_MAP_KEY, {});
 }
 
 function saveCollectedCodes() {
@@ -127,8 +129,8 @@ function savePriceHistory() {
   saveJsonStorage(PRICE_HISTORY_KEY, state.priceHistory);
 }
 
-function saveBarcodeLinks() {
-  saveJsonStorage(BARCODE_LINKS_KEY, state.barcodeLinks);
+function saveBarcodeExcelMap() {
+  saveJsonStorage(BARCODE_EXCEL_MAP_KEY, state.barcodeExcelMap);
 }
 
 function priceChangeForProduct(product) {
@@ -176,6 +178,57 @@ function csvCell(value) {
   return `"${String(value ?? "").replace(/"/g, '""')}"`;
 }
 
+function loadScriptOnce(src) {
+  return new Promise((resolve, reject) => {
+    const existing = document.querySelector(`script[src="${src}"]`);
+    if (existing) {
+      if (window.XLSX) resolve();
+      else existing.addEventListener("load", resolve, { once: true });
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = src;
+    script.async = true;
+    script.onload = resolve;
+    script.onerror = () => reject(new Error("Nu pot incarca citirea Excel."));
+    document.head.appendChild(script);
+  });
+}
+
+async function importBarcodeExcel(file) {
+  if (!file) return;
+  els.refreshStatus.textContent = "Citesc Excelul...";
+  try {
+    await loadScriptOnce(XLSX_URL);
+    const buffer = await file.arrayBuffer();
+    const workbook = window.XLSX.read(buffer, { type: "array" });
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const rows = window.XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+    const headers = (rows[0] || []).map((name) => normalize(String(name)));
+    const barcodeIndex = headers.indexOf("cod de bare");
+    const productCodeIndex = headers.indexOf("cod produs");
+
+    if (barcodeIndex < 0 || productCodeIndex < 0) {
+      els.refreshStatus.textContent = "Excelul trebuie sa aiba coloanele: Cod de bare, Cod produs.";
+      return;
+    }
+
+    const map = {};
+    for (const row of rows.slice(1)) {
+      const barcode = String(row[barcodeIndex] || "").trim();
+      const productCode = String(row[productCodeIndex] || "").trim();
+      if (barcode && productCode) map[barcode] = productCode;
+    }
+    state.barcodeExcelMap = map;
+    saveBarcodeExcelMap();
+    els.refreshStatus.textContent = `Excel incarcat: ${Object.keys(map).length} coduri de bare.`;
+  } catch (error) {
+    els.refreshStatus.textContent = "Nu am putut citi fisierul Excel.";
+  } finally {
+    els.excelInput.value = "";
+  }
+}
+
 function exportCollectedCodes() {
   const rows = state.products
     .filter((product) => product.product_code && state.collectedCodes.has(product.product_code))
@@ -213,14 +266,11 @@ function exportCollectedCodes() {
   els.refreshStatus.textContent = `Am descarcat ${rows.length} coduri.`;
 }
 
-function barcodeLinkedForProduct(product) {
-  return Boolean(barcodeForProduct(product));
-}
-
 function barcodeForProduct(product) {
-  const key = productKey(product);
-  const match = Object.entries(state.barcodeLinks).find(([, link]) =>
-    link.product_key === key || (product.product_code && link.product_code === product.product_code)
+  const code = String(product.product_code || "").trim();
+  if (!code) return "";
+  const match = Object.entries(state.barcodeExcelMap).find(([, productCode]) =>
+    String(productCode).trim() === code
   );
   return match ? match[0] : "";
 }
@@ -243,16 +293,12 @@ async function scanBarcodeFromFile(file) {
   }
 }
 
-function showProductFromBarcodeLink(link, barcode) {
-  const product = state.products.find((item) =>
-    productKey(item) === link.product_key || (link.product_code && item.product_code === link.product_code)
-  );
-  if (!product) {
-    els.refreshStatus.textContent = `Codul ${barcode} este legat, dar produsul nu este in baza actuala.`;
-    return;
-  }
-  els.input.value = product.name;
-  state.query = product.name;
+function showProductFromProductCode(productCode, barcode) {
+  const normalizedProductCode = String(productCode || "").trim();
+  const product = state.products.find((item) => String(item.product_code || "").trim() === normalizedProductCode);
+  if (!product) return false;
+  els.input.value = normalizedProductCode;
+  state.query = normalizedProductCode;
   state.category = "all";
   state.subcategory = "all";
   state.onlyPromo = false;
@@ -267,10 +313,10 @@ function showProductFromBarcodeLink(link, barcode) {
   render();
   window.scrollTo({ top: 0, behavior: "smooth" });
   els.refreshStatus.textContent = `Gasit dupa cod de bare: ${barcode}`;
+  return true;
 }
 
-function startBarcodeScan(productKeyToBind = "") {
-  state.pendingBarcodeBindKey = productKeyToBind;
+function startBarcodeScan() {
   els.barcodeInput.value = "";
   els.barcodeInput.click();
 }
@@ -282,35 +328,19 @@ async function handleBarcodeFile(file) {
   els.barcodeInput.value = "";
   if (!barcode) {
     els.refreshStatus.textContent = "Nu am citit codul de bare. Fa poza mai aproape si clar.";
-    state.pendingBarcodeBindKey = "";
     return;
   }
 
-  if (state.pendingBarcodeBindKey) {
-    const product = state.products.find((item) => productKey(item) === state.pendingBarcodeBindKey);
-    state.pendingBarcodeBindKey = "";
-    if (!product) {
-      els.refreshStatus.textContent = "Produsul pentru legare nu mai este gasit.";
-      return;
-    }
-    const productCode = await loadProductCode(product).catch(() => product.product_code || "");
-    state.barcodeLinks[barcode] = {
-      product_key: productKey(product),
-      product_code: productCode,
-      name: product.name
-    };
-    saveBarcodeLinks();
-    els.refreshStatus.textContent = `Codul de bare ${barcode} a fost legat de produs.`;
-    render();
+  const productCode = String(state.barcodeExcelMap[barcode] || "").trim();
+  if (!productCode) {
+    els.refreshStatus.textContent = "Produsul nu a fost găsit.";
     return;
   }
 
-  const link = state.barcodeLinks[barcode];
-  if (!link) {
-    els.refreshStatus.textContent = `Cod necunoscut: ${barcode}. Cauta produsul manual si apasa Leaga bare.`;
+  if (!showProductFromProductCode(productCode, barcode)) {
+    els.refreshStatus.textContent = "Produsul nu a fost găsit.";
     return;
   }
-  showProductFromBarcodeLink(link, barcode);
 }
 
 function categoryFromProduct(product) {
@@ -416,7 +446,6 @@ function productCard(product) {
   const weightedProduce = isWeightedProduce(product);
   const productIsNew = isNewProduct(product);
   const collectedCode = product.product_code && state.collectedCodes.has(product.product_code);
-  const linkedBarcode = barcodeLinkedForProduct(product);
   const barcode = barcodeForProduct(product);
   const priceChange = priceChangeForProduct(product);
   const pricePerKg = weightedProduce ? product.price / kgUnit : product.price;
@@ -486,9 +515,6 @@ function productCard(product) {
         <div class="product-actions">
           <button class="mini-action code-action${collectedCode ? " active" : ""}" type="button" data-action="code">
             ${collectedCode ? "Cod salvat" : "Adauga cod"}
-          </button>
-          <button class="mini-action barcode-action${linkedBarcode ? " active" : ""}" type="button" data-action="bind-barcode">
-            ${linkedBarcode ? "Bare legat" : "Leaga bare"}
           </button>
         </div>
       </div>
@@ -934,6 +960,12 @@ els.onlyPromo.addEventListener("click", () => {
 });
 els.codes.addEventListener("click", () => setListMode("codes"));
 els.exportCodes.addEventListener("click", exportCollectedCodes);
+els.importExcel.addEventListener("click", () => {
+  els.excelInput.click();
+});
+els.excelInput.addEventListener("change", () => {
+  importBarcodeExcel(els.excelInput.files[0]);
+});
 els.scanBarcode.addEventListener("click", () => startBarcodeScan());
 els.barcodeInput.addEventListener("change", () => {
   handleBarcodeFile(els.barcodeInput.files[0]);
@@ -978,10 +1010,6 @@ els.results.addEventListener("click", async (event) => {
       if (state.collectedCodes.has(code)) state.collectedCodes.delete(code);
       else state.collectedCodes.add(code);
       saveCollectedCodes();
-    }
-    if (action.dataset.action === "bind-barcode") {
-      startBarcodeScan(key);
-      return;
     }
     render();
     return;
