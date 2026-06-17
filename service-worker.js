@@ -1,11 +1,11 @@
-const CACHE_NAME = "cauta-pret-v31";
+const CACHE_NAME = "cauta-pret-v33";
 const ASSETS = [
   "./",
   "./index.html",
   "./styles.css",
   "./app.js",
   "./manifest.webmanifest",
-  "./icon.svg"
+  "./icon-512-v33.png"
 ];
 
 self.addEventListener("install", (event) => {
