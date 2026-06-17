@@ -1,6 +1,6 @@
 {
   "source": "https://linella.md/ro/catalog",
-  "generated_at": "2026-06-14 17:22",
+  "generated_at": "2026-06-16 21:04",
   "products": [
     {
       "name": "20 de eroi mitici extraordinari din lumea intreaga",
@@ -520,9 +520,7 @@
       "category": "Prajituri",
       "image_url": "https://linella.md/public/products/b79d09f5f4db7866f002c0029e0348a8.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/prajituri/7_spice_eclere_cu_crema_de_ciocolata__150g",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/prajituri/7_spice_eclere_cu_crema_de_ciocolata__150g"
     },
     {
       "name": "7 SPICE Foitaj cu brânză 70g",
@@ -1228,10 +1226,10 @@
     },
     {
       "name": "ACE Detergent pentru wc lichid DESCALER 700ml",
-      "price": 45.9,
-      "old_price": 51.9,
-      "discount": "-11%",
-      "is_promo": true,
+      "price": 51.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "219720",
       "category_slug": "articole_pentru_curatenia_suprafetelor",
       "category": "Articole pentru curatenia suprafetelor",
@@ -1267,9 +1265,9 @@
     },
     {
       "name": "ACE Gel degresant ULTRA POWER PERFUME 750ml",
-      "price": 45.9,
+      "price": 46.7,
       "old_price": 51.9,
-      "discount": "-11%",
+      "discount": "-10%",
       "is_promo": true,
       "product_code": "163963",
       "category_slug": "articole_pentru_curatenia_suprafetelor",
@@ -2306,19 +2304,6 @@
       "url": "https://linella.md/ro/catalog/fructe/afine_250g_"
     },
     {
-      "name": "Afine 500g",
-      "price": 170.0,
-      "old_price": null,
-      "discount": "",
-      "is_promo": false,
-      "product_code": "252715",
-      "category_slug": "fructe",
-      "category": "Fructe, legume, muraturi",
-      "image_url": "https://linella.md/public/products/5a7030fad8f055820587546080130c38.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/fructe/afine_500g"
-    },
-    {
       "name": "Afine ambalate 125g",
       "price": 35.9,
       "old_price": null,
@@ -2995,19 +2980,6 @@
       "url": "https://linella.md/ro/catalog/ghivece_si_accesorii/aleana_ghiveci_de_flori_cvadro_27x27x51cm"
     },
     {
-      "name": "Aleana Ghiveci de flori Fiujn 22x41.5cm",
-      "price": 199.6,
-      "old_price": 249.5,
-      "discount": "-20%",
-      "is_promo": true,
-      "product_code": "392137",
-      "category_slug": "ghivece_si_accesorii",
-      "category": "Ghivece si accesorii",
-      "image_url": "https://linella.md/public/products/f0851c9ccfa3109dc7b28817ac4b3200.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/ghivece_si_accesorii/aleana_ghiveci_de_flori_fiujn_22x415cm"
-    },
-    {
       "name": "Aleana Ghiveci de flori Fiujn 23.5x22cm",
       "price": 88.4,
       "old_price": 110.5,
@@ -3109,9 +3081,7 @@
       "category": "Pelmeni i coltunasi",
       "image_url": "https://linella.md/public/products/2ab90ae3e64543888cca722fe3a468c9.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/pelmeni_i_coltunasi/alexeevskie_pelmeni_ravioli_gaina-porc_1kg",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/pelmeni_i_coltunasi/alexeevskie_pelmeni_ravioli_gaina-porc_1kg"
     },
     {
       "name": "ALGIDA Inghetata CALIPPO cola 105g",
@@ -4272,7 +4242,7 @@
     },
     {
       "name": "APETITO Fulgi de ovaz mascati 500g",
-      "price": 14.5,
+      "price": 14.9,
       "old_price": null,
       "discount": "",
       "is_promo": false,
@@ -4571,10 +4541,10 @@
     },
     {
       "name": "AQUA UNIQA Apa min. Pere 1.5l",
-      "price": 14.3,
-      "old_price": 15.9,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 15.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "77041",
       "category_slug": "apa_minerala",
       "category": "Apa minerala",
@@ -4584,10 +4554,10 @@
     },
     {
       "name": "AQUA UNIQA Apa Minerala Carbogazoasa cu gust de lamie 1.5L",
-      "price": 14.3,
-      "old_price": 15.9,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 15.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "69168",
       "category_slug": "apa_minerala",
       "category": "Apa minerala",
@@ -4597,10 +4567,10 @@
     },
     {
       "name": "AQUA UNIQA Apa Minerala Carbogazoasa cu gust de mar verde 1.5L",
-      "price": 14.3,
-      "old_price": 15.9,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 15.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "77043",
       "category_slug": "apa_minerala",
       "category": "Apa minerala",
@@ -4766,10 +4736,10 @@
     },
     {
       "name": "Ardei California Galben, kg",
-      "price": 21.95,
-      "old_price": 28.95,
-      "discount": "-24%",
-      "is_promo": true,
+      "price": 28.95,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "158470",
       "category_slug": "legume",
       "category": "Fructe, legume, muraturi",
@@ -5078,9 +5048,9 @@
     },
     {
       "name": "ARKO Balsam de ras Extra Sensitive 150ml",
-      "price": 58.5,
+      "price": 53.45,
       "old_price": 66.8,
-      "discount": "-12%",
+      "discount": "-19%",
       "is_promo": true,
       "product_code": "39461",
       "category_slug": "produse_cosmetice_pentru_barbati",
@@ -5361,19 +5331,6 @@
       "image_url": "https://linella.md/public/products/6486afc0e57149bee1e284b7cd75094b.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/articole_pentru_curatenia_suprafetelor/asperox_solutie_universala_degresanta_magic_yellow_1000ml"
-    },
-    {
-      "name": "Aspirator multifunctional JB 7.5V LT-117",
-      "price": 235.85,
-      "old_price": 336.95,
-      "discount": "-30%",
-      "is_promo": true,
-      "product_code": "477606",
-      "category_slug": "electrocasnice",
-      "category": "Electrocasnice",
-      "image_url": "https://linella.md/public/products/ea1a1b9d37dbc12097b6dad634c13168.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/electrocasnice/aspirator_multifunctional_jb_75v_lt-117"
     },
     {
       "name": "ASTEL Fierbator de apa electric 1.8L 1800W",
@@ -6144,7 +6101,7 @@
     },
     {
       "name": "AVICOLA CIMIȘLIA Ouă de gaină 10 buc",
-      "price": 40.9,
+      "price": 36.5,
       "old_price": null,
       "discount": "",
       "is_promo": false,
@@ -6443,9 +6400,9 @@
     },
     {
       "name": "AXE Gel de duș Dark Temptation 400ml",
-      "price": 96.8,
+      "price": 86.4,
       "old_price": 108.0,
-      "discount": "-10%",
+      "discount": "-19%",
       "is_promo": true,
       "product_code": "322701",
       "category_slug": "produse_cosmetice_pentru_barbati",
@@ -7895,9 +7852,7 @@
       "category": "Seminte floarea soarelui i dovleac",
       "image_url": "https://linella.md/public/products/dbb1afe58240a3eeea3c1d8be5200b68.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/seminte_floarea_soarelui_i_dovleac/banzai_seminte_de_floarea_soarelui_cu_sare_50g",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/seminte_floarea_soarelui_i_dovleac/banzai_seminte_de_floarea_soarelui_cu_sare_50g"
     },
     {
       "name": "BANZAI Seminte de floarea soarelui fara sare 180g",
@@ -8836,19 +8791,6 @@
       "url": "https://linella.md/ro/catalog/energizante/battery_energetic_unicorn_033l"
     },
     {
-      "name": "BATTISTERO Colomba cu piersici si ciocolata 750g",
-      "price": 44.0,
-      "old_price": 175.0,
-      "discount": "-74%",
-      "is_promo": true,
-      "product_code": "2010537",
-      "category_slug": "rulade_muffin_i_chec",
-      "category": "Rulade muffin i chec",
-      "image_url": "https://linella.md/public/products/47edc9865148df2e418bafeb31aa729b.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/rulade_muffin_i_chec/battistero_colomba_cu_piersici_si_ciocolata_750g"
-    },
-    {
       "name": "Bazin plastic 15l",
       "price": 64.8,
       "old_price": 81.0,
@@ -8857,7 +8799,7 @@
       "product_code": "392086",
       "category_slug": "inventar_curatenie",
       "category": "Inventar curatenie",
-      "image_url": "https://linella.md/public/products/f03dfaa40d57270519c3a5012b0c2938.webp",
+      "image_url": "https://linella.md/public/products/c2227093d93c5cd9af8bff2dd2142499.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/inventar_curatenie/bazin_plastic_15l"
     },
@@ -9913,6 +9855,21 @@
       "image_url": "https://linella.md/public/products/ce8d059369e2ff8becb70500834cded5.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/salate_ambalate/belmar_otet_de_vin_4_1l"
+    },
+    {
+      "name": "BELUCCI Zefir glazurat cu ciocolata 160g",
+      "price": 30.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
+      "product_code": "2010674",
+      "category_slug": "alte_dulciuri",
+      "category": "Alte dulciuri",
+      "image_url": "https://linella.md/public/products/779750fa9c6c8b128d5a434d747c6f9b.webp",
+      "unit": "",
+      "url": "https://linella.md/ro/catalog/alte_dulciuri/belucci_zefir_glazurat_cu_ciocolata_160g",
+      "new_on": "2026-06-16",
+      "new_until": "2026-06-16 23:59:59"
     },
     {
       "name": "BELUGA Vodca Noble Russian 0.7l",
@@ -11358,6 +11315,21 @@
       "url": "https://linella.md/ro/catalog/articole_pentru_curatenia_suprafetelor/_bingo_praf_lemon_500g"
     },
     {
+      "name": "BINGO Solutie de curatare pentru podea Fresh Sweet Home 2.5L",
+      "price": 92.3,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
+      "product_code": "410525",
+      "category_slug": "articole_pentru_curatenia_suprafetelor",
+      "category": "Articole pentru curatenia suprafetelor",
+      "image_url": "https://linella.md/public/products/ebed6c4f14bd7df094344b38b76dd2f1.webp",
+      "unit": "",
+      "url": "https://linella.md/ro/catalog/articole_pentru_curatenia_suprafetelor/bingo_solutie_de_curatare_pentru_podea_fresh_sweet_home_25l",
+      "new_on": "2026-06-16",
+      "new_until": "2026-06-16 23:59:59"
+    },
+    {
       "name": "BIOJUNIOR Batonase din griu spelt/afine 132g",
       "price": 52.9,
       "old_price": null,
@@ -11437,7 +11409,7 @@
     },
     {
       "name": "BIOMED Apa de gura Gum Health 500ml",
-      "price": 108.5,
+      "price": 108.0,
       "old_price": 157.25,
       "discount": "-31%",
       "is_promo": true,
@@ -11450,7 +11422,7 @@
     },
     {
       "name": "BIOMED Apa de gura Natural Whitening 500ml",
-      "price": 108.5,
+      "price": 108.0,
       "old_price": 157.25,
       "discount": "-31%",
       "is_promo": true,
@@ -11580,9 +11552,9 @@
     },
     {
       "name": "BIOTEN Crema de zi Hydro X-Cell Sensitive 50ml",
-      "price": 126.5,
+      "price": 126.0,
       "old_price": 143.5,
-      "discount": "-11%",
+      "discount": "-12%",
       "is_promo": true,
       "product_code": "475223",
       "category_slug": "creme",
@@ -11593,9 +11565,9 @@
     },
     {
       "name": "BIOTEN Crema de zi Multi Collagen Spf10 50ml",
-      "price": 154.9,
+      "price": 154.0,
       "old_price": 175.35,
-      "discount": "-11%",
+      "discount": "-12%",
       "is_promo": true,
       "product_code": "475224",
       "category_slug": "creme",
@@ -11839,6 +11811,21 @@
       "url": "https://linella.md/ro/catalog/paine_uscata_i_expandata/biscottini_grisine_ulei_de_masline-rosii-oregano_200g"
     },
     {
+      "name": "BISCUIT & CHOCOLATE Bomboane НИКОЛЬ glazura 200g",
+      "price": 35.5,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
+      "product_code": "122178",
+      "category_slug": "bomboane_i_praline",
+      "category": "Bomboane i praline",
+      "image_url": "https://linella.md/public/products/1c11d4e3031dfc1a9932523792899695.webp",
+      "unit": "",
+      "url": "https://linella.md/ro/catalog/bomboane_i_praline/biscuit_i_chocolate_bomboane_nikol_glazura_200g",
+      "new_on": "2026-06-16",
+      "new_until": "2026-06-16 23:59:59"
+    },
+    {
       "name": "BISCUIT CHOCOLATE Biscuiti pentru diabetici 200g",
       "price": 17.9,
       "old_price": null,
@@ -11863,6 +11850,21 @@
       "image_url": "https://linella.md/public/products/09fe2471a31abb9720914728fe8f2195.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/produse_pentru_diabetici/biscuit_chocolate_bomboane_cu_fructoza_200g"
+    },
+    {
+      "name": "BISCUIT CHOCOLATE Bomboane cu fructoza si arahide 200g",
+      "price": 47.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
+      "product_code": "172361",
+      "category_slug": "produse_pentru_diabetici",
+      "category": "Produse pentru diabetici",
+      "image_url": "https://linella.md/public/products/601ca0d93cd16fe7ff3120e2842a8e6d.webp",
+      "unit": "",
+      "url": "https://linella.md/ro/catalog/produse_pentru_diabetici/biscuit_chocolate_bomboane_cu_fructoza__si_arahide_200g",
+      "new_on": "2026-06-16",
+      "new_until": "2026-06-16 23:59:59"
     },
     {
       "name": "BISCUIT CHOCOLATE Bomboane cu lapte condensat Забодайка 200g",
@@ -11954,6 +11956,36 @@
       "image_url": "https://linella.md/public/products/a9b0957520919bac7d0a056d8faa33c6.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/unelte/bison_super_clei_gel_2g"
+    },
+    {
+      "name": "BKK Tort Dubai Secret 700g",
+      "price": 197.0,
+      "old_price": 239.0,
+      "discount": "-17%",
+      "is_promo": true,
+      "product_code": "2011958",
+      "category_slug": "torturi",
+      "category": "Torturi",
+      "image_url": "https://linella.md/public/products/a4da44a69f7ec2e69ff865c4e8212cd6.webp",
+      "unit": "",
+      "url": "https://linella.md/ro/catalog/torturi/bkk_tort_dubai_secret_700g",
+      "new_on": "2026-06-16",
+      "new_until": "2026-06-16 23:59:59"
+    },
+    {
+      "name": "BKK Tort Tri moloka vid Shefa 500g",
+      "price": 119.0,
+      "old_price": 149.0,
+      "discount": "-20%",
+      "is_promo": true,
+      "product_code": "2011957",
+      "category_slug": "torturi",
+      "category": "Torturi",
+      "image_url": "https://linella.md/public/products/42d3b68c6c78740866577b8db2497208.webp",
+      "unit": "",
+      "url": "https://linella.md/ro/catalog/torturi/bkk_tort_tri_moloka_vid_shefa_500g_",
+      "new_on": "2026-06-16",
+      "new_until": "2026-06-16 23:59:59"
     },
     {
       "name": "BLACK Bautura Energizanta Mojito 250ml",
@@ -13942,9 +13974,7 @@
       "category": "Cafea boabe",
       "image_url": "https://linella.md/public/products/4bdf778733e2efb2197508a97b9e888a.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/cafea_boabe_/bristot_cafea_boabe_classico_1kg",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/cafea_boabe_/bristot_cafea_boabe_classico_1kg"
     },
     {
       "name": "BRISTOT Cafea boabe CREMA ORO 500g",
@@ -13970,9 +14000,7 @@
       "category": "Cafea boabe",
       "image_url": "https://linella.md/public/products/c6b3a78f8ffbbbf72dd7dc0b807b98dd.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/cafea_boabe_/bristot_cafea_boabe_espresso_1kg",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/cafea_boabe_/bristot_cafea_boabe_espresso_1kg"
     },
     {
       "name": "BRISTOT Cafea boabe ESPRESSO 500g",
@@ -14466,9 +14494,7 @@
       "category": "Apa minerala",
       "image_url": "https://linella.md/public/products/870fbefbe750541fdfafffb81c8fcf68.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/apa_minerala/bucovina_apa_minerala_naturala_plata_1l",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/apa_minerala/bucovina_apa_minerala_naturala_plata_1l"
     },
     {
       "name": "BUCOVINA Apă minerală plată Sport 700ml",
@@ -16730,9 +16756,7 @@
       "category": "Conserve din legume",
       "image_url": "https://linella.md/public/products/56697da2b495723d112aee052bd323c6.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/conserve_din_legume/bun_strabun_tomate_marinate_rosii_670g",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/conserve_din_legume/bun_strabun_tomate_marinate_rosii_670g"
     },
     {
       "name": "BUN STRĂBUN Turtă pentru pizza 400g",
@@ -17880,7 +17904,7 @@
     },
     {
       "name": "Caise, kg",
-      "price": 23.95,
+      "price": 21.95,
       "old_price": null,
       "discount": "",
       "is_promo": false,
@@ -19856,10 +19880,10 @@
     },
     {
       "name": "CARMEZ Salam Capitala crud-afumat, 100g",
-      "price": 31.5,
-      "old_price": 44.0,
-      "discount": "-28%",
-      "is_promo": true,
+      "price": 44.0,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "167742",
       "category_slug": "salamuri_crud-uscate",
       "category": "Salamuri crud-uscate",
@@ -20116,10 +20140,10 @@
     },
     {
       "name": "CARMEZ Saleami Servelat Cu Coniac crud-afumat 100g",
-      "price": 32.0,
-      "old_price": 45.0,
-      "discount": "-28%",
-      "is_promo": true,
+      "price": 45.0,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "167744",
       "category_slug": "salamuri_crud-uscate",
       "category": "Salamuri crud-uscate",
@@ -20255,9 +20279,7 @@
       "category": "Specialitati",
       "image_url": "https://linella.md/public/products/1ab12e70e0cb68c14f61e890227c94ad.webp",
       "unit": "/0.3kg",
-      "url": "https://linella.md/ro/catalog/specialitati/carmez_slanina_de_casa__kg",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/specialitati/carmez_slanina_de_casa__kg"
     },
     {
       "name": "CARMEZ Slanina in saramura caldare, 1kg",
@@ -20361,9 +20383,7 @@
       "category": "Specialitati",
       "image_url": "https://linella.md/public/products/f4af12ad2059aa0fd667a2cff838d898.webp",
       "unit": "/0.3kg",
-      "url": "https://linella.md/ro/catalog/specialitati/carmez_toba_de_casa__kg",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/specialitati/carmez_toba_de_casa__kg"
     },
     {
       "name": "CARMEZ Toba de pui, kg",
@@ -21615,10 +21635,10 @@
     },
     {
       "name": "CASA RINALDI Ulei din olive cu usturoi 250ml",
-      "price": 109.0,
-      "old_price": 155.95,
-      "discount": "-30%",
-      "is_promo": true,
+      "price": 155.95,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "129220",
       "category_slug": "otet_i_ulei",
       "category": "Otet i ulei",
@@ -21654,10 +21674,10 @@
     },
     {
       "name": "CASA RINALDI Ulei din olive SANSA 1l",
-      "price": 109.0,
-      "old_price": 149.0,
-      "discount": "-26%",
-      "is_promo": true,
+      "price": 149.0,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "129218",
       "category_slug": "otet_i_ulei",
       "category": "Otet i ulei",
@@ -21875,7 +21895,7 @@
     },
     {
       "name": "Castraveți",
-      "price": 8.95,
+      "price": 11.95,
       "old_price": null,
       "discount": "",
       "is_promo": false,
@@ -23226,19 +23246,6 @@
       "url": "https://linella.md/ro/catalog/chipsuri/chipster`s_chipsuri_cu_gust_bbq_asiatic_100g"
     },
     {
-      "name": "CHIPSTER`S Chipsuri cu gust sos thailandez 100g",
-      "price": 17.9,
-      "old_price": 25.9,
-      "discount": "-30%",
-      "is_promo": true,
-      "product_code": "2009754",
-      "category_slug": "chipsuri",
-      "category": "Chipsuri",
-      "image_url": "https://linella.md/public/products/3d9a913c664a04099055a2de632a739d.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/chipsuri/chipster`s_chipsuri_cu_gust_sos_thailandez_100g"
-    },
-    {
       "name": "CHIPSTER`S Cipsuri gust smîntînă cu ceapă 100g",
       "price": 17.9,
       "old_price": 25.9,
@@ -23357,10 +23364,10 @@
     },
     {
       "name": "CHOCCO VIA Bomboane Caise uscate cu nuci in glazura 200g",
-      "price": 24.9,
-      "old_price": 49.9,
-      "discount": "-50%",
-      "is_promo": true,
+      "price": 49.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "2007359",
       "category_slug": "ciocolate_in_cutie",
       "category": "Ciocolate in cutie",
@@ -23396,10 +23403,10 @@
     },
     {
       "name": "CHOCCO VIA Bomboane Prune cu nuci in glazura 200g",
-      "price": 24.9,
-      "old_price": 49.9,
-      "discount": "-50%",
-      "is_promo": true,
+      "price": 49.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "2007358",
       "category_slug": "ciocolate_in_cutie",
       "category": "Ciocolate in cutie",
@@ -24082,19 +24089,6 @@
       "image_url": "https://linella.md/public/products/e1141f6011125bdf1103b8cfbcea1203.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/whiskey/clan_macgregor_whisky_07l"
-    },
-    {
-      "name": "Clarina Scobitori 1000buc box",
-      "price": 19.55,
-      "old_price": 26.05,
-      "discount": "-24%",
-      "is_promo": true,
-      "product_code": "388404",
-      "category_slug": "vesela_de_unica_folosinta",
-      "category": "Vesela de unica folosinta",
-      "image_url": "https://linella.md/public/products/5521d105ca5ee431c4e520e56ee437b3.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/vesela_de_unica_folosinta/clarina_scobitori_1000buc_box"
     },
     {
       "name": "Claudia Partole. Rebela",
@@ -25502,10 +25496,10 @@
     },
     {
       "name": "CONFECTUM Zefir Aroma de fragi 200g",
-      "price": 49.9,
-      "old_price": 56.5,
-      "discount": "-11%",
-      "is_promo": true,
+      "price": 56.5,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "79880",
       "category_slug": "alte_dulciuri",
       "category": "Alte dulciuri",
@@ -25528,10 +25522,10 @@
     },
     {
       "name": "CONFECTUM Zefir Tuciki Stuciki 200g",
-      "price": 49.9,
-      "old_price": 56.5,
-      "discount": "-11%",
-      "is_promo": true,
+      "price": 56.5,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "79882",
       "category_slug": "alte_dulciuri",
       "category": "Alte dulciuri",
@@ -27812,9 +27806,7 @@
       "category": "Sport",
       "image_url": "https://linella.md/public/products/4556630278ebb87ab86879e7d4226d64.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/sport/cotiera_elastica",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/sport/cotiera_elastica"
     },
     {
       "name": "Cotoneve Burete-plasă rotundă pentru baie",
@@ -30196,19 +30188,6 @@
       "url": "https://linella.md/ro/catalog/produse_cosmetice_igiena_protectie/dalin_sapun_classic_100g"
     },
     {
-      "name": "DALLMAYAR Prodomo Cafea macinata 250g",
-      "price": 164.0,
-      "old_price": null,
-      "discount": "",
-      "is_promo": false,
-      "product_code": "198776",
-      "category_slug": "cafea_macinata_",
-      "category": "Cafea macinata",
-      "image_url": "https://linella.md/public/products/a63cd8c3bde84931217c643d74a52db8.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/cafea_macinata_/dallmayar_prodomo_cafea_macinata_250g"
-    },
-    {
       "name": "Dalmors File de hering Kira în ulei 200g",
       "price": 44.9,
       "old_price": null,
@@ -31471,10 +31450,10 @@
     },
     {
       "name": "DELIKAT Borș Magic 20g",
-      "price": 11.9,
-      "old_price": null,
-      "discount": "",
-      "is_promo": false,
+      "price": 9.9,
+      "old_price": 11.9,
+      "discount": "-16%",
+      "is_promo": true,
       "product_code": "74365",
       "category_slug": "condimente_si_mirodenii",
       "category": "Condimente si mirodenii",
@@ -31497,10 +31476,10 @@
     },
     {
       "name": "DELIKAT Condimente găină 75g",
-      "price": 16.9,
-      "old_price": null,
-      "discount": "",
-      "is_promo": false,
+      "price": 14.9,
+      "old_price": 16.9,
+      "discount": "-11%",
+      "is_promo": true,
       "product_code": "74362",
       "category_slug": "condimente_si_mirodenii",
       "category": "Condimente si mirodenii",
@@ -31523,10 +31502,10 @@
     },
     {
       "name": "DELIKAT Condimente legume 75g",
-      "price": 16.9,
-      "old_price": null,
-      "discount": "",
-      "is_promo": false,
+      "price": 14.9,
+      "old_price": 16.9,
+      "discount": "-11%",
+      "is_promo": true,
       "product_code": "74360",
       "category_slug": "condimente_si_mirodenii",
       "category": "Condimente si mirodenii",
@@ -33433,19 +33412,6 @@
       "url": "https://linella.md/ro/catalog/produse_cosmetice_pentru_barbati/dove_roll-on_antiperspirant_mencare_invisible_dry_50ml_"
     },
     {
-      "name": "DOVE Roll-On Men. Care Clean Comfort 50ml",
-      "price": 55.5,
-      "old_price": null,
-      "discount": "",
-      "is_promo": false,
-      "product_code": "448544",
-      "category_slug": "produse_cosmetice_pentru_barbati",
-      "category": "Produse cosmetice pentru barbati",
-      "image_url": "https://linella.md/public/products/d8edb2d184cf81a3cd9cb30bf8371cfe.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/produse_cosmetice_pentru_barbati/dove_roll-on_men_care_clean_comfort_50ml"
-    },
-    {
       "name": "DOVE Sampon Aloe&Аpa de trandafiri 400ml",
       "price": 104.0,
       "old_price": null,
@@ -34522,9 +34488,7 @@
       "category": "Cereale i fulgi de ovaz",
       "image_url": "https://linella.md/public/products/994c15605cf6942b3503584b32f53658.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/cereale_i_fulgi_de_ovaz/drschar_fulgi_de_porumb_fara_gluten_250g",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/cereale_i_fulgi_de_ovaz/drschar_fulgi_de_porumb_fara_gluten_250g"
     },
     {
       "name": "DR.SCHAR Făină Mix It FARINA universal pentru copturi fără gluten 500g",
@@ -39269,9 +39233,7 @@
       "category": "Hrana pisici",
       "image_url": "https://linella.md/public/products/724849c7f91f005d12009e1d87b41b14.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/hrana_pisici/felix_hrana_pisici_conservata_pastrav__fasole_verde_85g",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/hrana_pisici/felix_hrana_pisici_conservata_pastrav__fasole_verde_85g"
     },
     {
       "name": "FELIX Hrană pisici conservată somon 85g",
@@ -39284,22 +39246,7 @@
       "category": "Hrana pisici",
       "image_url": "https://linella.md/public/products/d9ff0e738e03d55064791e9e35b64e11.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/hrana_pisici/felix_hrana_pisici_conservata_somon_85g",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
-    },
-    {
-      "name": "FELIX Hrană рentru pisici Junior, cu pui 85g",
-      "price": 7.9,
-      "old_price": 12.5,
-      "discount": "-36%",
-      "is_promo": true,
-      "product_code": "341104",
-      "category_slug": "hrana_pisici",
-      "category": "Hrana pisici",
-      "image_url": "https://linella.md/public/products/593aa62d2cb3e1545dabe2e3e3d568c4.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/hrana_pisici/felix_hrana_rentru_pisici_junior__cu_pui_85g"
+      "url": "https://linella.md/ro/catalog/hrana_pisici/felix_hrana_pisici_conservata_somon_85g"
     },
     {
       "name": "FELIX Hrană рentru pisici, carne de vită 85g",
@@ -42835,9 +42782,7 @@
       "category": "Inghetata",
       "image_url": "https://linella.md/public/products/ef27568c55917838d00043365fd3637f.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/inghetata/frigo_inghetata_super_plombir_pahar_alb_75g",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/inghetata/frigo_inghetata_super_plombir_pahar_alb_75g"
     },
     {
       "name": "FRIGO Inghetata Super Plombir pahar ciocolata 75g",
@@ -42850,9 +42795,7 @@
       "category": "Inghetata",
       "image_url": "https://linella.md/public/products/62968119d9a14e4c4d7ad66bc11ce5d4.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/inghetata/frigo_inghetata_super_plombir_pahar_ciocolata_75g",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/inghetata/frigo_inghetata_super_plombir_pahar_ciocolata_75g"
     },
     {
       "name": "FRIGO Inghetata SUPER PLOMBIR pahar plat 90g",
@@ -44909,19 +44852,6 @@
       "url": "https://linella.md/ro/catalog/vopsea_tonice/garnier_vopsea_color_nat4_15_frosty_dark_mahog"
     },
     {
-      "name": "GARNIER Vopsea Color Nat5 Șaten Deschis",
-      "price": 79.9,
-      "old_price": null,
-      "discount": "",
-      "is_promo": false,
-      "product_code": "41984",
-      "category_slug": "vopsea_tonice",
-      "category": "Vopsea tonice",
-      "image_url": "https://linella.md/public/products/51bd64cb22ab2a21d8e76f0d76238556.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/vopsea_tonice/garnier_vopsea_color_nat5_saten_deschis"
-    },
-    {
       "name": "GARNIER Vopsea Color Nat6,34 Blond Închis Auriu",
       "price": 79.9,
       "old_price": null,
@@ -45716,9 +45646,9 @@
     },
     {
       "name": "GENERA Sampon Musetel si Miere 1l",
-      "price": 43.5,
+      "price": 41.2,
       "old_price": 48.5,
-      "discount": "-10%",
+      "discount": "-15%",
       "is_promo": true,
       "product_code": "425897",
       "category_slug": "ingrijire_par",
@@ -45729,9 +45659,9 @@
     },
     {
       "name": "GENERA Sampon Ulei de masline 1l",
-      "price": 43.5,
+      "price": 41.2,
       "old_price": 48.5,
-      "discount": "-10%",
+      "discount": "-15%",
       "is_promo": true,
       "product_code": "425898",
       "category_slug": "ingrijire_par",
@@ -47782,19 +47712,6 @@
       "url": "https://linella.md/ro/catalog/machiaj/golden_rose_fond_de_ten_pentru_fata_total_cover_2in1_004_65g"
     },
     {
-      "name": "GOLDEN ROSE Lac de unghii Green Last&Care №115 10.2ml",
-      "price": 16.1,
-      "old_price": 40.3,
-      "discount": "-60%",
-      "is_promo": true,
-      "product_code": "417240",
-      "category_slug": "machiaj",
-      "category": "Machiaj",
-      "image_url": "https://linella.md/public/products/7b7f2a34d9d060a40b1ef3439d14f89d.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/machiaj/golden_rose_lac_de_unghii_green_lasticare_115_102ml"
-    },
-    {
       "name": "GOLDEN ROSE Lac de unghii Green Last&Care №121 10.2ml",
       "price": 16.1,
       "old_price": 40.3,
@@ -48017,10 +47934,10 @@
     },
     {
       "name": "GOLSKI MIIO Rulouri de vafe cu umplutura de alune 180g",
-      "price": 24.9,
-      "old_price": 27.9,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 27.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "383640",
       "category_slug": "_napolitane",
       "category": "Napolitane",
@@ -48030,10 +47947,10 @@
     },
     {
       "name": "GOLSKI MIIO Rulouri de vafe cu umplutura de plombir 180g",
-      "price": 24.9,
-      "old_price": 27.9,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 27.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "383639",
       "category_slug": "_napolitane",
       "category": "Napolitane",
@@ -48043,10 +47960,10 @@
     },
     {
       "name": "GOLSKI ROLO Rulouri de vafe cu aroma de ciocolata 100g",
-      "price": 13.3,
-      "old_price": 14.9,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 14.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "2010148",
       "category_slug": "_napolitane",
       "category": "Napolitane",
@@ -48056,10 +47973,10 @@
     },
     {
       "name": "GOLSKI ROLO Rulouri de vafe cu aroma de lapte copt 100g",
-      "price": 13.3,
-      "old_price": 14.9,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 14.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "2010147",
       "category_slug": "_napolitane",
       "category": "Napolitane",
@@ -48237,19 +48154,6 @@
       "url": "https://linella.md/ro/catalog/apa_minerala/gorji_apa_minerala_lecuitoare_pet_1l"
     },
     {
-      "name": "GOSIA Folie din aluminiu 0.29*10m in rulou",
-      "price": 40.9,
-      "old_price": 45.9,
-      "discount": "-10%",
-      "is_promo": true,
-      "product_code": "317986",
-      "category_slug": "folie__folie_alimentara__hartie_de_copt",
-      "category": "Folie  folie alimentara  hartie de copt",
-      "image_url": "https://linella.md/public/products/153db917b01f1bcabf0cd7b115c68667.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/folie__folie_alimentara__hartie_de_copt/gosia_folie_din_aluminiu_029_10m_in_rulou"
-    },
-    {
       "name": "GOSIA Hirtie p/u coacere 0.29*6 in cutie",
       "price": 26.9,
       "old_price": 29.9,
@@ -48258,7 +48162,7 @@
       "product_code": "339204",
       "category_slug": "folie__folie_alimentara__hartie_de_copt",
       "category": "Folie  folie alimentara  hartie de copt",
-      "image_url": "https://linella.md/public/products/312c69b217979d9f055432f2ee36543c.webp",
+      "image_url": "https://linella.md/public/products/c3e9f37eb950fa7547266c29161ba2c9.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/folie__folie_alimentara__hartie_de_copt/gosia_hirtie_p-u_coacere_029_6_in_cutie"
     },
@@ -48284,7 +48188,7 @@
       "product_code": "317976",
       "category_slug": "folie__folie_alimentara__hartie_de_copt",
       "category": "Folie  folie alimentara  hartie de copt",
-      "image_url": "https://linella.md/public/products/e0ed003b06fc963b5422d6e3e9d4ba31.webp",
+      "image_url": "https://linella.md/public/products/6517aa6a865a065512ffe92766eed494.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/folie__folie_alimentara__hartie_de_copt/gosia_pachete_p-u_pastrarea_produselor_alimentare_15buc_3l"
     },
@@ -48297,7 +48201,7 @@
       "product_code": "492616",
       "category_slug": "saci_menajeri",
       "category": "Saci menajeri",
-      "image_url": "https://linella.md/public/products/c3928c6b806f69557c6accbeca5629a8.webp",
+      "image_url": "https://linella.md/public/products/d97748b432cf31c9fa752e9a33fa4e2f.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/saci_menajeri/gosia_saci_de_gunoi__35l_15buc"
     },
@@ -48989,19 +48893,6 @@
       "image_url": "https://linella.md/public/products/34fcfc27097bee60454bda1c3885134f.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/rulade_muffin_i_chec/granducale_cozonac_cu_ciocolata_agnello_750g"
-    },
-    {
-      "name": "GRANINI Nectar piersici 1L",
-      "price": 44.9,
-      "old_price": null,
-      "discount": "",
-      "is_promo": false,
-      "product_code": "66454",
-      "category_slug": "suc_i_nectar",
-      "category": "Suc i nectar",
-      "image_url": "https://linella.md/public/products/e2706d2c5a7a32d848bcf046d264c1f1.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/suc_i_nectar/granini_nectar_piersici_1l"
     },
     {
       "name": "GRANINI Suc de Portocale cu miez 1L",
@@ -49742,9 +49633,7 @@
       "category": "Sport",
       "image_url": "https://linella.md/public/products/84e2a74f9d9b54137e1cfd0199987ffe.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/sport/gs_expander_de_mina",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/sport/gs_expander_de_mina"
     },
     {
       "name": "GS Hamac 1.5x1.9 cm",
@@ -49822,9 +49711,7 @@
       "category": "Sport",
       "image_url": "https://linella.md/public/products/7c80c0af1bbfc13ae3b0901130a15b15.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/sport/gs_minge_fotbal_din_eco_piele14051",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/sport/gs_minge_fotbal_din_eco_piele14051"
     },
     {
       "name": "GS Minge Fotbal din Eco Piele",
@@ -49837,9 +49724,7 @@
       "category": "Sport",
       "image_url": "https://linella.md/public/products/241999c323bbd705f45c4295ad199064.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/sport/gs_minge_fotbal_din_eco_piele14046",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/sport/gs_minge_fotbal_din_eco_piele14046"
     },
     {
       "name": "GS Minge Fotbal din Eco piele",
@@ -49852,9 +49737,7 @@
       "category": "Sport",
       "image_url": "https://linella.md/public/products/920ba08289bb52de5e71769505e6e736.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/sport/gs_minge_fotbal_din_eco_piele",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/sport/gs_minge_fotbal_din_eco_piele"
     },
     {
       "name": "GS Minge Fotbal mini din Eco Piele",
@@ -49867,9 +49750,7 @@
       "category": "Sport",
       "image_url": "https://linella.md/public/products/19b33033a1b4ae59f0c60ad40aba9cac.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/sport/gs_minge_fotbal_mini_din_eco_piele",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/sport/gs_minge_fotbal_mini_din_eco_piele"
     },
     {
       "name": "GS Minge Volei din Eco Piele",
@@ -49999,9 +49880,7 @@
       "category": "Produse pentru diabetici",
       "image_url": "https://linella.md/public/products/76cf7d5d246218ffae2d620a1fe2190a.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/produse_pentru_diabetici/gullon_biscuiti_de_cereale_cu_portocala_fara_gluten_si_lactoza_180g",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/produse_pentru_diabetici/gullon_biscuiti_de_cereale_cu_portocala_fara_gluten_si_lactoza_180g"
     },
     {
       "name": "GULLON Biscuiti Dibus Mini Сacao fara lactoza 250g",
@@ -50014,9 +49893,7 @@
       "category": "Produse pentru diabetici",
       "image_url": "https://linella.md/public/products/8ee588ad1c6540800b43aa5c59447bd4.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/produse_pentru_diabetici/gullon_biscuiti_dibus_mini_sacao_fara_lactoza_250g",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/produse_pentru_diabetici/gullon_biscuiti_dibus_mini_sacao_fara_lactoza_250g"
     },
     {
       "name": "GULLON Biscuiti Dibus Sharkies fara gluten si lactoza 250g",
@@ -50029,9 +49906,7 @@
       "category": "Produse pentru diabetici",
       "image_url": "https://linella.md/public/products/99da098cd043aa86bc8d2207f6e31d20.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/produse_pentru_diabetici/gullon_biscuiti_dibus_sharkies_fara_gluten_si_lactoza_250g",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/produse_pentru_diabetici/gullon_biscuiti_dibus_sharkies_fara_gluten_si_lactoza_250g"
     },
     {
       "name": "GULLON Biscuiti Digestive Choco fara zahar 270g",
@@ -50083,9 +49958,7 @@
       "category": "Produse pentru diabetici",
       "image_url": "https://linella.md/public/products/a9e249db23d8d7a1b37916c57d1cb006.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/produse_pentru_diabetici/gullon_biscuiti_twins_sandwich_fara_zahar_147g",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/produse_pentru_diabetici/gullon_biscuiti_twins_sandwich_fara_zahar_147g"
     },
     {
       "name": "GULLON Biscuiți Chip Choco Diet Nature fără zahăr 125g",
@@ -50241,9 +50114,7 @@
       "category": "Crenvursti i safalade",
       "image_url": "https://linella.md/public/products/83723a3a4c618b56874148acb664ab2f.webp",
       "unit": "/0.3kg",
-      "url": "https://linella.md/ro/catalog/crenvursti_i_safalade/gurman_crenvursti_cu_cascaval__kg",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/crenvursti_i_safalade/gurman_crenvursti_cu_cascaval__kg"
     },
     {
       "name": "GURMAN Crenvursti Moldovenesti , kg",
@@ -50585,9 +50456,9 @@
     },
     {
       "name": "GUSTOVO Oua de gaina brune L 10 buc",
-      "price": 36.9,
+      "price": 37.9,
       "old_price": 45.9,
-      "discount": "-19%",
+      "discount": "-17%",
       "is_promo": true,
       "product_code": "413541",
       "category_slug": "oua",
@@ -50598,9 +50469,9 @@
     },
     {
       "name": "GUSTOVO Oua de gaina brune M 10buc",
-      "price": 33.9,
+      "price": 30.9,
       "old_price": 41.9,
-      "discount": "-19%",
+      "discount": "-26%",
       "is_promo": true,
       "product_code": "500877",
       "category_slug": "oua",
@@ -50806,10 +50677,10 @@
     },
     {
       "name": "GUTAROM Varză murată 400g",
-      "price": 17.9,
-      "old_price": 20.9,
-      "discount": "-14%",
-      "is_promo": true,
+      "price": 20.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "32864",
       "category_slug": "muraturi",
       "category": "Fructe, legume, muraturi",
@@ -51105,10 +50976,10 @@
     },
     {
       "name": "HAPPY BUBBLES Bautura Racoritoare Capsuna carbogazificata 750ml",
-      "price": 60.9,
-      "old_price": 67.9,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 67.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "128843",
       "category_slug": "bauturi_racoritoare",
       "category": "Bauturi racoritoare",
@@ -51118,10 +50989,10 @@
     },
     {
       "name": "HAPPY BUBBLES Bautura Racoritoare Piersici carbogazificata 750ml",
-      "price": 60.9,
-      "old_price": 67.9,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 67.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "128844",
       "category_slug": "bauturi_racoritoare",
       "category": "Bauturi racoritoare",
@@ -51962,19 +51833,6 @@
       "url": "https://linella.md/ro/catalog/alimentatia_copiilor/hipp_amestec_lactat_2_organic_6l_300g_cutie"
     },
     {
-      "name": "HIPP Amestec lactat Combiotic 1 300g",
-      "price": 159.0,
-      "old_price": null,
-      "discount": "",
-      "is_promo": false,
-      "product_code": "48416",
-      "category_slug": "alimentatia_copiilor",
-      "category": "Alimentatia copiilor",
-      "image_url": "https://linella.md/public/products/fd169436e415bc64f9046bcd367e2636.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/alimentatia_copiilor/hipp_amestec_lactat_combiotic_1_300g"
-    },
-    {
       "name": "HIPP Amestec pentru copii 3 Combiotic 500g",
       "price": 232.0,
       "old_price": null,
@@ -52648,9 +52506,7 @@
       "category": "Alimentatia copiilor",
       "image_url": "https://linella.md/public/products/364485afa0e44db2f48bf09d5f1a0888.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/alimentatia_copiilor/holle_batonas_de_mere_si_morcovi_25g_12luni",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/alimentatia_copiilor/holle_batonas_de_mere_si_morcovi_25g_12luni"
     },
     {
       "name": "HOLLE Batonaș de mere și banane (12 luni+) 25g",
@@ -52780,9 +52636,7 @@
       "category": "Alimentatia copiilor",
       "image_url": "https://linella.md/public/products/893e42eb1223a7b639de9c81c1706d68.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/alimentatia_copiilor/holle_piure_bio_organic_carrot_cat_100g_6luni",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/alimentatia_copiilor/holle_piure_bio_organic_carrot_cat_100g_6luni"
     },
     {
       "name": "HOLLE Piure Bio organic Panda Peach piersici, caise, banane, grâu spelt 8l+ 100g d/p",
@@ -52808,9 +52662,7 @@
       "category": "Alimentatia copiilor",
       "image_url": "https://linella.md/public/products/427fb4c88da093aa37c1b534d00c7934.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/alimentatia_copiilor/holle_piure_bio_organic_pear_pony_100g_8luni",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/alimentatia_copiilor/holle_piure_bio_organic_pear_pony_100g_8luni"
     },
     {
       "name": "HOLLE Piure Bio Organic Zebra Beet 100g 6luni+",
@@ -52823,9 +52675,7 @@
       "category": "Alimentatia copiilor",
       "image_url": "https://linella.md/public/products/5e79de8df8dd362feef3bb5ec0217b05.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/alimentatia_copiilor/holle_piure_bio_organic_zebra_beet_100g_6luni",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/alimentatia_copiilor/holle_piure_bio_organic_zebra_beet_100g_6luni"
     },
     {
       "name": "HOLLE Piure cu amestec de legume 190g",
@@ -52851,9 +52701,7 @@
       "category": "Alimentatia copiilor",
       "image_url": "https://linella.md/public/products/d9a46a312d47e39c218267139427301f.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/alimentatia_copiilor/holle_piure_mix_de_legume_cu_orez_220g_8luni",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/alimentatia_copiilor/holle_piure_mix_de_legume_cu_orez_220g_8luni"
     },
     {
       "name": "HOLLE Snack Bio Organic de Mei 25g 8luni+",
@@ -52905,9 +52753,7 @@
       "category": "Alimentatia copiilor",
       "image_url": "https://linella.md/public/products/ce69729b03a71c3273e884949da39075.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/alimentatia_copiilor/holle_terci_organic_3_cereale_250g_6luni",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/alimentatia_copiilor/holle_terci_organic_3_cereale_250g_6luni"
     },
     {
       "name": "HOLSTEN PILSENER Bere blondă pet 1.96l",
@@ -53389,19 +53235,6 @@
       "image_url": "https://linella.md/public/products/f5456318d9f69f36f8a1da8a71a3d9a7.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/scutece_si_servetele_umede/huggies_scutece classic_jumbo__3__4-9_kg___52buc"
-    },
-    {
-      "name": "HUGGIES Scutece Classic Jumbo №4, 7-18 kg, 44buc",
-      "price": 88.55,
-      "old_price": 221.4,
-      "discount": "-60%",
-      "is_promo": true,
-      "product_code": "378504",
-      "category_slug": "scutece_si_servetele_umede",
-      "category": "Scutece si servetele umede",
-      "image_url": "https://linella.md/public/products/e782d17cd7212a563d7946272c9f566f.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/scutece_si_servetele_umede/huggies_scutece classic_jumbo__4__7-18_kg__44buc"
     },
     {
       "name": "Huggies Ultra Comfort Scutece Jumbo 3 (4-9 kg) 56buc Unisex",
@@ -56238,19 +56071,6 @@
       "url": "https://linella.md/ro/catalog/cafea/jardin_cafea_latte_3in1_8buc"
     },
     {
-      "name": "JARDIN Cafea Mochacino 18g",
-      "price": 6.9,
-      "old_price": 8.5,
-      "discount": "-18%",
-      "is_promo": true,
-      "product_code": "456239",
-      "category_slug": "cafea",
-      "category": "Cafea",
-      "image_url": "https://linella.md/public/products/db256e2e74fe0528cd07e04ca9e94894.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/cafea/jardin_cafea_mochacino_18g"
-    },
-    {
       "name": "JARDIN Cafea Mochacino 3in1 8buc",
       "price": 39.9,
       "old_price": 65.5,
@@ -56366,19 +56186,6 @@
       "image_url": "https://linella.md/public/products/da3ab5542628e2cda04e2a25f38681af.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/imbracaminte/jenika_top-sorti_dame_velour"
-    },
-    {
-      "name": "JETS Batonaș caramelă cu biscuit 42g",
-      "price": 5.2,
-      "old_price": null,
-      "discount": "",
-      "is_promo": false,
-      "product_code": "185437",
-      "category_slug": "batoane_de_ciocolata",
-      "category": "Batoane de ciocolata",
-      "image_url": "https://linella.md/public/products/470e1e5b4e622e9b97f787d2277eea41.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/batoane_de_ciocolata/jets_batonas_caramela_cu_biscuit_42g"
     },
     {
       "name": "JIGOTT Crema maini Mango 100ml",
@@ -57604,10 +57411,10 @@
     },
     {
       "name": "KAMARKO Ulei de măsline cu ardei iute 240ml",
-      "price": 79.9,
-      "old_price": 99.9,
-      "discount": "-20%",
-      "is_promo": true,
+      "price": 99.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "2010178",
       "category_slug": "otet_i_ulei",
       "category": "Otet i ulei",
@@ -57617,10 +57424,10 @@
     },
     {
       "name": "KAMARKO Ulei de măsline cu busuioc, 240 ml",
-      "price": 79.9,
-      "old_price": 99.9,
-      "discount": "-20%",
-      "is_promo": true,
+      "price": 99.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "2010175",
       "category_slug": "otet_i_ulei",
       "category": "Otet i ulei",
@@ -57630,10 +57437,10 @@
     },
     {
       "name": "KAMARKO Ulei de măsline cu rozmarin 240ml",
-      "price": 79.9,
-      "old_price": 99.9,
-      "discount": "-20%",
-      "is_promo": true,
+      "price": 99.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "2010176",
       "category_slug": "otet_i_ulei",
       "category": "Otet i ulei",
@@ -57643,10 +57450,10 @@
     },
     {
       "name": "KAMARKO Ulei de măsline cu usturoi 240ml",
-      "price": 79.9,
-      "old_price": 99.9,
-      "discount": "-20%",
-      "is_promo": true,
+      "price": 99.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "2010177",
       "category_slug": "otet_i_ulei",
       "category": "Otet i ulei",
@@ -58110,19 +57917,6 @@
       "url": "https://linella.md/ro/catalog/sapun/keff_sapun_lichid_aloe_vera_2l"
     },
     {
-      "name": "KICK Batonas cu bile crocante de orez, ananas si mango 30g",
-      "price": 16.9,
-      "old_price": null,
-      "discount": "",
-      "is_promo": false,
-      "product_code": "502819",
-      "category_slug": "batoane_de_ciocolata",
-      "category": "Batoane de ciocolata",
-      "image_url": "https://linella.md/public/products/431673898663cc1120b07f6dfcfcd9c6.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/batoane_de_ciocolata/kick_batonas_cu_bile_crocante_de_orez__ananas_si_mango_30g"
-    },
-    {
       "name": "KICK Batonas cu stafide si prune uscate in ciocolata caramelizata 45g",
       "price": 29.9,
       "old_price": null,
@@ -58160,32 +57954,6 @@
       "image_url": "https://linella.md/public/products/95d86f509f95c1e3b91d2cff00279274.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/batoane_de_ciocolata/kick_batonas_de_arahide_in_ciocolata_caramelizata_45g"
-    },
-    {
-      "name": "KICK Batonas de caramela sarata in ciocolata caramelizata 45g",
-      "price": 29.9,
-      "old_price": null,
-      "discount": "",
-      "is_promo": false,
-      "product_code": "502815",
-      "category_slug": "batoane_de_ciocolata",
-      "category": "Batoane de ciocolata",
-      "image_url": "https://linella.md/public/products/fcdb50555b22e50cbc2fe6fb96182b92.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/batoane_de_ciocolata/kick_batonas_de_caramela_sarata_in_ciocolata_caramelizata_45g"
-    },
-    {
-      "name": "KICK Batonas de curmale cu banane in ciocolata 45g",
-      "price": 29.9,
-      "old_price": null,
-      "discount": "",
-      "is_promo": false,
-      "product_code": "502825",
-      "category_slug": "batoane_de_ciocolata",
-      "category": "Batoane de ciocolata",
-      "image_url": "https://linella.md/public/products/19fa710fc57adbb96c57f97cb0205d87.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/batoane_de_ciocolata/kick_batonas_de_curmale_cu_banane_in_ciocolata_45g"
     },
     {
       "name": "KICK Batonas de nuca de cocos in ciocolata caramelizata 45g",
@@ -59070,19 +58838,6 @@
       "image_url": "https://linella.md/public/products/cb198f15027136aa164431a270088aba.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/batoane_de_ciocolata/knoppers_baton_napolitana_lapte_si_alune_40g"
-    },
-    {
-      "name": "KNOPPERS Napolitane Lapte, alune 25g",
-      "price": 13.9,
-      "old_price": 15.9,
-      "discount": "-12%",
-      "is_promo": true,
-      "product_code": "198768",
-      "category_slug": "batoane_de_ciocolata",
-      "category": "Batoane de ciocolata",
-      "image_url": "https://linella.md/public/products/89dda2105560e96c5f710691e59ca5cd.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/batoane_de_ciocolata/knoppers_napolitane_lapte__alune_25g"
     },
     {
       "name": "KOMO Branza maturata SMETANKOVII 50%, kg",
@@ -61022,19 +60777,6 @@
       "url": "https://linella.md/ro/catalog/cascaval/lactis_branza_cu_cheag_tare_moldova_50_1kg"
     },
     {
-      "name": "LACTIS Branza semitare Posehonie 45% , amb.",
-      "price": 62.4,
-      "old_price": null,
-      "discount": "",
-      "is_promo": false,
-      "product_code": "2001375",
-      "category_slug": "cascaval",
-      "category": "Cascaval",
-      "image_url": "https://linella.md/public/products/895536c2bb63ab319227af218f5cf603.webp",
-      "unit": "/0.3kg",
-      "url": "https://linella.md/ro/catalog/cascaval/lactis_branza_semitare_posehonie_45___amb"
-    },
-    {
       "name": "LACTIS Branza semitare Posehonie 45%, kg",
       "price": 59.7,
       "old_price": null,
@@ -61214,9 +60956,7 @@
       "category": "Produse din bumbac",
       "image_url": "https://linella.md/public/products/63e807ac72f1e747ec2b7d6f7ee9b99c.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/produse_din_bumbac/lady_cotton_betisoare_cu_vata_200_buc",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/produse_din_bumbac/lady_cotton_betisoare_cu_vata_200_buc"
     },
     {
       "name": "LADY COTTON Discuri cosmetice de vata 150+25buc",
@@ -62178,9 +61918,7 @@
       "category": "Lapte condensat",
       "image_url": "https://linella.md/public/products/396f98718481dec110cb07fd9d946d5f.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/lapte_condensat/latti_lapte_condensat_cu_zahar_8_5__480_g",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/lapte_condensat/latti_lapte_condensat_cu_zahar_8_5__480_g"
     },
     {
       "name": "LATTI Lapte condensat cu zahăr Latti 8,5%, 370G",
@@ -62193,9 +61931,7 @@
       "category": "Lapte condensat",
       "image_url": "https://linella.md/public/products/2fe2dd2beefce3b3c3f9392ac491ef9f.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/lapte_condensat/_latti_lapte_condensat_cu_zahar_latti_8_5__370g",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/lapte_condensat/_latti_lapte_condensat_cu_zahar_latti_8_5__370g"
     },
     {
       "name": "LATTI Lapte UHT 2.5%, 950g",
@@ -62329,10 +62065,10 @@
     },
     {
       "name": "LATTI Unt din sm. dulce EXTRA 82.5%, 180gr",
-      "price": 34.9,
-      "old_price": 42.9,
-      "discount": "-18%",
-      "is_promo": true,
+      "price": 42.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "2000151",
       "category_slug": "unt_i_margarina",
       "category": "Unt i margarina",
@@ -64434,19 +64170,6 @@
       "url": "https://linella.md/ro/catalog/ciocolata_tablete/lindt_ciocolata_neagra_excellence_85__100g"
     },
     {
-      "name": "LINDT Iepuras auriu de ciocolata cu lapte de Paste 50g",
-      "price": 24.9,
-      "old_price": 96.9,
-      "discount": "-74%",
-      "is_promo": true,
-      "product_code": "2010601",
-      "category_slug": "alimentatia_copiilor",
-      "category": "Alimentatia copiilor",
-      "image_url": "https://linella.md/public/products/f1b05b8c6d02579777918a2462bf65c8.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/alimentatia_copiilor/lindt_iepuras_auriu_de_ciocolata_cu_lapte_de_paste_50g"
-    },
-    {
       "name": "LINELLA Ardei umpluti cu legume, kg",
       "price": 48.0,
       "old_price": null,
@@ -64821,9 +64544,7 @@
       "category": "Culinarie",
       "image_url": "https://linella.md/public/products/2254ba6e32b06391bab35a8af143087d.webp",
       "unit": "/0.3kg",
-      "url": "https://linella.md/ro/catalog/fel_principal/linella_file_de_pui_copt_cu_legume__kg",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/fel_principal/linella_file_de_pui_copt_cu_legume__kg"
     },
     {
       "name": "LINELLA File de pui prajit, kg",
@@ -66478,10 +66199,10 @@
     },
     {
       "name": "LOVARE Amestec de ceai negru și verde. Sampagne Splashes 15p*2g",
-      "price": 57.9,
-      "old_price": 64.9,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 64.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "256090",
       "category_slug": "ceai_pachetele",
       "category": "Ceai pachetele",
@@ -66556,10 +66277,10 @@
     },
     {
       "name": "LOVARE Ceai Cherry Confiture 15p",
-      "price": 53.9,
-      "old_price": 60.5,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 60.5,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "256087",
       "category_slug": "ceai_pachetele",
       "category": "Ceai pachetele",
@@ -66569,10 +66290,10 @@
     },
     {
       "name": "LOVARE Ceai Cleopatra's Night 15p",
-      "price": 53.9,
-      "old_price": 60.5,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 60.5,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "511246",
       "category_slug": "ceai_pachetele",
       "category": "Ceai pachetele",
@@ -66595,10 +66316,10 @@
     },
     {
       "name": "LOVARE Ceai negru 1001 Nights 15p",
-      "price": 57.9,
-      "old_price": 64.9,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 64.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "256089",
       "category_slug": "ceai_pachetele",
       "category": "Ceai pachetele",
@@ -66699,10 +66420,10 @@
     },
     {
       "name": "LOVARE Ceai Passion Fruit 15p",
-      "price": 53.9,
-      "old_price": 60.5,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 60.5,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "511245",
       "category_slug": "ceai_pachetele",
       "category": "Ceai pachetele",
@@ -66712,10 +66433,10 @@
     },
     {
       "name": "LOVARE Ceai Pomegranate Shake15p*0.02g",
-      "price": 53.9,
-      "old_price": 60.5,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 60.5,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "256088",
       "category_slug": "ceai_pachetele",
       "category": "Ceai pachetele",
@@ -66738,10 +66459,10 @@
     },
     {
       "name": "LOVARE Ceai Set Asorty 60p",
-      "price": 157.0,
-      "old_price": 176.0,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 176.0,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "229962",
       "category_slug": "ceai_pachetele",
       "category": "Ceai pachetele",
@@ -66751,10 +66472,10 @@
     },
     {
       "name": "LOVARE Ceai Set Fest Tea 90 p",
-      "price": 157.0,
-      "old_price": 179.0,
-      "discount": "-12%",
-      "is_promo": true,
+      "price": 179.0,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "354438",
       "category_slug": "ceai_pachetele",
       "category": "Ceai pachetele",
@@ -66764,10 +66485,10 @@
     },
     {
       "name": "LOVARE Ceai Set Prime Tea 90 p",
-      "price": 157.0,
-      "old_price": 179.0,
-      "discount": "-12%",
-      "is_promo": true,
+      "price": 179.0,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "354439",
       "category_slug": "ceai_pachetele",
       "category": "Ceai pachetele",
@@ -66838,9 +66559,7 @@
       "category": "Ceai infuzie",
       "image_url": "https://linella.md/public/products/a8179949e692c94a8821893f4114b5f7.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/ceai_infuzie/lovare_ceai_strawberry_marshmallow_80g",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/ceai_infuzie/lovare_ceai_strawberry_marshmallow_80g"
     },
     {
       "name": "LOVARE Ceai Verde Asortat 32p",
@@ -66896,10 +66615,10 @@
     },
     {
       "name": "LOVARE TISANES Amestec de ceai Linden Garden 24p",
-      "price": 54.9,
-      "old_price": 61.5,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 61.5,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "511244",
       "category_slug": "ceai_pachetele",
       "category": "Ceai pachetele",
@@ -66909,10 +66628,10 @@
     },
     {
       "name": "LOVARE TISANES Ceai Assorted Chamomile 32p",
-      "price": 66.9,
-      "old_price": 74.9,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 74.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "2007314",
       "category_slug": "ceai_pachetele",
       "category": "Ceai pachetele",
@@ -66935,10 +66654,10 @@
     },
     {
       "name": "LOVARE TISANES Ceai Provance Drems 24p",
-      "price": 54.9,
-      "old_price": 61.5,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 61.5,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "511243",
       "category_slug": "ceai_pachetele",
       "category": "Ceai pachetele",
@@ -66948,10 +66667,10 @@
     },
     {
       "name": "LOVARE TISANES Ceai Rooibos Honey 24p",
-      "price": 54.9,
-      "old_price": 61.5,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 61.5,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "2001716",
       "category_slug": "ceai_pachetele",
       "category": "Ceai pachetele",
@@ -66961,10 +66680,10 @@
     },
     {
       "name": "LOVARE TISANES Ceai Sunset Melody 24p",
-      "price": 54.9,
-      "old_price": 61.5,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 61.5,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "2001719",
       "category_slug": "ceai_pachetele",
       "category": "Ceai pachetele",
@@ -66974,10 +66693,10 @@
     },
     {
       "name": "LOVARE TISANES Ceai Timeless Flower 24p",
-      "price": 54.9,
-      "old_price": 61.5,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 61.5,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "506052",
       "category_slug": "ceai_pachetele",
       "category": "Ceai pachetele",
@@ -66987,10 +66706,10 @@
     },
     {
       "name": "LOVARE TISANES Ceai, Colecția Rooibos 32p",
-      "price": 66.9,
-      "old_price": 74.9,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 74.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "2007315",
       "category_slug": "ceai_pachetele",
       "category": "Ceai pachetele",
@@ -68921,19 +68640,6 @@
       "image_url": "https://linella.md/public/products/93e75608400e46c28bf3029b680f45f7.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/fructe_uscate_532/mango_ananas_uscata_250g"
-    },
-    {
-      "name": "Mango Gold, buc",
-      "price": 58.9,
-      "old_price": null,
-      "discount": "",
-      "is_promo": false,
-      "product_code": "166122",
-      "category_slug": "fructe",
-      "category": "Fructe, legume, muraturi",
-      "image_url": "https://linella.md/public/products/dca93fedbeb70a1a84627cdd1e9055f2.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/fructe/mango_gold__buc"
     },
     {
       "name": "MANGO Mango uscat 500g",
@@ -71849,10 +71555,10 @@
     },
     {
       "name": "MILKA Biscuiti cu ciocolata 135g",
-      "price": 32.9,
-      "old_price": 44.9,
-      "discount": "-26%",
-      "is_promo": true,
+      "price": 44.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "487247",
       "category_slug": "biscuiti_i_fursecuri",
       "category": "Produse de cofetarie",
@@ -71875,10 +71581,10 @@
     },
     {
       "name": "MILKA Biscuiti cu ciocolata si nuci 135g",
-      "price": 32.9,
-      "old_price": 44.9,
-      "discount": "-26%",
-      "is_promo": true,
+      "price": 44.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "2007986",
       "category_slug": "biscuiti_i_fursecuri",
       "category": "Produse de cofetarie",
@@ -72264,19 +71970,6 @@
       "url": "https://linella.md/ro/catalog/branza_proaspata/milkmark_branza_de_vaci_9___500g"
     },
     {
-      "name": "MILKMARK Brânză cu cheag tare ROSIISKII 50%, kg",
-      "price": 58.5,
-      "old_price": null,
-      "discount": "",
-      "is_promo": false,
-      "product_code": "192690",
-      "category_slug": "cascaval",
-      "category": "Cascaval",
-      "image_url": "https://linella.md/public/products/021bd4fea25f6a1b73117850ad9d9194.webp",
-      "unit": "/0.3kg",
-      "url": "https://linella.md/ro/catalog/cascaval/milkmark_branza_cu_cheag_tare_rosiiskii_50__kg"
-    },
-    {
       "name": "MILKMARK Brânză topită Delicioasă 30%, 175g",
       "price": 23.0,
       "old_price": null,
@@ -72473,9 +72166,9 @@
     },
     {
       "name": "MILL PROFESSIONAL Detergent capsule pentru copii 30buc",
-      "price": 132.0,
+      "price": 125.2,
       "old_price": 156.5,
-      "discount": "-15%",
+      "discount": "-19%",
       "is_promo": true,
       "product_code": "432419",
       "category_slug": "produse_chimice_de_uz_casnic",
@@ -72876,10 +72569,10 @@
     },
     {
       "name": "MIRINDA Bautura carbogazoasă. Portocale 1l",
-      "price": 20.5,
-      "old_price": 22.9,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 22.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "2007347",
       "category_slug": "bauturi_racoritoare",
       "category": "Bauturi racoritoare",
@@ -73292,9 +72985,9 @@
     },
     {
       "name": "MLEKOVITA Branza semitare SALAMI feliat 300g",
-      "price": 45.9,
+      "price": 47.9,
       "old_price": 54.9,
-      "discount": "-16%",
+      "discount": "-12%",
       "is_promo": true,
       "product_code": "2007426",
       "category_slug": "cascaval",
@@ -73393,19 +73086,6 @@
       "image_url": "https://linella.md/public/products/7edd4f4f9446782db9b6a50e42391ac8.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/cascaval/mlekovita_cascaval_gouda_mini__kg"
-    },
-    {
-      "name": "MLEKOVITA Cascaval Mazdamer 45%, kg",
-      "price": 64.5,
-      "old_price": null,
-      "discount": "",
-      "is_promo": false,
-      "product_code": "168475",
-      "category_slug": "cascaval",
-      "category": "Cascaval",
-      "image_url": "https://linella.md/public/products/a8b99ce9c8ac94ed369d3e4b98d1d5f1.webp",
-      "unit": "/0.3kg",
-      "url": "https://linella.md/ro/catalog/cascaval/mlekovita_cascaval_mazdamer_45___kg"
     },
     {
       "name": "MLEKOVITA Cascaval Salami feliat 150g",
@@ -73650,7 +73330,7 @@
       "product_code": "2009883",
       "category_slug": "specialitati_paine",
       "category": "Specialitati paine",
-      "image_url": "https://linella.md/public/products/98aefd627ff40eb51fe7e4d3fdc340d2.webp",
+      "image_url": "https://linella.md/public/products/34e528c80b22c510fb608f4c36d26373.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/specialitati_paine/molino_spadoni_gran_pinsa_stil_clasic_roman_230g"
     },
@@ -74124,10 +73804,10 @@
     },
     {
       "name": "MONOMAX Ceai negru cu bergamotă Earl Grey 100+25p",
-      "price": 86.9,
-      "old_price": 96.9,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 96.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "454081",
       "category_slug": "ceai_pachetele",
       "category": "Ceai pachetele",
@@ -74137,10 +73817,10 @@
     },
     {
       "name": "MONOMAX Ceai negru de Ceylon. Kenya 100+25p",
-      "price": 86.9,
-      "old_price": 96.9,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 96.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "454082",
       "category_slug": "ceai_pachetele",
       "category": "Ceai pachetele",
@@ -74877,19 +74557,6 @@
       "url": "https://linella.md/ro/catalog/depozitarea_alimentelor/mtm_container_pentru_produse_vrac_1l"
     },
     {
-      "name": "MTM Cos de carlige de rufe Nova 30buc",
-      "price": 98.4,
-      "old_price": null,
-      "discount": "",
-      "is_promo": false,
-      "product_code": "433863",
-      "category_slug": "inventar_curatenie",
-      "category": "Inventar curatenie",
-      "image_url": "https://linella.md/public/products/853439be7f90db0411e32c6440187793.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/inventar_curatenie/mtm_cos_de_carlige_de_rufe_nova_30buc"
-    },
-    {
       "name": "MTM Cutie pentru paine",
       "price": 199.2,
       "old_price": null,
@@ -75592,6 +75259,21 @@
       "url": "https://linella.md/ro/catalog/hrana_pisici/my_cat_hrana_umeda_pentru_pisici_peste_100g"
     },
     {
+      "name": "MY DOG Hrană umedă pentru câini Miel/Curcan 300g",
+      "price": 19.95,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
+      "product_code": "425033",
+      "category_slug": "hrana_caini",
+      "category": "Hrana caini",
+      "image_url": "https://linella.md/public/products/1a0393736b59e913ab983ca0689bd46e.webp",
+      "unit": "",
+      "url": "https://linella.md/ro/catalog/hrana_caini/my_dog_hrana_umeda_pentru_caini_miel-curcan_300g",
+      "new_on": "2026-06-16",
+      "new_until": "2026-06-16 23:59:59"
+    },
+    {
       "name": "MY DOG Hrană umedă pentru câini Vita 300g",
       "price": 19.95,
       "old_price": null,
@@ -75938,7 +75620,7 @@
       "product_code": "383762",
       "category_slug": "alimentatia_copiilor",
       "category": "Alimentatia copiilor",
-      "image_url": "https://linella.md/public/products/32c55b66dcf6bf3bd89eb1fe194464d9.webp",
+      "image_url": "https://linella.md/public/products/7fd001e03055b632f01709801795e905.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/alimentatia_copiilor/nan_optipro_4_amestec_lactat_800g__18"
     },
@@ -79193,19 +78875,6 @@
       "url": "https://linella.md/ro/catalog/sapun/nivea_sapun_lichid_creme_soft_500ml__rezerva"
     },
     {
-      "name": "NIVEA Set cadou Nivea Men Sensitive Trio Bag",
-      "price": 187.0,
-      "old_price": 375.0,
-      "discount": "-50%",
-      "is_promo": true,
-      "product_code": "2002581",
-      "category_slug": "idei_de_cadouri",
-      "category": "Idei de cadouri",
-      "image_url": "https://linella.md/public/products/b862f937802a172a2bcded68ff9543b4.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/idei_de_cadouri/nivea_set_cadou_nivea_men_sensitive_trio_bag"
-    },
-    {
       "name": "NIVEA Set cadou pentru femei. Inspirator",
       "price": 73.5,
       "old_price": 147.0,
@@ -80350,19 +80019,6 @@
       "url": "https://linella.md/ro/catalog/chefir/o_pret_mic_chefir_25__500g"
     },
     {
-      "name": "O! PRET MIC Chips Paprica 100g",
-      "price": 12.9,
-      "old_price": 19.9,
-      "discount": "-35%",
-      "is_promo": true,
-      "product_code": "511772",
-      "category_slug": "chipsuri",
-      "category": "Chipsuri",
-      "image_url": "https://linella.md/public/products/c99eaaeedb6884cfd121013b155b9e3c.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/chipsuri/o_pret_mic_chips_paprica_100g"
-    },
-    {
       "name": "O! PRET MIC Chips Smintina si verdeata 100g",
       "price": 12.9,
       "old_price": 19.9,
@@ -80754,10 +80410,10 @@
     },
     {
       "name": "O! PRET MIC Inghetata cu vanilie si caramela sarat 500g",
-      "price": 44.9,
-      "old_price": 59.95,
-      "discount": "-25%",
-      "is_promo": true,
+      "price": 59.95,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "393975",
       "category_slug": "inghetata",
       "category": "Inghetata",
@@ -81099,7 +80755,7 @@
       "product_code": "2012023",
       "category_slug": "sosuri_i_dressing",
       "category": "Sosuri i dressing",
-      "image_url": "https://linella.md/public/products/47cf40d80cc820aeb6b8b8f5b6d19197.webp",
+      "image_url": "https://linella.md/public/products/341eafea0735a0c68b1204b4934d6698.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/sosuri_i_dressing/o_pret_mic_pasta_de_tomate_28-30__c-m_70g_"
     },
@@ -81651,10 +81307,10 @@
     },
     {
       "name": "O! PRET MIC Înghețată cu pepene galben 500g",
-      "price": 44.9,
-      "old_price": 59.95,
-      "discount": "-25%",
-      "is_promo": true,
+      "price": 59.95,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "393974",
       "category_slug": "inghetata",
       "category": "Inghetata",
@@ -82158,10 +81814,10 @@
     },
     {
       "name": "OCEAN FISH Merluciu decongelat preparat, 1kg",
-      "price": 125.0,
-      "old_price": 165.0,
-      "discount": "-24%",
-      "is_promo": true,
+      "price": 165.0,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "401423",
       "category_slug": "peste_proaspat",
       "category": "Peste proaspat",
@@ -82677,6 +82333,21 @@
       "url": "https://linella.md/ro/catalog/produse_cosmetice_pentru_barbati/old_spice_gel_de_dus_cold_spice_400ml"
     },
     {
+      "name": "OLD SPICE Gel de dus cu pompa Cold Spice 1000ml",
+      "price": 213.75,
+      "old_price": 225.0,
+      "discount": "-5%",
+      "is_promo": true,
+      "product_code": "2011577",
+      "category_slug": "produse_cosmetice_pentru_barbati",
+      "category": "Produse cosmetice pentru barbati",
+      "image_url": "https://linella.md/public/products/d325376b92edcfff863decb6fb795c40.webp",
+      "unit": "",
+      "url": "https://linella.md/ro/catalog/produse_cosmetice_pentru_barbati/old_spice_gel_de_dus_cu_pompa_cold_spice_1000ml",
+      "new_on": "2026-06-16",
+      "new_until": "2026-06-16 23:59:59"
+    },
+    {
       "name": "OLD SPICE Gel de dus Whitewater 1l",
       "price": 225.0,
       "old_price": null,
@@ -82846,17 +82517,19 @@
       "url": "https://linella.md/ro/catalog/lapte/olympus__lapte_proteic_fara_lactoza_17__500ml"
     },
     {
-      "name": "OLYMPUS Suc de portocale 0.5l",
-      "price": 39.7,
-      "old_price": 46.9,
+      "name": "OLYMPUS Suc de mandarine, portocale rosii 1l",
+      "price": 58.5,
+      "old_price": 68.9,
       "discount": "-15%",
       "is_promo": true,
-      "product_code": "255696",
+      "product_code": "460237",
       "category_slug": "suc_i_nectar",
       "category": "Suc i nectar",
-      "image_url": "https://linella.md/public/products/edf09feef655031ffba1844f7f2ef3c9.webp",
+      "image_url": "https://linella.md/public/products/47f4c027f54fbca999cbcf7555f2a2a5.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/suc_i_nectar/olympus_suc_de_portocale_05l"
+      "url": "https://linella.md/ro/catalog/suc_i_nectar/olympus_suc_de_mandarine__portocale_rosii_1l",
+      "new_on": "2026-06-16",
+      "new_until": "2026-06-16 23:59:59"
     },
     {
       "name": "OLYMPUS Suc mixt de 9 fructe, 7 vitamine, 1L",
@@ -83195,19 +82868,6 @@
       "image_url": "https://linella.md/public/products/e365e86c5595341803a4c9fea1bc56ac.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/produse_cosmetice_igiena_protectie/on_line_kids_gel_hidratant_3in1_fruit_jellies_850ml"
-    },
-    {
-      "name": "ON LINE Kids Gel moale 3in1 Baby Sensitive 850ml",
-      "price": 59.5,
-      "old_price": 79.35,
-      "discount": "-25%",
-      "is_promo": true,
-      "product_code": "417872",
-      "category_slug": "produse_cosmetice_igiena_protectie",
-      "category": "Produse cosmetice igiena protectie",
-      "image_url": "https://linella.md/public/products/c16a9118cf499231e002176e0868ef8d.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/produse_cosmetice_igiena_protectie/on_line_kids_gel_moale_3in1_baby_sensitive_850ml"
     },
     {
       "name": "On Line Kids Time Gel+Spumă baie Watermelon 980ml",
@@ -83637,19 +83297,6 @@
       "image_url": "https://linella.md/public/products/98e6ca206f3fd0bae1b3e9b6f7009dba.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/trusa_de_prim_ajutor/one_touch_prezervative_romantic_3buc"
-    },
-    {
-      "name": "ONLY Ciocolată cu lapte 4x15g",
-      "price": 10.9,
-      "old_price": 44.9,
-      "discount": "-75%",
-      "is_promo": true,
-      "product_code": "2010264",
-      "category_slug": "ciocolata_tablete",
-      "category": "Ciocolata tablete",
-      "image_url": "https://linella.md/public/products/5ca359a6d73d90c276c1ee1a13d70c30.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/ciocolata_tablete/only_ciocolata_cu_lapte_4x15g"
     },
     {
       "name": "ONLY Iepuras de Paste din ciocolata cu lapte albastru 60g",
@@ -84510,19 +84157,6 @@
       "url": "https://linella.md/ro/catalog/igiena_orala/orbitol_perie_de_dinti_trio_3buc"
     },
     {
-      "name": "ORE LIETE Mini Colomba cu umplutura de fistic si bucati de ciocalata 100g",
-      "price": 12.5,
-      "old_price": 50.0,
-      "discount": "-75%",
-      "is_promo": true,
-      "product_code": "2010893",
-      "category_slug": "rulade_muffin_i_chec",
-      "category": "Rulade muffin i chec",
-      "image_url": "https://linella.md/public/products/838214c50f3c21b690d53c138831b97d.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/rulade_muffin_i_chec/ore_liete_mini_colomba_cu_umplutura_de_fistic_si_bucati_de_ciocalata_100g"
-    },
-    {
       "name": "OREO Biscuiti Birthday Party 154g",
       "price": 19.9,
       "old_price": 31.9,
@@ -84781,19 +84415,6 @@
       "image_url": "https://linella.md/public/products/add480d4961a83101627677ef31aae9f.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/oua/ovo_mia_oua_de_gaina_premium__10_buc"
-    },
-    {
-      "name": "Ozbest Capac pentru WC Anatolia",
-      "price": 182.0,
-      "old_price": null,
-      "discount": "",
-      "is_promo": false,
-      "product_code": "392171",
-      "category_slug": "baie",
-      "category": "Baie",
-      "image_url": "https://linella.md/public/products/705c0e3d6cb4b89e4764597a15066ee7.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/baie/ozbest_capac_pentru_wc_anatolia"
     },
     {
       "name": "OZMO Biscuiți Burger cremă de ciocolată 40g",
@@ -86291,6 +85912,21 @@
       "url": "https://linella.md/ro/catalog/scutece_si_servetele_umede/pampers_scutece_premium_midi_180buc_3_6-10_kg"
     },
     {
+      "name": "PAMPERS Scutece Premium Mini 204 (2) 4-8 kg",
+      "price": 985.15,
+      "old_price": 1159.0,
+      "discount": "-15%",
+      "is_promo": true,
+      "product_code": "2011980",
+      "category_slug": "scutece_si_servetele_umede",
+      "category": "Scutece si servetele umede",
+      "image_url": "https://linella.md/public/products/4c90719111c81ed0ef400e1f1fcdc087.webp",
+      "unit": "",
+      "url": "https://linella.md/ro/catalog/scutece_si_servetele_umede/pampers_scutece_premium_mini_204_2_4-8_kg",
+      "new_on": "2026-06-16",
+      "new_until": "2026-06-16 23:59:59"
+    },
+    {
       "name": "PAMPERS Scutece VP Premium Care Junior 44buc (5)",
       "price": 466.65,
       "old_price": 518.5,
@@ -86624,7 +86260,7 @@
       "product_code": "260567",
       "category_slug": "prajituri",
       "category": "Prajituri",
-      "image_url": "https://linella.md/public/products/78631853048e0ce93efea91ea929b891.webp",
+      "image_url": "https://linella.md/public/products/9401f3701a5899c26d94a6f25ce704f1.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/prajituri/panilino_prajitura_batonas_cu_arahide_200g"
     },
@@ -87202,10 +86838,10 @@
     },
     {
       "name": "PAPIA Hârtie igienică 3 str.10+2buc",
-      "price": 104.5,
-      "old_price": 120.0,
-      "discount": "-12%",
-      "is_promo": true,
+      "price": 120.0,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "166818",
       "category_slug": "produse_din_hartie",
       "category": "Produse din hartie",
@@ -87329,6 +86965,21 @@
       "image_url": "https://linella.md/public/products/2f2cc0e552006f6128654de047dfa26f.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/folie__folie_alimentara__hartie_de_copt/parex_pergament_de_copt_8m"
+    },
+    {
+      "name": "PAREX Rolă de curățare 56foi",
+      "price": 44.4,
+      "old_price": 55.5,
+      "discount": "-20%",
+      "is_promo": true,
+      "product_code": "367302",
+      "category_slug": "ingrijire_si_depozitare",
+      "category": "Ingrijire si depozitare",
+      "image_url": "https://linella.md/public/products/9329a362e7b3c0108e89067dcc505b3b.webp",
+      "unit": "",
+      "url": "https://linella.md/ro/catalog/ingrijire_si_depozitare/parex_rola_de_curatare_56foi",
+      "new_on": "2026-06-16",
+      "new_until": "2026-06-16 23:59:59"
     },
     {
       "name": "PAREX Saci de gunoi cu legaturi cu parfum de lamiie 40l 15buc",
@@ -88360,9 +88011,9 @@
     {
       "name": "Pepene Galben, kg",
       "price": 29.9,
-      "old_price": 34.9,
-      "discount": "-14%",
-      "is_promo": true,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "58148",
       "category_slug": "fructe",
       "category": "Fructe, legume, muraturi",
@@ -88398,10 +88049,10 @@
     },
     {
       "name": "PEPSI Bautura carb. Cola 1l",
-      "price": 20.5,
-      "old_price": 22.9,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 22.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "2007344",
       "category_slug": "bauturi_racoritoare",
       "category": "Bauturi racoritoare",
@@ -88411,10 +88062,10 @@
     },
     {
       "name": "PEPSI Bautura carb. Max fara zahar 1l",
-      "price": 20.5,
-      "old_price": 22.9,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 22.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "2007345",
       "category_slug": "bauturi_racoritoare",
       "category": "Bauturi racoritoare",
@@ -88424,10 +88075,10 @@
     },
     {
       "name": "PEPSI Bautura carb. Twist lamaie 1l",
-      "price": 20.5,
-      "old_price": 22.9,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 22.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "2007346",
       "category_slug": "bauturi_racoritoare",
       "category": "Bauturi racoritoare",
@@ -88761,19 +88412,6 @@
       "url": "https://linella.md/ro/catalog/detergenti/persil_capsule_de_spalat_universale__490gr_35sp_"
     },
     {
-      "name": "PERSIL Capsule pentru spalarea tesaturilor colorate 490gr 35sp",
-      "price": 277.4,
-      "old_price": 292.0,
-      "discount": "-5%",
-      "is_promo": true,
-      "product_code": "466618",
-      "category_slug": "detergenti",
-      "category": "Detergenti",
-      "image_url": "https://linella.md/public/products/eab91758d32c90d7d9fa2cda63285dc0.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/detergenti/persil_capsule_pentru_spalarea_tesaturilor_colorate__490gr_35sp_"
-    },
-    {
       "name": "PERSIL Capsule universale pentru rufe 1650g, 100buc",
       "price": 976.75,
       "old_price": null,
@@ -88993,19 +88631,6 @@
       "image_url": "https://linella.md/public/products/0a06c0db1110884d68b79c45aa52b0a0.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/detergenti/perwoll_detergent_black_2l_40sp"
-    },
-    {
-      "name": "PERWOLL Detergent Black 3l 60sp",
-      "price": 266.85,
-      "old_price": 280.9,
-      "discount": "-5%",
-      "is_promo": true,
-      "product_code": "466623",
-      "category_slug": "detergenti",
-      "category": "Detergenti",
-      "image_url": "https://linella.md/public/products/4850ea22690990596c3a31604188c1b1.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/detergenti/perwoll_detergent_black_3l_60sp"
     },
     {
       "name": "PERWOLL Detergent Black 4l 80sp",
@@ -91163,9 +90788,7 @@
       "category": "Carne de pui",
       "image_url": "https://linella.md/public/products/2e3fa9be298a3fb2f6c1c4aea4324224.webp",
       "unit": "/0.5kg",
-      "url": "https://linella.md/ro/catalog/carne_de_pui/porumbaca_sold_d-gaina_dezosat_refr",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/carne_de_pui/porumbaca_sold_d-gaina_dezosat_refr"
     },
     {
       "name": "PORUMBACA Sold de gaina caserola refr, kg",
@@ -96251,24 +95874,11 @@
       "url": "https://linella.md/ro/catalog/legume/ridiche_daikon_500g"
     },
     {
-      "name": "RIDICHE rosie, kg",
-      "price": 12.95,
+      "name": "Ridiche roșie 500g",
+      "price": 18.9,
       "old_price": null,
       "discount": "",
       "is_promo": false,
-      "product_code": "16146",
-      "category_slug": "legume",
-      "category": "Fructe, legume, muraturi",
-      "image_url": "https://linella.md/public/products/27ca1d1f18b5a3b318461399b39678fd.webp",
-      "unit": "/0.5kg",
-      "url": "https://linella.md/ro/catalog/legume/ridiche_rosie__kg_"
-    },
-    {
-      "name": "Ridiche roșie 500g",
-      "price": 15.9,
-      "old_price": 18.9,
-      "discount": "-15%",
-      "is_promo": true,
       "product_code": "271258",
       "category_slug": "legume",
       "category": "Fructe, legume, muraturi",
@@ -96366,19 +95976,6 @@
       "image_url": "https://linella.md/public/products/c7912120fe80ba704e7a1c3975436a8b.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/depozitarea_si_organizarea_spatiului/rio_cos_capac__knit_12l"
-    },
-    {
-      "name": "Rio Cos de rufe 65l",
-      "price": 264.4,
-      "old_price": 330.5,
-      "discount": "-20%",
-      "is_promo": true,
-      "product_code": "392186",
-      "category_slug": "depozitarea_si_organizarea_spatiului",
-      "category": "Depozitarea si organizarea spatiului",
-      "image_url": "https://linella.md/public/products/a61de6439acac5d0796e440a1e36578e.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/depozitarea_si_organizarea_spatiului/rio_cos_de_rufe__65l_"
     },
     {
       "name": "Rio Cos knit 10l",
@@ -98110,19 +97707,6 @@
       "url": "https://linella.md/ro/catalog/caramele_i_drajeuri/roshen_ecler_de_caramel_cu_umplutura_de_ciocolata_200g"
     },
     {
-      "name": "ROSHEN Figurina de ciocolata Ou de primavara 26g, 1buc",
-      "price": 4.9,
-      "old_price": 18.9,
-      "discount": "-74%",
-      "is_promo": true,
-      "product_code": "2009923",
-      "category_slug": "alimentatia_copiilor",
-      "category": "Alimentatia copiilor",
-      "image_url": "https://linella.md/public/products/426ce9875735e320aa5f4b641c4417c6.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/alimentatia_copiilor/roshen_figurina_de_ciocolata_ou_de_primavara_26g__1buc"
-    },
-    {
       "name": "ROSHEN Lacmi Ciocolata Bubble Crisp 85g",
       "price": 28.9,
       "old_price": null,
@@ -98332,7 +97916,7 @@
     },
     {
       "name": "Rosii Cherry",
-      "price": 31.95,
+      "price": 33.95,
       "old_price": null,
       "discount": "",
       "is_promo": false,
@@ -98345,7 +97929,7 @@
     },
     {
       "name": "ROSII CHERRY crenguta, kg",
-      "price": 31.95,
+      "price": 33.95,
       "old_price": null,
       "discount": "",
       "is_promo": false,
@@ -98355,6 +97939,21 @@
       "image_url": "https://linella.md/public/products/94525b9d81317d6e4d415d0b561ab4ef.webp",
       "unit": "/0.5kg",
       "url": "https://linella.md/ro/catalog/legume/rosii_cherry_crenguta__kg"
+    },
+    {
+      "name": "Rosii Cherry Prunisoare Mix 175gr",
+      "price": 33.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
+      "product_code": "283681",
+      "category_slug": "legume",
+      "category": "Fructe, legume, muraturi",
+      "image_url": "https://linella.md/public/products/799195e5d9449cb5fcae69251fd1f257.webp",
+      "unit": "",
+      "url": "https://linella.md/ro/catalog/legume/rosii_cherry_prunisoare_mix_175gr",
+      "new_on": "2026-06-16",
+      "new_until": "2026-06-16 23:59:59"
     },
     {
       "name": "ROSSO BIANCO Batonas Dubai 35g",
@@ -98514,7 +98113,7 @@
     },
     {
       "name": "Roșii cherry prunișoare 250g",
-      "price": 19.9,
+      "price": 23.9,
       "old_price": null,
       "discount": "",
       "is_promo": false,
@@ -98553,10 +98152,10 @@
     },
     {
       "name": "Roșii roz",
-      "price": 18.95,
-      "old_price": 24.95,
-      "discount": "-24%",
-      "is_promo": true,
+      "price": 19.45,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "8698",
       "category_slug": "legume",
       "category": "Fructe, legume, muraturi",
@@ -98683,10 +98282,10 @@
     },
     {
       "name": "RUTA Batiste Mini Tissues 2str 150buc",
-      "price": 18.5,
-      "old_price": 20.9,
-      "discount": "-11%",
-      "is_promo": true,
+      "price": 20.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "465223",
       "category_slug": "produse_din_hartie",
       "category": "Produse din hartie",
@@ -98708,19 +98307,6 @@
       "url": "https://linella.md/ro/catalog/produse_din_hartie/ruta_hartie_igienica_pure_whiste_3str_4role"
     },
     {
-      "name": "RUTA Hartie igienica Pure White Deluxe 3str 8role",
-      "price": 58.9,
-      "old_price": 88.9,
-      "discount": "-33%",
-      "is_promo": true,
-      "product_code": "465221",
-      "category_slug": "produse_din_hartie",
-      "category": "Produse din hartie",
-      "image_url": "https://linella.md/public/products/7d7ca53bfbe74b66389fc6f5a7d0d740.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/produse_din_hartie/ruta_hartie_igienica_pure_white_deluxe_3str_8role"
-    },
-    {
       "name": "RUTA Hartie igienica Pure White Deluxe Mango 3str 8role",
       "price": 58.9,
       "old_price": 88.9,
@@ -98732,45 +98318,6 @@
       "image_url": "https://linella.md/public/products/8786b0928de5e505c492e164afff084a.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/produse_din_hartie/ruta_hartie_igienica_pure_white_deluxe_mango_3str_8role"
-    },
-    {
-      "name": "RUTA Hartie igienica Selecta 3str 32role",
-      "price": 159.0,
-      "old_price": 305.5,
-      "discount": "-47%",
-      "is_promo": true,
-      "product_code": "293349",
-      "category_slug": "produse_din_hartie",
-      "category": "Produse din hartie",
-      "image_url": "https://linella.md/public/products/db5fa2f22d28f16b30a5eff6f1938676.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/produse_din_hartie/ruta_hartie_igienica_selecta_3str_32role_"
-    },
-    {
-      "name": "RUTA Hirtie igienica Dream touch alb 4str 8role",
-      "price": 59.9,
-      "old_price": 96.9,
-      "discount": "-38%",
-      "is_promo": true,
-      "product_code": "517968",
-      "category_slug": "produse_din_hartie",
-      "category": "Produse din hartie",
-      "image_url": "https://linella.md/public/products/da1f8c45e61ed79b3d53e3588b4a340f.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/produse_din_hartie/ruta_hirtie_igienica_dream_touch_alb_4str_8role_"
-    },
-    {
-      "name": "Ruta Hirtie igienica in sortiment 2str 4 buc",
-      "price": 25.5,
-      "old_price": 44.5,
-      "discount": "-42%",
-      "is_promo": true,
-      "product_code": "14040",
-      "category_slug": "produse_din_hartie",
-      "category": "Produse din hartie",
-      "image_url": "https://linella.md/public/products/6e801a457eca6607c39a8d55cbfb94d5.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/produse_din_hartie/ruta_hirtie_igienica_in_sortiment_2str_4_buc"
     },
     {
       "name": "RUTA Hirtie igienica umeda Selecta 80buc",
@@ -98929,11 +98476,26 @@
       "url": "https://linella.md/ro/catalog/produse_din_hartie/ruta_servetele__alb_33h33_100buc_"
     },
     {
-      "name": "RUTA Servetele cosmetice Palitra 80buc",
-      "price": 29.9,
-      "old_price": 34.25,
-      "discount": "-12%",
+      "name": "RUTA Servetele cosmetice albe penal 3str 90buc",
+      "price": 32.7,
+      "old_price": 40.9,
+      "discount": "-20%",
       "is_promo": true,
+      "product_code": "2005702",
+      "category_slug": "produse_din_hartie",
+      "category": "Produse din hartie",
+      "image_url": "https://linella.md/public/products/d9e0decb1b25fe2c60801e1af6e8db15.webp",
+      "unit": "",
+      "url": "https://linella.md/ro/catalog/produse_din_hartie/ruta_servetele_cosmetice_albe_penal_3str_90buc",
+      "new_on": "2026-06-16",
+      "new_until": "2026-06-16 23:59:59"
+    },
+    {
+      "name": "RUTA Servetele cosmetice Palitra 80buc",
+      "price": 34.25,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "67263",
       "category_slug": "produse_din_hartie",
       "category": "Produse din hartie",
@@ -98969,9 +98531,9 @@
     },
     {
       "name": "RUTA Șervețele albe 100buc",
-      "price": 14.8,
+      "price": 13.95,
       "old_price": 17.0,
-      "discount": "-12%",
+      "discount": "-17%",
       "is_promo": true,
       "product_code": "11616",
       "category_slug": "produse_din_hartie",
@@ -99320,10 +98882,10 @@
     },
     {
       "name": "Salată Misticanza 100g",
-      "price": 19.9,
-      "old_price": 22.9,
-      "discount": "-13%",
-      "is_promo": true,
+      "price": 22.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "202630",
       "category_slug": "salate_i_verdeturi",
       "category": "Salate i verdeturi",
@@ -102167,10 +101729,10 @@
     },
     {
       "name": "SELIK Arahide decojite 150g",
-      "price": 18.9,
-      "old_price": 21.7,
-      "discount": "-12%",
-      "is_promo": true,
+      "price": 21.7,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "170533",
       "category_slug": "nuci",
       "category": "Nuci",
@@ -102544,9 +102106,9 @@
     },
     {
       "name": "SELPAK Batiste nazale flower 10buc.",
-      "price": 3.8,
+      "price": 3.9,
       "old_price": 4.9,
-      "discount": "-22%",
+      "discount": "-20%",
       "is_promo": true,
       "product_code": "126737",
       "category_slug": "produse_din_hartie",
@@ -102557,9 +102119,9 @@
     },
     {
       "name": "SELPAK Hârtie igienică 3sl*32roll",
-      "price": 328.0,
+      "price": 346.0,
       "old_price": 418.8,
-      "discount": "-21%",
+      "discount": "-17%",
       "is_promo": true,
       "product_code": "411138",
       "category_slug": "produse_din_hartie",
@@ -102622,9 +102184,9 @@
     },
     {
       "name": "SELPAK Prosoape de hârtie 3 straturi, 3 role",
-      "price": 45.5,
+      "price": 43.9,
       "old_price": 56.75,
-      "discount": "-19%",
+      "discount": "-22%",
       "is_promo": true,
       "product_code": "209990",
       "category_slug": "produse_din_hartie",
@@ -102635,9 +102197,9 @@
     },
     {
       "name": "SELPAK Prosop de bucatarie 3str 12role",
-      "price": 187.9,
+      "price": 192.0,
       "old_price": 235.0,
-      "discount": "-20%",
+      "discount": "-18%",
       "is_promo": true,
       "product_code": "319932",
       "category_slug": "produse_din_hartie",
@@ -102645,6 +102207,21 @@
       "image_url": "https://linella.md/public/products/3ffbde1df12d84b0091dc890e802554c.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/produse_din_hartie/selpak_prosop_de_bucatarie_3str_12role"
+    },
+    {
+      "name": "SELPAK Prosop de bucatarie Mega Roll 2str 540foi",
+      "price": 61.1,
+      "old_price": 81.5,
+      "discount": "-25%",
+      "is_promo": true,
+      "product_code": "2005007",
+      "category_slug": "produse_din_hartie",
+      "category": "Produse din hartie",
+      "image_url": "https://linella.md/public/products/223339369d99cb59ea9c7e6632631c61.webp",
+      "unit": "",
+      "url": "https://linella.md/ro/catalog/produse_din_hartie/selpak_prosop_de_bucatarie_mega_roll_2str_540foi",
+      "new_on": "2026-06-16",
+      "new_until": "2026-06-16 23:59:59"
     },
     {
       "name": "SELPAK Șervețele Dispenser MAXI 3 straturi, 100 bucăţi",
@@ -105676,19 +105253,6 @@
       "url": "https://linella.md/ro/catalog/accesorii_pentru_sarbator_575/spring_farfurii_de_carton_d185cm_happy_birthday_10buc_"
     },
     {
-      "name": "SPRING Fluturasi pentru badminton galben in tub 3buc",
-      "price": 16.5,
-      "old_price": null,
-      "discount": "",
-      "is_promo": false,
-      "product_code": "315922",
-      "category_slug": "sport",
-      "category": "Sport",
-      "image_url": "https://linella.md/public/products/64805b315096ac5f996cdb692c2de15f.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/sport/spring_fluturasi_pentru_badminton_galben_in_tub_3buc"
-    },
-    {
       "name": "SPRING Foarfece pentru vita de vie 8 verde-oranj 19cm",
       "price": 53.2,
       "old_price": null,
@@ -107028,19 +106592,6 @@
       "url": "https://linella.md/ro/catalog/frisca_i_lapte_condensat/sterilgarda_sos_bechamel_uht_500g"
     },
     {
-      "name": "STERILGARDA YoCream Caise 2*100g",
-      "price": 18.9,
-      "old_price": null,
-      "discount": "",
-      "is_promo": false,
-      "product_code": "2004723",
-      "category_slug": "deserturi",
-      "category": "Produse de cofetarie",
-      "image_url": "https://linella.md/public/products/8cd8f7416e39d3a5a6a4987923d1d987.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/deserturi/sterilgarda_yocream_caise_2_100g"
-    },
-    {
       "name": "STERILGARDA YoCream Capsuni 2*100g",
       "price": 18.9,
       "old_price": null,
@@ -107052,19 +106603,6 @@
       "image_url": "https://linella.md/public/products/db56d2721d2c29afb529de93cacaa43e.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/deserturi/sterilgarda_yocream_capsuni_2_100g"
-    },
-    {
-      "name": "STERILGARDA YoCream Desert alb 2*100g",
-      "price": 18.9,
-      "old_price": null,
-      "discount": "",
-      "is_promo": false,
-      "product_code": "2004722",
-      "category_slug": "deserturi",
-      "category": "Produse de cofetarie",
-      "image_url": "https://linella.md/public/products/3c10a959354fa898f183a36f40f1a692.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/deserturi/sterilgarda_yocream_desert_alb_2_100g"
     },
     {
       "name": "STERILGARDA YoCream fructe de padure 2*100g",
@@ -107678,19 +107216,6 @@
       "url": "https://linella.md/ro/catalog/fructe/struguri_albi"
     },
     {
-      "name": "Struguri roz, kg",
-      "price": 39.95,
-      "old_price": null,
-      "discount": "",
-      "is_promo": false,
-      "product_code": "8671",
-      "category_slug": "fructe",
-      "category": "Fructe, legume, muraturi",
-      "image_url": "https://linella.md/public/products/2e7187c047999643ccab9979ac2056ea.webp",
-      "unit": "/0.5kg",
-      "url": "https://linella.md/ro/catalog/fructe/struguri_roz__kg"
-    },
-    {
       "name": "SUNEX Centura pentru sport",
       "price": 182.0,
       "old_price": null,
@@ -107952,10 +107477,10 @@
     },
     {
       "name": "SYOSS Balsam de păr KERATIN 440ml",
-      "price": 88.5,
-      "old_price": 101.7,
-      "discount": "-12%",
-      "is_promo": true,
+      "price": 101.7,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "296983",
       "category_slug": "ingrijire_par",
       "category": "Ingrijire par",
@@ -107965,10 +107490,10 @@
     },
     {
       "name": "SYOSS Balsam de păr REPAIR 440ml",
-      "price": 88.5,
-      "old_price": 101.7,
-      "discount": "-12%",
-      "is_promo": true,
+      "price": 101.7,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "296979",
       "category_slug": "ingrijire_par",
       "category": "Ingrijire par",
@@ -108329,10 +107854,10 @@
     },
     {
       "name": "SYOSS Șampon KERATIN 440ml",
-      "price": 88.5,
-      "old_price": 101.7,
-      "discount": "-12%",
-      "is_promo": true,
+      "price": 101.7,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "296991",
       "category_slug": "ingrijire_par",
       "category": "Ingrijire par",
@@ -108342,10 +107867,10 @@
     },
     {
       "name": "SYOSS Șampon REPAIR 440ml",
-      "price": 88.5,
-      "old_price": 101.7,
-      "discount": "-12%",
-      "is_promo": true,
+      "price": 101.7,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "296985",
       "category_slug": "ingrijire_par",
       "category": "Ingrijire par",
@@ -108706,10 +108231,10 @@
     },
     {
       "name": "TCHIBO Cafea Family Roasted 250g",
-      "price": 94.9,
-      "old_price": 115.0,
-      "discount": "-17%",
-      "is_promo": true,
+      "price": 115.0,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "37092",
       "category_slug": "cafea_macinata_",
       "category": "Cafea macinata",
@@ -108771,10 +108296,10 @@
     },
     {
       "name": "TCHIBO Cafea solubilă GOLD selection 50g",
-      "price": 69.9,
-      "old_price": 82.5,
-      "discount": "-15%",
-      "is_promo": true,
+      "price": 82.5,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "22609",
       "category_slug": "cafea",
       "category": "Cafea",
@@ -108784,10 +108309,10 @@
     },
     {
       "name": "TCHIBO Cafea solubilă GOLD selection 75g",
-      "price": 85.9,
-      "old_price": 104.0,
-      "discount": "-17%",
-      "is_promo": true,
+      "price": 104.0,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "197695",
       "category_slug": "cafea",
       "category": "Cafea",
@@ -110499,19 +110024,6 @@
       "url": "https://linella.md/ro/catalog/ciocolate_in_cutie/toffifee_praline_caramel_easter_375g"
     },
     {
-      "name": "TOFFIFEE Praline cu caramel 400g",
-      "price": 49.9,
-      "old_price": 199.0,
-      "discount": "-74%",
-      "is_promo": true,
-      "product_code": "2010602",
-      "category_slug": "ciocolate_in_cutie",
-      "category": "Ciocolate in cutie",
-      "image_url": "https://linella.md/public/products/86adaf349e3debfbbe63ded015991b73.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/ciocolate_in_cutie/toffifee_praline_cu_caramel_400g"
-    },
-    {
       "name": "TOFFIX Caramele Suc de fructe 148g",
       "price": 27.9,
       "old_price": null,
@@ -110848,19 +110360,6 @@
       "image_url": "https://linella.md/public/products/e37a1d782584c8b0a84d983dde27d2a7.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/baterii/toshiba_baterie_lr03_alkaline_red_4buc"
-    },
-    {
-      "name": "TOSHIBA Baterii 10buc",
-      "price": 55.3,
-      "old_price": 79.0,
-      "discount": "-30%",
-      "is_promo": true,
-      "product_code": "391923",
-      "category_slug": "baterii",
-      "category": "Baterii",
-      "image_url": "https://linella.md/public/products/46d69baee5878962787f4e2dff5dbac8.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/baterii/toshiba_baterii_10buc"
     },
     {
       "name": "TOSHIBA Baterii LR03, ААА de mare putere 10 buc",
@@ -112190,9 +111689,9 @@
     },
     {
       "name": "UNI Șervețele umede cu capac Baby Family, 100 bucăți",
-      "price": 27.5,
+      "price": 25.75,
       "old_price": 33.0,
-      "discount": "-16%",
+      "discount": "-21%",
       "is_promo": true,
       "product_code": "369455",
       "category_slug": "scutece_si_servetele_umede",
@@ -112291,19 +111790,6 @@
       "image_url": "https://linella.md/public/products/08257f9b69f4f2ed09ff1b472a931910.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/depozitarea_alimentelor/uscator_de_tacamuri"
-    },
-    {
-      "name": "Usturoi negru fermentat natural, 100g",
-      "price": 125.9,
-      "old_price": null,
-      "discount": "",
-      "is_promo": false,
-      "product_code": "458053",
-      "category_slug": "legume",
-      "category": "Fructe, legume, muraturi",
-      "image_url": "https://linella.md/public/products/ac90d79680999742011bbcb5e845fbd9.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/legume/usturoi_negru_fermentat_natural__100g"
     },
     {
       "name": "Usturoi plasă, 250 g",
@@ -113513,19 +112999,6 @@
       "image_url": "https://linella.md/public/products/10c65adf89fa0610d40ec8d02ba32968.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/machiaj/venita_set_p-u_laminarea_sprancenelor"
-    },
-    {
-      "name": "VENITA Solutie clatire par Anti-Yellow Silver 200ml",
-      "price": 35.6,
-      "old_price": 47.5,
-      "discount": "-25%",
-      "is_promo": true,
-      "product_code": "424315",
-      "category_slug": "vopsea_tonice",
-      "category": "Vopsea tonice",
-      "image_url": "https://linella.md/public/products/ba924cc1b5ae8dbb31ccef8ddc508cf7.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/vopsea_tonice/venita_solutie_clatire_par_anti-yellow_silver_200ml"
     },
     {
       "name": "VENITA Solutie clatire par Anti-Yellow Violet 200ml",
@@ -114985,29 +114458,16 @@
     },
     {
       "name": "Vinete",
-      "price": 14.95,
-      "old_price": 17.45,
-      "discount": "-14%",
-      "is_promo": true,
+      "price": 16.95,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "70650",
       "category_slug": "legume",
       "category": "Fructe, legume, muraturi",
       "image_url": "https://linella.md/public/products/34f1b6ee788d8c54e1a592b2442fc9a6.webp",
       "unit": "/0.5kg",
       "url": "https://linella.md/ro/catalog/legume/vinete"
-    },
-    {
-      "name": "VINTAGE HOME Odorizant cu betisoare Frutos Rojos 100ml",
-      "price": 74.9,
-      "old_price": null,
-      "discount": "",
-      "is_promo": false,
-      "product_code": "2005631",
-      "category_slug": "odorizanti",
-      "category": "Odorizanti",
-      "image_url": "https://linella.md/public/products/da9a852f1ebb9ca353d4f1b91f5ccff1.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/odorizanti/vintage_home_odorizant_cu_betisoare_frutos_rojos_100ml"
     },
     {
       "name": "VINTAGE HOME Odorizant cu betisoare Mango 100ml",
@@ -115151,19 +114611,6 @@
       "image_url": "https://linella.md/public/products/e084efd1325f2cb4a8d11e7667cf5cd2.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/creme/viorica_lapte_de_corp_nutritiv_250ml"
-    },
-    {
-      "name": "VIORICA Set pentru corp Îngrijire minuțioasă",
-      "price": 99.5,
-      "old_price": 199.0,
-      "discount": "-50%",
-      "is_promo": true,
-      "product_code": "348801",
-      "category_slug": "idei_de_cadouri",
-      "category": "Idei de cadouri",
-      "image_url": "https://linella.md/public/products/89c61fcb4535dba8e0ded582b3555221.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/idei_de_cadouri/viorica_set_pentru_corp_ingrijire_minutioasa"
     },
     {
       "name": "VIS Adjică clasică cu usturoi 225g",
@@ -115960,10 +115407,10 @@
     },
     {
       "name": "Vita Baby Nectar prune 175ml 5м+",
-      "price": 11.7,
-      "old_price": 13.5,
-      "discount": "-13%",
-      "is_promo": true,
+      "price": 13.5,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "7682",
       "category_slug": "alimentatia_copiilor",
       "category": "Alimentatia copiilor",
@@ -115973,10 +115420,10 @@
     },
     {
       "name": "VITA BABY Pireu mere-banana fără zahăr 6l+ 180g",
-      "price": 15.5,
-      "old_price": 17.5,
-      "discount": "-11%",
-      "is_promo": true,
+      "price": 17.5,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "408848",
       "category_slug": "alimentatia_copiilor",
       "category": "Alimentatia copiilor",
@@ -116025,10 +115472,10 @@
     },
     {
       "name": "Vita Baby Piure mere 4+ 180g",
-      "price": 15.5,
-      "old_price": 17.5,
-      "discount": "-11%",
-      "is_promo": true,
+      "price": 17.5,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "7653",
       "category_slug": "alimentatia_copiilor",
       "category": "Alimentatia copiilor",
@@ -116038,10 +115485,10 @@
     },
     {
       "name": "Vita Baby Suc mere-struguri 175ml 4м+",
-      "price": 11.7,
-      "old_price": 13.5,
-      "discount": "-13%",
-      "is_promo": true,
+      "price": 13.5,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "7687",
       "category_slug": "alimentatia_copiilor",
       "category": "Alimentatia copiilor",
@@ -116869,19 +116316,6 @@
       "url": "https://linella.md/ro/catalog/totul_pentru_curatenie_in_casa/vortex_lavete_universale_3buc"
     },
     {
-      "name": "VORTEX Servetele umede menajere p/u bucatarie 48buc",
-      "price": 54.25,
-      "old_price": 60.3,
-      "discount": "-10%",
-      "is_promo": true,
-      "product_code": "477715",
-      "category_slug": "articole_pentru_curatenia_suprafetelor",
-      "category": "Articole pentru curatenia suprafetelor",
-      "image_url": "https://linella.md/public/products/e6c464bd4abc268f53b72ad30943d6d8.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/articole_pentru_curatenia_suprafetelor/vortex_servetele_umede_menajere_p-u_bucatarie_48buc"
-    },
-    {
       "name": "VREMEA Barbatii sunt de pe Marte, femeile sunt de pe Venus",
       "price": 189.0,
       "old_price": null,
@@ -117182,9 +116616,9 @@
     },
     {
       "name": "WELLAFLEX Spuma de par pentru fixare puternica 200ml",
-      "price": 80.9,
+      "price": 93.1,
       "old_price": 98.0,
-      "discount": "-17%",
+      "discount": "-5%",
       "is_promo": true,
       "product_code": "387193",
       "category_slug": "ingrijire_par",
@@ -117195,9 +116629,9 @@
     },
     {
       "name": "WELLAFLEX Spuma de par pentru fixare puternica 200ml",
-      "price": 80.9,
+      "price": 93.1,
       "old_price": 98.0,
-      "discount": "-17%",
+      "discount": "-5%",
       "is_promo": true,
       "product_code": "387194",
       "category_slug": "ingrijire_par",
@@ -117208,10 +116642,10 @@
     },
     {
       "name": "WELLAFLEX Spumă de păr 2DAY №4 200ml",
-      "price": 82.5,
-      "old_price": 99.55,
-      "discount": "-17%",
-      "is_promo": true,
+      "price": 99.55,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "251334",
       "category_slug": "ingrijire_par",
       "category": "Ingrijire par",
@@ -117221,10 +116655,10 @@
     },
     {
       "name": "WELLAFLEX Spumă de păr №5 200ml",
-      "price": 82.5,
-      "old_price": 99.55,
-      "discount": "-17%",
-      "is_promo": true,
+      "price": 99.55,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "242439",
       "category_slug": "ingrijire_par",
       "category": "Ingrijire par",
@@ -117234,10 +116668,10 @@
     },
     {
       "name": "WELLAFLEX Șampon dry sensual rose 180ml",
-      "price": 114.5,
-      "old_price": 139.0,
-      "discount": "-17%",
-      "is_promo": true,
+      "price": 139.0,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "390394",
       "category_slug": "ingrijire_par",
       "category": "Ingrijire par",
@@ -117738,19 +117172,6 @@
       "image_url": "https://linella.md/public/products/d62bd4cf35796be076b6ad1b81ef9ffc.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/picnic/woodisteel_ac_frigarui_40cm"
-    },
-    {
-      "name": "WOOD&STEEL Suport pentru 8 ace frigararui",
-      "price": 62.3,
-      "old_price": 89.0,
-      "discount": "-30%",
-      "is_promo": true,
-      "product_code": "300999",
-      "category_slug": "picnic",
-      "category": "Picnic. Vacanta",
-      "image_url": "https://linella.md/public/products/6f62f787b0f33175032dcac37314eac5.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/picnic/woodisteel_suport_pentru_8_ace_frigararui"
     },
     {
       "name": "WOOGIE Caramela ice mint 170g",
@@ -118491,9 +117912,7 @@
       "category": "Produse de cofetarie",
       "image_url": "https://linella.md/public/products/91822e96771b5423063ff01b715c6d81.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/deserturi/yoli_jeleu_din_zer_cu_suc_de_visina_0__130g",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/deserturi/yoli_jeleu_din_zer_cu_suc_de_visina_0__130g"
     },
     {
       "name": "YOLI Jeleu din zer cu suc de zmeura 0%, 130g",
@@ -120056,6 +119475,21 @@
       "url": "https://linella.md/ro/catalog/conserve_de_peste/akvatoriya_ton_in_ulei_pentru_salata_185g"
     },
     {
+      "name": "АЛЕНКА Pandispan cu crema de frisca 150g",
+      "price": 29.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
+      "product_code": "2012034",
+      "category_slug": "rulade_muffin_i_chec",
+      "category": "Rulade muffin i chec",
+      "image_url": "https://linella.md/public/products/5a97fe67335dea5e957fc822d5ac5496.webp",
+      "unit": "",
+      "url": "https://linella.md/ro/catalog/rulade_muffin_i_chec/alenka_pandispan_cu_crema_de_frisca_150g",
+      "new_on": "2026-06-16",
+      "new_until": "2026-06-16 23:59:59"
+    },
+    {
       "name": "АЛЬПИНА ПАБЛИШЕР Cele 7 deprinderi ale persoanelor eficace",
       "price": 236.0,
       "old_price": null,
@@ -120584,7 +120018,7 @@
       "product_code": "2001261",
       "category_slug": "ciocolata_tablete",
       "category": "Ciocolata tablete",
-      "image_url": "https://linella.md/public/products/b36e4580d68de80f2fb8b0806ed0f7aa.webp",
+      "image_url": "https://linella.md/public/products/b3dcccf0048d79566ac591f87406845b.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/ciocolata_tablete/babaevskiy ciocolata_neagra_75g"
     },
@@ -121328,19 +120762,6 @@
       "image_url": "https://linella.md/public/products/46bdfe0e272ea3c92bf416428e4b0e49.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/cascaval/brest-litovsk_branza_semitare_gollandskii_45__130g"
-    },
-    {
-      "name": "БРЕСТ-ЛИТОВСК Branza semitare Gollandskii 45%, kg",
-      "price": 189.0,
-      "old_price": 215.0,
-      "discount": "-12%",
-      "is_promo": true,
-      "product_code": "464696",
-      "category_slug": "cascaval",
-      "category": "Cascaval",
-      "image_url": "https://linella.md/public/products/a679f1d6c68a3c238786d69317c72284.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/cascaval/brest-litovsk_branza_semitare_gollandskii_45__kg"
     },
     {
       "name": "БРЕСТ-ЛИТОВСК Branza semitare Rossiiskii 50%, 130g",
@@ -124178,10 +123599,10 @@
     },
     {
       "name": "КРАСНЫЙ ОКТЯБРЬ Pandispan cu frisca АЛЁНКА 200g",
-      "price": 27.9,
-      "old_price": 34.9,
-      "discount": "-20%",
-      "is_promo": true,
+      "price": 34.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "279276",
       "category_slug": "rulade_muffin_i_chec",
       "category": "Rulade muffin i chec",
@@ -124369,9 +123790,7 @@
       "category": "Inghetata",
       "image_url": "https://linella.md/public/products/881abd82adaa572176f69ba1ebc393d4.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/inghetata/lasunka_inghetata_stacan_velican_ciocolata_100g_",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/inghetata/lasunka_inghetata_stacan_velican_ciocolata_100g_"
     },
     {
       "name": "ЛАСУНКА Înghețată Stacan Velican caise/vișină 100g",
@@ -124528,19 +123947,6 @@
       "image_url": "https://linella.md/public/products/da7405beb521c9c0d525c0a9ac3020de.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/rechizite_scolare/luch_clei_pva-m_85g"
-    },
-    {
-      "name": "ЛУЧ Clei PVА-M 45g",
-      "price": 14.6,
-      "old_price": null,
-      "discount": "",
-      "is_promo": false,
-      "product_code": "166130",
-      "category_slug": "rechizite_scolare",
-      "category": "Rechizite scolare",
-      "image_url": "https://linella.md/public/products/6c0a2a64d70a0cb49ea696dd4fa7cac9.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/rechizite_scolare/luch_clei_pva-m__45g_"
     },
     {
       "name": "ЛУЧ Creioane color 12 culori Classica",
@@ -125766,10 +125172,10 @@
     },
     {
       "name": "МАХЕЕВЪ Maioneza Cu oua de prepelita 67%, 380g",
-      "price": 39.9,
-      "old_price": 46.9,
-      "discount": "-14%",
-      "is_promo": true,
+      "price": 46.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "210089",
       "category_slug": "maioneza__ketchup__sosuri",
       "category": "Maioneza  ketchup  sosuri",
@@ -125779,10 +125185,10 @@
     },
     {
       "name": "МАХЕЕВЪ Maioneza Cu ulei de masline 67%, 380g",
-      "price": 39.9,
-      "old_price": 46.9,
-      "discount": "-14%",
-      "is_promo": true,
+      "price": 46.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "210085",
       "category_slug": "maioneza__ketchup__sosuri",
       "category": "Maioneza  ketchup  sosuri",
@@ -125792,10 +125198,10 @@
     },
     {
       "name": "МАХЕЕВЪ Maioneza Provensal 50.5%, 380g",
-      "price": 39.9,
-      "old_price": 46.9,
-      "discount": "-14%",
-      "is_promo": true,
+      "price": 46.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "24777",
       "category_slug": "maioneza__ketchup__sosuri",
       "category": "Maioneza  ketchup  sosuri",
@@ -126204,9 +125610,7 @@
       "category": "Produse lactate",
       "image_url": "https://linella.md/public/products/bb994c2c0377470df33248a1601f490a.webp",
       "unit": "",
-      "url": "https://linella.md/ro/catalog/lapte/molochnyiy_mir_lapte_25_uht_1l",
-      "new_on": "2026-06-14",
-      "new_until": "2026-06-14 23:59:59"
+      "url": "https://linella.md/ro/catalog/lapte/molochnyiy_mir_lapte_25_uht_1l"
     },
     {
       "name": "МОЛОЧНЫЙ МИР Lapte UHT 3.2%, 1l",
@@ -126340,10 +125744,10 @@
     },
     {
       "name": "МОРШИНСКАЯ Apa Minerala carbozificata 1.5L",
-      "price": 16.5,
-      "old_price": 18.5,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 18.5,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "3439",
       "category_slug": "apa_minerala",
       "category": "Apa minerala",
@@ -126353,10 +125757,10 @@
     },
     {
       "name": "МОРШИНСКАЯ Apa Minerala Necarbogazata 1.5L",
-      "price": 16.5,
-      "old_price": 18.5,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 18.5,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "3445",
       "category_slug": "apa_minerala",
       "category": "Apa minerala",
@@ -126366,10 +125770,10 @@
     },
     {
       "name": "МОРШИНСКАЯ Apa Minerala Slab carbozificata 1.5L",
-      "price": 16.5,
-      "old_price": 18.5,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 18.5,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "3443",
       "category_slug": "apa_minerala",
       "category": "Apa minerala",
@@ -126405,10 +125809,10 @@
     },
     {
       "name": "МОРШИНСКАЯ Apă minerală, plată 6l",
-      "price": 54.5,
-      "old_price": 60.9,
-      "discount": "-10%",
-      "is_promo": true,
+      "price": 60.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "3442",
       "category_slug": "apa_minerala",
       "category": "Apa minerala",
@@ -126431,10 +125835,10 @@
     },
     {
       "name": "МОСКОВСКИЙ Maioneza 67% Provansal Fin 374g",
-      "price": 34.9,
-      "old_price": 46.9,
-      "discount": "-25%",
-      "is_promo": true,
+      "price": 46.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "414547",
       "category_slug": "maioneza__ketchup__sosuri",
       "category": "Maioneza  ketchup  sosuri",
@@ -126470,10 +125874,10 @@
     },
     {
       "name": "МОСКОВСКИЙ Maioneză 67% Provence 390ml",
-      "price": 34.9,
-      "old_price": 46.9,
-      "discount": "-25%",
-      "is_promo": true,
+      "price": 46.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "305903",
       "category_slug": "maioneza__ketchup__sosuri",
       "category": "Maioneza  ketchup  sosuri",
@@ -126483,10 +125887,10 @@
     },
     {
       "name": "МОСКОВСКИЙ Maioneză acasă 55%, 400g",
-      "price": 34.9,
-      "old_price": 46.9,
-      "discount": "-25%",
-      "is_promo": true,
+      "price": 46.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "196308",
       "category_slug": "maioneza__ketchup__sosuri",
       "category": "Maioneza  ketchup  sosuri",
@@ -126496,10 +125900,10 @@
     },
     {
       "name": "МОСКОВСКИЙ Maioneză cu frișcă 67%, 374g",
-      "price": 34.9,
-      "old_price": 46.9,
-      "discount": "-25%",
-      "is_promo": true,
+      "price": 46.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "125858",
       "category_slug": "maioneza__ketchup__sosuri",
       "category": "Maioneza  ketchup  sosuri",
@@ -126509,10 +125913,10 @@
     },
     {
       "name": "МОСКОВСКИЙ Maioneză cu ouă de prepeliță 67%, 390ml",
-      "price": 34.9,
-      "old_price": 46.9,
-      "discount": "-25%",
-      "is_promo": true,
+      "price": 46.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "322287",
       "category_slug": "maioneza__ketchup__sosuri",
       "category": "Maioneza  ketchup  sosuri",
@@ -126961,19 +126365,6 @@
       "image_url": "https://linella.md/public/products/8583778fe80987a6c16b3f5ed87bcf11.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/bauturi_racoritoare/natahtari_bautura_carbogazoasa_de_pere_05l"
-    },
-    {
-      "name": "НАШ МОЛОЧНИК Branza topita cu aroma de julien din ciuperci 160g",
-      "price": 18.9,
-      "old_price": 27.95,
-      "discount": "-32%",
-      "is_promo": true,
-      "product_code": "517350",
-      "category_slug": "crema_de_branza",
-      "category": "Crema de branza",
-      "image_url": "https://linella.md/public/products/d9096bc0eadc38d1149ab8a3a9c91c24.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/crema_de_branza/nash_molochnik_branza_topita_cu_aroma_de_julien_din_ciuperci_160g"
     },
     {
       "name": "НАШ МОЛОЧНИК Branza topita cu aroma de Yantar 160g",
@@ -127572,19 +126963,6 @@
       "image_url": "https://linella.md/public/products/4d4f1e83cd92fc234aa29babd1b2fe48.webp",
       "unit": "",
       "url": "https://linella.md/ro/catalog/maioneza__ketchup__sosuri/piknik_maioneza_de_vara_25__760g_galeata"
-    },
-    {
-      "name": "ПИРЯТИН Branza semitare GOLLANDSKII feliat 150g",
-      "price": 26.9,
-      "old_price": 36.95,
-      "discount": "-27%",
-      "is_promo": true,
-      "product_code": "477342",
-      "category_slug": "cascaval",
-      "category": "Cascaval",
-      "image_url": "https://linella.md/public/products/c1975d589d17d4e283897aae2598c8bf.webp",
-      "unit": "",
-      "url": "https://linella.md/ro/catalog/cascaval/piryatin_branza_semitare_gollandskii_feliat_150g"
     },
     {
       "name": "ПИРЯТИН Branza semitare SLIVOCINII feliat 150g",
@@ -129732,6 +129110,21 @@
       "url": "https://linella.md/ro/catalog/bomboane_i_praline/slavyanka_bomboane_super_step_144g"
     },
     {
+      "name": "СЛАВЯНКА Bomboane vafe. Marele Sankt Petersburg 175g",
+      "price": 39.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
+      "product_code": "2005751",
+      "category_slug": "bomboane_i_praline",
+      "category": "Bomboane i praline",
+      "image_url": "https://linella.md/public/products/4d2ef7fab9cb5f59312995257016e06b.webp",
+      "unit": "",
+      "url": "https://linella.md/ro/catalog/bomboane_i_praline/slavyanka_bomboane_vafe_marele_sankt_petersburg_175g",
+      "new_on": "2026-06-16",
+      "new_until": "2026-06-16 23:59:59"
+    },
+    {
       "name": "СЛАВЯНКА Bomboane Золотой Степ 155g",
       "price": 34.5,
       "old_price": null,
@@ -130773,10 +130166,10 @@
     },
     {
       "name": "ТОРЧИН Sos Adjika 180g",
-      "price": 27.9,
-      "old_price": 32.9,
-      "discount": "-15%",
-      "is_promo": true,
+      "price": 32.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "294120",
       "category_slug": "sosuri_i_dressing",
       "category": "Sosuri i dressing",
@@ -130786,10 +130179,10 @@
     },
     {
       "name": "ТОРЧИН Sos cu usturoi 200g",
-      "price": 27.9,
-      "old_price": 32.9,
-      "discount": "-15%",
-      "is_promo": true,
+      "price": 32.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "106642",
       "category_slug": "sosuri_i_dressing",
       "category": "Sosuri i dressing",
@@ -130799,10 +130192,10 @@
     },
     {
       "name": "ТОРЧИН Sos de soia Classic 500ml",
-      "price": 94.9,
-      "old_price": 109.0,
-      "discount": "-12%",
-      "is_promo": true,
+      "price": 109.0,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "225970",
       "category_slug": "sosuri_i_dressing",
       "category": "Sosuri i dressing",
@@ -130838,10 +130231,10 @@
     },
     {
       "name": "ТОРЧИН Sos mexicano 200g",
-      "price": 27.9,
-      "old_price": 32.9,
-      "discount": "-15%",
-      "is_promo": true,
+      "price": 32.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "106635",
       "category_slug": "sosuri_i_dressing",
       "category": "Sosuri i dressing",
@@ -130851,10 +130244,10 @@
     },
     {
       "name": "ТОРЧИН Sos Satebeli 200g",
-      "price": 27.9,
-      "old_price": 32.9,
-      "discount": "-15%",
-      "is_promo": true,
+      "price": 32.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "106636",
       "category_slug": "sosuri_i_dressing",
       "category": "Sosuri i dressing",
@@ -130864,10 +130257,10 @@
     },
     {
       "name": "ТОРЧИН Sos tartar 200g",
-      "price": 27.9,
-      "old_price": 32.9,
-      "discount": "-15%",
-      "is_promo": true,
+      "price": 32.9,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "106640",
       "category_slug": "sosuri_i_dressing",
       "category": "Sosuri i dressing",
@@ -132190,10 +131583,10 @@
     },
     {
       "name": "ЧИСТАЯ ЛИНИЯ Șampon Ultrahidratare 400ml",
-      "price": 53.5,
-      "old_price": 61.5,
-      "discount": "-13%",
-      "is_promo": true,
+      "price": 61.5,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "344559",
       "category_slug": "ingrijire_par",
       "category": "Ingrijire par",
@@ -133763,10 +133156,10 @@
     },
     {
       "name": "ЯГОТИНСЬКЕ Smantana fara lactoza 15%, 300g",
-      "price": 19.9,
-      "old_price": 24.5,
-      "discount": "-18%",
-      "is_promo": true,
+      "price": 24.5,
+      "old_price": null,
+      "discount": "",
+      "is_promo": false,
       "product_code": "469104",
       "category_slug": "smantana",
       "category": "Smantana",
