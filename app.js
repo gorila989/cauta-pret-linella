@@ -59,32 +59,17 @@ const XLSX_URL = "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js
 
 const SITE_CATEGORY_GROUPS = [
   ["Fructe, fructe de padure, Legume, Muraturi", ["fructe, legume, muraturi", "fructe", "fructe de padure", "legume", "salate verde", "verdeturi", "muraturi"]],
-  ["Culinarie", ["culinarie", "fel principal", "salate", "to go", "placinde", "placinte", "vertutas"]],
-  ["Produse Panificatie", ["panificatie", "paine", "patiserie", "colaci", "lavas", "pita", "chifle", "croissante", "khachapuri", "covrigi", "gogosi"]],
-  ["Produse de cofetarie", ["produse de cofetarie", "torturi", "prajituri", "deserturi"]],
-  ["Mezeluri si crenvursti", ["mezeluri", "parizer", "crenvursti", "safalade", "afumaturi", "sunca", "salamuri", "toba", "slanina"]],
   ["Produse lactate", ["produse lactate", "lapte", "chefir", "iaurturi", "smantana", "branza de vaci", "branza feta", "tofu", "frisca", "lapte condensat", "unt", "margarina"]],
-  ["Cascaval", ["cascaval", "branza tare", "mozzarella", "branza moale", "branza procesata", "tartina"]],
-  ["Oua", ["oua"]],
-  ["Carne", ["carne", "carne proaspata", "carne tocata", "marinate", "carnaciori", "mici"]],
-  ["Peste", ["peste", "fructe de mare", "icre"]],
   ["Dulciuri", ["dulciuri", "bomboane", "ciocolate", "ciocolata", "batoane", "caramele", "drajeuri", "gume", "biscuiti", "turte", "napolitane", "muffin", "chec", "panettone", "blaturi", "diabetici", "crema de ciocolata"]],
   ["Ceai si cafea", ["ceai", "cafea", "cacao", "cappucinno", "cicoare"]],
-  ["Crupe si boboase", ["orez", "hrisca", "bulgur", "arpacas", "mei", "gris", "arnaut", "malai", "couscous", "grau", "orz", "mazare", "linte", "naut", "fasole", "crupe"]],
-  ["Bacanie", ["bacanie", "sushi", "zahar", "sare", "paste", "faina", "pesmet", "fulgi", "cereale", "muesli", "granola", "ulei", "maioneza", "ketchup", "sosuri", "dressing", "bors", "otet", "alimente instant", "condimente", "mirodenii", "articole pentru copt", "jeleu", "kissel"]],
-  ["Conserve", ["conserve", "masline", "pateuri", "ciuperci", "miere", "magiun", "gem", "dulceturi"]],
-  ["Produse congelate", ["congelate", "aluat congelat", "pizza", "pelmeni", "coltunasi", "inghetata", "gheata"]],
   ["Nuci, fructe uscate si seminte", ["fructe uscate", "nuci", "seminte", "amestecuri de nuci"]],
   ["Snack-uri", ["snack", "chipsuri", "nachos", "sticks", "crackers", "pesmeti", "popcorn", "arahide", "fistic", "gustari"]],
   ["Bauturi nealcoolice", ["apa minerala", "bauturi racoritoare", "suc", "nectar", "energizante"]],
-  ["Bauturi alcoolice", ["vin", "divin", "votca", "vodca", "whiskey", "rom", "tequila", "gin", "brandy", "lichior", "balsam", "vermut", "aperol", "bere", "alcoolice"]],
-  ["Produse chimice de uz casnic", ["detergenti", "curatenia suprafetelor", "masina de spalat", "repelente", "odorizanti"]],
-  ["Produse cosmetice", ["parfumerie", "machiaj", "creme", "ser", "masti", "plasturi cosmetici", "demachiere", "vopsea", "tonice", "solara"]],
-  ["Igiena si ingrijire", ["sapun", "ingrijire corp", "ingrijire par", "igiena orala", "igiena intima", "bumbac", "barbatilor", "servetele umede", "trusa de prim ajutor"]],
-  ["Hrana & Accesorii animale", ["hrana pisici", "hrana caini", "animale", "asternut"]]
+  ["Bauturi alcoolice", ["vin", "divin", "votca", "vodca", "whiskey", "rom", "tequila", "gin", "brandy", "lichior", "balsam", "vermut", "aperol", "bere", "alcoolice"]]
 ];
 
 const VISIBLE_MAIN_CATEGORIES = SITE_CATEGORY_GROUPS.map(([name]) => name);
+const VISIBLE_MAIN_CATEGORY_SET = new Set(VISIBLE_MAIN_CATEGORIES);
 
 const normalize = (value) =>
   value
@@ -677,6 +662,7 @@ function applyProducts(data, offline) {
   state.products = data.products.map((product) => {
     const categorySlug = product.category_slug || categorySlugFromUrl(product.url);
     const subcategoryName = product.category || labelFromSlug(categorySlug);
+    const mainCategory = mainCategoryFromName(subcategoryName);
     return {
       ...product,
       category_slug: categorySlug,
@@ -684,10 +670,10 @@ function applyProducts(data, offline) {
       subcategory_key: normalize(subcategoryName),
       subcategory_name: subcategoryName,
       category: subcategoryName,
-      main_category: mainCategoryFromName(subcategoryName),
+      main_category: mainCategory,
       search: normalize(`${product.name} ${product.product_code || ""}`)
     };
-  });
+  }).filter((product) => VISIBLE_MAIN_CATEGORY_SET.has(product.main_category));
   updatePriceHistory(state.products, data.generated_at);
   renderCategories();
   renderSubcategories();

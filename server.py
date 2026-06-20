@@ -2,9 +2,12 @@
 import argparse
 import json
 import os
+import queue
+import re
 import subprocess
 import sys
 import threading
+import time
 from datetime import datetime, timedelta
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -17,6 +20,8 @@ PRODUCTS_FILE = ROOT / "products.json"
 CHANGES_FILE = ROOT / "changes.json"
 SCRAPER_FILE = ROOT / "scrape_linella.py"
 SOURCE_URL = "https://linella.md/ro/catalog"
+REFRESH_TIMEOUT_SECONDS = 1800
+REFRESH_IDLE_TIMEOUT_SECONDS = 120
 
 status_lock = threading.Lock()
 status = {
@@ -84,6 +89,7 @@ def refresh_products(max_pages, sleep_seconds):
     previous = load_products_file()
     command = [
         sys.executable,
+        "-u",
         str(SCRAPER_FILE),
         "--source-url",
         SOURCE_URL,
@@ -94,27 +100,153 @@ def refresh_products(max_pages, sleep_seconds):
         "--out",
         str(PRODUCTS_FILE),
     ]
+    process = None
     try:
-        completed = subprocess.run(
+        process = subprocess.Popen(
             command,
             cwd=str(ROOT),
             text=True,
             encoding="utf-8",
             errors="replace",
-            capture_output=True,
-            timeout=600,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            bufsize=1,
         )
-        if completed.returncode != 0:
-            message = completed.stderr.strip().splitlines()[-1:] or ["Actualizarea a esuat."]
-            set_status(running=False, success=False, message=message[0], finished_at=now())
+        started = time.monotonic()
+        current_page = 0
+        total_pages = 0
+        remaining_pages = 0
+        current_category = ""
+        current_category_index = 0
+        total_categories = 0
+        current_division = ""
+        current_division_index = 0
+        total_divisions = 0
+        last_line = ""
+
+        line_queue = queue.Queue()
+
+        def read_output():
+            for output_line in process.stdout or []:
+                line_queue.put(output_line)
+
+        threading.Thread(target=read_output, daemon=True).start()
+
+        while process.poll() is None:
+            if time.monotonic() - started > REFRESH_TIMEOUT_SECONDS:
+                process.kill()
+                raise subprocess.TimeoutExpired(command, REFRESH_TIMEOUT_SECONDS)
+
+            try:
+                raw_line = line_queue.get(timeout=REFRESH_IDLE_TIMEOUT_SECONDS)
+            except queue.Empty:
+                process.kill()
+                raise TimeoutError(
+                    f"Nu am primit progres de {REFRESH_IDLE_TIMEOUT_SECONDS} secunde. Linella sau conexiunea s-a blocat."
+                )
+
+            last_line = raw_line.strip()
+
+            if last_line.startswith("Division progress:"):
+                division_match = re.search(r"Division progress:\s*(\d+)/(\d+)\s+(.+)", last_line)
+                if division_match:
+                    current_division_index = int(division_match.group(1))
+                    total_divisions = int(division_match.group(2))
+                    current_division = division_match.group(3)
+                    current_category = ""
+                    current_category_index = 0
+                    total_categories = 0
+                    divisions_left = max(total_divisions - current_division_index, 0)
+                    set_status(message=f"Diviziunea {current_division_index} din {total_divisions}: {current_division}. Au ramas {divisions_left} diviziuni...")
+            elif last_line.startswith("Category progress:"):
+                category_match = re.search(r"Category progress:\s*(\d+)/(\d+)\s+(.+)", last_line)
+                if category_match:
+                    current_category_index = int(category_match.group(1))
+                    total_categories = int(category_match.group(2))
+                    current_category = category_match.group(3)
+                    current_page = 0
+                    total_pages = 0
+                    remaining_pages = 0
+                    categories_left = max(total_categories - current_category_index, 0)
+                    division_prefix = f"Diviziunea {current_division_index}/{total_divisions}, " if total_divisions else ""
+                    set_status(message=f"{division_prefix}subcategoria {current_category_index} din {total_categories}: {current_category}. Au ramas {categories_left} subcategorii...")
+            elif last_line.startswith("Downloading "):
+                page_match = re.search(r"[?&]page=(\d+)", last_line)
+                current_page = int(page_match.group(1)) if page_match else 1
+                division_prefix = f"Diviziunea {current_division_index}/{total_divisions}, " if total_divisions else ""
+                category_prefix = f"subcategoria {current_category_index}/{total_categories}, " if total_categories else ""
+                if total_pages:
+                    remaining_pages = max(total_pages - current_page, 0)
+                    set_status(message=f"{division_prefix}{category_prefix}descarc pagina {current_page} din {total_pages}. Au ramas {remaining_pages} pagini...")
+                else:
+                    set_status(message=f"{division_prefix}{category_prefix}descarc pagina {current_page} din catalog...")
+            elif last_line.startswith("Total pages:"):
+                total_match = re.search(r"Total pages:\s*(\d+)", last_line)
+                total_pages = int(total_match.group(1)) if total_match else 0
+                remaining_pages = max(total_pages - current_page, 0) if current_page else total_pages
+                division_prefix = f"Diviziunea {current_division_index}/{total_divisions}, " if total_divisions else ""
+                category_prefix = f"subcategoria {current_category_index}/{total_categories}: " if total_categories else ""
+                if total_pages:
+                    set_status(message=f"{division_prefix}{category_prefix}are {total_pages} pagini. Au ramas {remaining_pages} pagini...")
+            elif last_line.startswith("Page progress:"):
+                progress_match = re.search(r"Page progress:\s*(\d+)/(\d+)", last_line)
+                if progress_match:
+                    current_page = int(progress_match.group(1))
+                    total_pages = int(progress_match.group(2))
+                    remaining_pages = max(total_pages - current_page, 0)
+                    division_prefix = f"Diviziunea {current_division_index}/{total_divisions}, " if total_divisions else ""
+                    category_prefix = f"subcategoria {current_category_index}/{total_categories}, " if total_categories else ""
+                    set_status(message=f"{division_prefix}{category_prefix}descarc pagina {current_page} din {total_pages}. Au ramas {remaining_pages} pagini...")
+            elif "found" in last_line and "products" in last_line:
+                found_match = re.search(r"found\s+(\d+)\s+products", last_line)
+                found = found_match.group(1) if found_match else "?"
+                division_prefix = f"Diviziunea {current_division_index}/{total_divisions}, " if total_divisions else ""
+                category_prefix = f"subcategoria {current_category_index}/{total_categories}, " if total_categories else ""
+                if total_pages:
+                    set_status(message=f"{division_prefix}{category_prefix}pagina {current_page} din {total_pages}: {found} produse. Au ramas {remaining_pages} pagini...")
+                else:
+                    set_status(message=f"{division_prefix}{category_prefix}pagina {current_page}: {found} produse gasite. Continui...")
+            elif last_line.startswith("Wrote "):
+                set_status(message="Salvez baza de produse...")
+
+        while not line_queue.empty():
+            last_line = line_queue.get().strip() or last_line
+
+        return_code = process.wait()
+        if return_code != 0:
+            set_status(
+                running=False,
+                success=False,
+                message=last_line or "Actualizarea a esuat.",
+                finished_at=now(),
+            )
             return
         current = load_products_file() or {"products": []}
-        write_changes(previous, current)
+        changes = write_changes(previous, current)
         count = count_products()
+        changed_count = len(changes.get("upserts", []))
+        deleted_count = len(changes.get("deleted", []))
+        new_count = changes.get("new_count", 0)
+        price_count = changes.get("price_changed_count", 0)
         set_status(
             running=False,
             success=True,
-            message=f"Actualizat cu succes: {count} produse.",
+            message=f"Actualizat: {count} produse. Diferente: {changed_count}, noi: {new_count}, pret schimbat: {price_count}, sterse: {deleted_count}.",
+            finished_at=now(),
+        )
+    except subprocess.TimeoutExpired:
+        minutes = REFRESH_TIMEOUT_SECONDS // 60
+        set_status(
+            running=False,
+            success=False,
+            message=f"Actualizarea a durat peste {minutes} minute. Linella se incarca greu; incearca din nou mai tarziu.",
+            finished_at=now(),
+        )
+    except TimeoutError as exc:
+        set_status(
+            running=False,
+            success=False,
+            message=f"Actualizarea s-a blocat: {exc}",
             finished_at=now(),
         )
     except Exception as exc:
@@ -147,18 +279,28 @@ def write_changes(previous, current):
     new_by_key = {product_key(product): product for product in current.get("products", []) if product_key(product)}
 
     upserts = []
+    new_count = 0
+    price_changed_count = 0
     for key, product in new_by_key.items():
         old_product = old_by_key.get(key)
         if old_product is None:
             if had_previous_catalog:
                 product["new_on"] = today()
                 product["new_until"] = end_of_today()
+                new_count += 1
         elif marker_is_today(old_product):
             product["new_on"] = old_product.get("new_on") or today()
             product["new_until"] = end_of_today()
         else:
             product.pop("new_on", None)
             product.pop("new_until", None)
+
+        if old_product is not None and (
+            old_product.get("price") != product.get("price") or
+            old_product.get("old_price") != product.get("old_price") or
+            old_product.get("discount") != product.get("discount")
+        ):
+            price_changed_count += 1
 
         if old_product != product:
             upserts.append(product)
@@ -169,11 +311,14 @@ def write_changes(previous, current):
         "generated_at": current.get("generated_at"),
         "source": current.get("source"),
         "full_count": len(current.get("products", [])),
+        "new_count": new_count,
+        "price_changed_count": price_changed_count,
         "upserts": upserts,
         "deleted": deleted,
     }
     save_products(current)
     CHANGES_FILE.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    return payload
 
 
 def manifest_payload():

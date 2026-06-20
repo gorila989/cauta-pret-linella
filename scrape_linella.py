@@ -14,6 +14,18 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 BASE_URL = "https://linella.md"
 DEFAULT_SOURCE_URL = "https://linella.md/ro/catalog"
 USER_AGENT = "Mozilla/5.0 (compatible; CautaPret/1.0; +https://linella.md/)"
+DEFAULT_CATEGORY_GROUPS = [
+    ("Fructe, legume, muraturi", ["fructe", "legume", "muraturi", "fructe_uscate_532"]),
+    ("Produse lactate", ["lapte", "chefir", "iaurturi", "smantana", "branza_proaspata", "branza_topita", "crema_de_branza", "frisca_i_lapte_condensat", "lapte_condensat", "unt_i_margarina", "margarina"]),
+    ("Dulciuri", ["alte_dulciuri", "batoane_de_ciocolata", "bomboane_i_praline", "ciocolata_tablete", "ciocolate_in_cutie", "crema_de_ciocolata", "gume_de_mestecat_i_bomboane_gumate", "_napolitane", "biscuiti_i_fursecuri", "turte_dulci_i_covrigi"]),
+    ("Ceai si cafea", ["ceai_infuzie", "ceai_pachetele", "cafea", "cafea_boabe_", "cafea_in_capsule", "cafea_macinata_", "cacao"]),
+    ("Nuci, fructe uscate si seminte", ["amestecuri_de_nuci_si_fructe_uscate", "arahide_fistic_i_mix_seminte", "nuci", "seminte", "seminte_floarea_soarelui_i_dovleac"]),
+    ("Snack-uri", ["chipsuri", "popcorn", "sticks__crackers_i_snack_expandat"]),
+    ("Bauturi nealcoolice", ["apa_minerala", "bauturi_racoritoare", "energizante", "suc_i_nectar"]),
+    ("Bauturi alcoolice", ["bauturi_slab_alcoolice", "bere", "divin", "lichior_balsam_vermut_aperol", "rom_tequila_gin_brandi", "vin", "vin_spumant", "votca_", "whiskey"]),
+]
+DEFAULT_CATEGORY_SLUGS = [slug for _, slugs in DEFAULT_CATEGORY_GROUPS for slug in slugs]
+DEFAULT_SLUG_GROUP = {slug: group for group, slugs in DEFAULT_CATEGORY_GROUPS for slug in slugs}
 
 
 CATEGORY_NAMES = {
@@ -134,6 +146,13 @@ def parse_products(page_html):
     return products
 
 
+def parse_total_pages(page_html):
+    pages = [1]
+    for match in re.finditer(r'[?&]page=(\d+)', page_html, re.IGNORECASE):
+        pages.append(int(match.group(1)))
+    return max(pages)
+
+
 def parse_detail(page_html):
     code_match = re.search(r"Cod produs:\s*<span>\s*([^<]+)\s*</span>", page_html, re.IGNORECASE)
     code = clean_text(code_match.group(1)) if code_match else ""
@@ -148,24 +167,56 @@ def enrich_product(product):
         return {**product, "detail_error": str(exc)}
 
 
-def scrape(source_url, max_pages, sleep_seconds, with_codes=False, detail_workers=6):
+def group_category_slugs(category_slugs):
+    grouped = []
+    by_name = {}
+    for slug in category_slugs:
+        group_name = DEFAULT_SLUG_GROUP.get(slug, "Alte categorii")
+        if group_name not in by_name:
+            by_name[group_name] = []
+            grouped.append((group_name, by_name[group_name]))
+        by_name[group_name].append(slug)
+    return grouped
+
+
+def scrape(source_url, max_pages, sleep_seconds, with_codes=False, detail_workers=6, category_slugs=None):
     all_products = []
     seen_urls = set()
-    for page in range(1, max_pages + 1):
-        url = source_url if page == 1 else f"{source_url}?page={page}"
-        print(f"Downloading {url}")
-        page_products = parse_products(fetch(url))
-        print(f"  found {len(page_products)} products")
-        for product in page_products:
-            if product["url"] not in seen_urls:
-                seen_urls.add(product["url"])
-                all_products.append(product)
-        if not page_products:
-            break
-        time.sleep(sleep_seconds)
+    slugs = [slug.strip().strip("/") for slug in category_slugs or [] if slug.strip()]
+    grouped_sources = group_category_slugs(slugs) if slugs else [("Catalog complet", [""])]
+
+    for group_index, (group_name, group_slugs) in enumerate(grouped_sources, start=1):
+        print(f"Division progress: {group_index}/{len(grouped_sources)} {group_name}", flush=True)
+        for source_index, source_name in enumerate(group_slugs, start=1):
+            current_source_url = source_url if not source_name else f"{source_url.rstrip('/')}/{source_name}"
+            print(f"Category progress: {source_index}/{len(group_slugs)} {source_name or 'catalog'}", flush=True)
+            total_pages = None
+            for page in range(1, max_pages + 1):
+                url = current_source_url if page == 1 else f"{current_source_url}?page={page}"
+                print(f"Downloading {url}", flush=True)
+                try:
+                    page_html = fetch(url)
+                except Exception as exc:
+                    print(f"  category skipped: {exc}", flush=True)
+                    break
+                if total_pages is None:
+                    total_pages = min(parse_total_pages(page_html), max_pages)
+                    print(f"Total pages: {total_pages}", flush=True)
+                print(f"Page progress: {page}/{total_pages}", flush=True)
+                page_products = parse_products(page_html)
+                print(f"  found {len(page_products)} products", flush=True)
+                for product in page_products:
+                    if product["url"] not in seen_urls:
+                        seen_urls.add(product["url"])
+                        all_products.append(product)
+                if not page_products:
+                    break
+                if total_pages and page >= total_pages:
+                    break
+                time.sleep(sleep_seconds)
 
     if with_codes and all_products:
-        print(f"Downloading product codes for {len(all_products)} products")
+        print(f"Downloading product codes for {len(all_products)} products", flush=True)
         enriched = []
         with ThreadPoolExecutor(max_workers=detail_workers) as executor:
             futures = [executor.submit(enrich_product, product) for product in all_products]
@@ -173,7 +224,7 @@ def scrape(source_url, max_pages, sleep_seconds, with_codes=False, detail_worker
                 product = future.result()
                 enriched.append(product)
                 if index % 100 == 0:
-                    print(f"  codes checked: {index}/{len(all_products)}")
+                    print(f"  codes checked: {index}/{len(all_products)}", flush=True)
         all_products = enriched
     return all_products
 
@@ -185,10 +236,12 @@ def main():
     parser.add_argument("--sleep", type=float, default=0.4, help="Seconds to wait between requests.")
     parser.add_argument("--with-codes", action="store_true", help="Also open each product page and import product codes.")
     parser.add_argument("--detail-workers", type=int, default=6, help="Parallel product detail requests when --with-codes is used.")
+    parser.add_argument("--category-slugs", default=",".join(DEFAULT_CATEGORY_SLUGS), help="Comma-separated Linella category slugs to import. Empty means full catalog.")
     parser.add_argument("--out", default="products.json", help="Output JSON file.")
     args = parser.parse_args()
 
-    products = scrape(args.source_url, args.max_pages, args.sleep, args.with_codes, args.detail_workers)
+    category_slugs = [slug.strip() for slug in args.category_slugs.split(",") if slug.strip()]
+    products = scrape(args.source_url, args.max_pages, args.sleep, args.with_codes, args.detail_workers, category_slugs)
     payload = {
         "source": args.source_url,
         "generated_at": dt.datetime.now().strftime("%Y-%m-%d %H:%M"),
