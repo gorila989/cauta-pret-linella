@@ -625,8 +625,12 @@ async function syncProducts(offlineData) {
   const manifestResponse = await fetch("api/manifest", { cache: "no-store" }).catch(() => null);
   if (manifestResponse && manifestResponse.ok) {
     const manifest = await manifestResponse.json();
-    if (offlineData && manifest.generated_at === offlineData.generated_at) {
-      return null;
+    if (offlineData) {
+      const serverTime = catalogTimeValue(manifest.generated_at);
+      const offlineTime = catalogTimeValue(offlineData.generated_at);
+      if (manifest.generated_at === offlineData.generated_at || (serverTime && offlineTime && serverTime < offlineTime)) {
+        return null;
+      }
     }
 
     const changesResponse = await fetch("api/changes", { cache: "no-store" }).catch(() => null);
@@ -641,6 +645,11 @@ async function syncProducts(offlineData) {
   const response = await fetchProducts();
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
   return response.json();
+}
+
+function catalogTimeValue(value) {
+  const time = Date.parse(String(value || "").replace(" ", "T"));
+  return Number.isFinite(time) ? time : 0;
 }
 
 function applyChanges(baseData, changes) {
