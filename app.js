@@ -59,20 +59,21 @@ const XLSX_URL = "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js
 
 const SITE_CATEGORY_GROUPS = [
   ["Fructe, fructe de padure, Legume, Muraturi", ["fructe, legume, muraturi", "fructe", "fructe de padure", "legume", "salate verde", "verdeturi", "muraturi"]],
-  ["Produse lactate", ["produse lactate", "lapte", "chefir", "iaurturi", "smantana", "branza de vaci", "branza feta", "tofu", "frisca", "lapte condensat", "margarina"]],
+  ["Produse lactate", ["produse lactate", "lapte", "chefir", "iaurturi", "smantana", "branza de vaci", "branza feta", "tofu", "frisca", "lapte condensat"]],
   ["Dulciuri", ["dulciuri", "bomboane", "ciocolate", "ciocolata", "batoane", "caramele", "drajeuri", "gume", "biscuiti", "turte", "napolitane", "muffin", "chec", "panettone", "blaturi", "diabetici", "crema de ciocolata"]],
   ["Ceai si cafea", ["ceai", "cafea", "cacao", "cappucinno", "cicoare"]],
   ["Nuci, fructe uscate si seminte", ["fructe uscate", "nuci", "seminte", "amestecuri de nuci"]],
   ["Snack-uri", ["snack", "chipsuri", "nachos", "sticks", "crackers", "pesmeti", "popcorn", "arahide", "fistic", "gustari"]],
   ["Bauturi nealcoolice", ["apa minerala", "bauturi racoritoare", "suc", "nectar", "energizante"]],
   ["Bauturi alcoolice", ["vin", "divin", "votca", "vodca", "whiskey", "rom", "tequila", "gin", "brandy", "lichior", "balsam", "vermut", "aperol", "bere", "alcoolice"]],
-  ["Produse congelate", ["unt", "unt i margarina", "congelate", "peste congelat", "carne congelata", "legume congelate", "fructe congelate", "aluat congelat", "pizza", "patiserie congelata", "pelmeni", "coltunasi", "inghetata", "gheata"]]
+  ["Produse congelate", ["unt", "margarina", "unt i margarina", "congelate", "peste congelat", "carne congelata", "legume congelate", "fructe congelate", "aluat congelat", "pizza", "patiserie congelata", "pelmeni", "coltunasi", "inghetata", "gheata"]]
 ];
 
 const VISIBLE_MAIN_CATEGORIES = SITE_CATEGORY_GROUPS.map(([name]) => name);
 const VISIBLE_MAIN_CATEGORY_SET = new Set(VISIBLE_MAIN_CATEGORIES);
 const SUBCATEGORY_LABELS = {
-  "unt_i_margarina": "UNT"
+  "unt_i_margarina": "UNT",
+  "margarina": "Margarina"
 };
 
 const normalize = (value) =>

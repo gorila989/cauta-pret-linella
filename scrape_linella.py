@@ -16,14 +16,14 @@ DEFAULT_SOURCE_URL = "https://linella.md/ro/catalog"
 USER_AGENT = "Mozilla/5.0 (compatible; CautaPret/1.0; +https://linella.md/)"
 DEFAULT_CATEGORY_GROUPS = [
     ("Fructe, legume, muraturi", ["fructe", "legume", "muraturi", "fructe_uscate_532"]),
-    ("Produse lactate", ["lapte", "chefir", "iaurturi", "smantana", "branza_proaspata", "branza_topita", "crema_de_branza", "frisca_i_lapte_condensat", "lapte_condensat", "margarina"]),
+    ("Produse lactate", ["lapte", "chefir", "iaurturi", "smantana", "branza_proaspata", "branza_topita", "crema_de_branza", "frisca_i_lapte_condensat", "lapte_condensat"]),
     ("Dulciuri", ["alte_dulciuri", "batoane_de_ciocolata", "bomboane_i_praline", "ciocolata_tablete", "ciocolate_in_cutie", "crema_de_ciocolata", "gume_de_mestecat_i_bomboane_gumate", "_napolitane", "biscuiti_i_fursecuri", "turte_dulci_i_covrigi"]),
     ("Ceai si cafea", ["ceai_infuzie", "ceai_pachetele", "cafea", "cafea_boabe_", "cafea_in_capsule", "cafea_macinata_", "cacao"]),
     ("Nuci, fructe uscate si seminte", ["amestecuri_de_nuci_si_fructe_uscate", "arahide_fistic_i_mix_seminte", "nuci", "seminte", "seminte_floarea_soarelui_i_dovleac"]),
     ("Snack-uri", ["chipsuri", "popcorn", "sticks__crackers_i_snack_expandat"]),
     ("Bauturi nealcoolice", ["apa_minerala", "bauturi_racoritoare", "energizante", "suc_i_nectar"]),
     ("Bauturi alcoolice", ["bauturi_slab_alcoolice", "bere", "divin", "lichior_balsam_vermut_aperol", "rom_tequila_gin_brandi", "vin", "vin_spumant", "votca_", "whiskey"]),
-    ("Produse congelate", ["unt_i_margarina", "congelate_din_peste", "congelate_din_carne", "legume_congelate", "fructe_congelate", "aluat_congelat", "pizza_i_patiserie_congelate", "pelmeni_i_coltunasi", "inghetata", "alte_produse_congelate"]),
+    ("Produse congelate", ["unt_i_margarina", "margarina", "congelate_din_peste", "congelate_din_carne", "legume_congelate", "fructe_congelate", "aluat_congelat", "pizza_i_patiserie_congelate", "pelmeni_i_coltunasi", "inghetata", "alte_produse_congelate"]),
 ]
 DEFAULT_CATEGORY_SLUGS = [slug for _, slugs in DEFAULT_CATEGORY_GROUPS for slug in slugs]
 DEFAULT_SLUG_GROUP = {slug: group for group, slugs in DEFAULT_CATEGORY_GROUPS for slug in slugs}
@@ -56,6 +56,7 @@ CATEGORY_NAMES = {
     "carne": "Carne",
     "congelate_din_carne": "Carne",
     "unt_i_margarina": "UNT",
+    "margarina": "Margarina",
     "congelate_din_peste": "Produse congelate",
     "legume_congelate": "Produse congelate",
     "fructe_congelate": "Produse congelate",
