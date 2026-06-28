@@ -23,6 +23,7 @@ DEFAULT_CATEGORY_GROUPS = [
     ("Snack-uri", ["chipsuri", "popcorn", "sticks__crackers_i_snack_expandat"]),
     ("Bauturi nealcoolice", ["apa_minerala", "bauturi_racoritoare", "energizante", "suc_i_nectar"]),
     ("Bauturi alcoolice", ["bauturi_slab_alcoolice", "bere", "divin", "lichior_balsam_vermut_aperol", "rom_tequila_gin_brandi", "vin", "vin_spumant", "votca_", "whiskey"]),
+    ("Produse congelate", ["congelate_din_peste", "congelate_din_carne", "legume_congelate", "fructe_congelate", "aluat_congelat", "pizza_i_patiserie_congelate", "pelmeni_i_coltunasi", "inghetata", "alte_produse_congelate"]),
 ]
 DEFAULT_CATEGORY_SLUGS = [slug for _, slugs in DEFAULT_CATEGORY_GROUPS for slug in slugs]
 DEFAULT_SLUG_GROUP = {slug: group for group, slugs in DEFAULT_CATEGORY_GROUPS for slug in slugs}
@@ -54,6 +55,14 @@ CATEGORY_NAMES = {
     "oua": "Oua",
     "carne": "Carne",
     "congelate_din_carne": "Carne",
+    "congelate_din_peste": "Produse congelate",
+    "legume_congelate": "Produse congelate",
+    "fructe_congelate": "Produse congelate",
+    "aluat_congelat": "Produse congelate",
+    "pizza_i_patiserie_congelate": "Produse congelate",
+    "pelmeni_i_coltunasi": "Produse congelate",
+    "inghetata": "Produse congelate",
+    "alte_produse_congelate": "Produse congelate",
 }
 
 
