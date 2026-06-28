@@ -55,7 +55,7 @@ CATEGORY_NAMES = {
     "oua": "Oua",
     "carne": "Carne",
     "congelate_din_carne": "Carne",
-    "unt_i_margarina": "Produse congelate",
+    "unt_i_margarina": "UNT",
     "congelate_din_peste": "Produse congelate",
     "legume_congelate": "Produse congelate",
     "fructe_congelate": "Produse congelate",

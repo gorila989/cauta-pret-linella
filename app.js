@@ -71,6 +71,9 @@ const SITE_CATEGORY_GROUPS = [
 
 const VISIBLE_MAIN_CATEGORIES = SITE_CATEGORY_GROUPS.map(([name]) => name);
 const VISIBLE_MAIN_CATEGORY_SET = new Set(VISIBLE_MAIN_CATEGORIES);
+const SUBCATEGORY_LABELS = {
+  "unt_i_margarina": "UNT"
+};
 
 const normalize = (value) =>
   value
@@ -671,7 +674,7 @@ function applyChanges(baseData, changes) {
 function applyProducts(data, offline) {
   state.products = data.products.map((product) => {
     const categorySlug = product.category_slug || categorySlugFromUrl(product.url);
-    const subcategoryName = product.category || labelFromSlug(categorySlug);
+    const subcategoryName = SUBCATEGORY_LABELS[categorySlug] || product.category || labelFromSlug(categorySlug);
     const mainCategory = mainCategoryFromName(subcategoryName);
     return {
       ...product,
