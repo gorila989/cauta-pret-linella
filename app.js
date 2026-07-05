@@ -309,9 +309,17 @@ function showProductFromProductCode(productCode, barcode) {
 }
 
 function startBarcodeScan() {
+  const params = new URLSearchParams(window.location.search);
+  params.delete("barcode");
+  params.delete("format");
+  const existingParams = params.toString();
+  const query = `${existingParams ? `${existingParams}&` : ""}barcode={CODE}&format={FORMAT}`;
+  const returnUrl = `${window.location.origin}${window.location.pathname}?${query}${window.location.hash}`;
+  const zxingUrl = `zxing://scan/?ret=${encodeURIComponent(returnUrl)}`;
   els.scannerInput.focus();
   els.scannerInput.select();
-  els.refreshStatus.textContent = "Scaneaza codul de bare in campul ZXing.";
+  els.refreshStatus.textContent = "Deschid ZXing. Daca nu se deschide, scaneaza in campul de jos.";
+  window.location.href = zxingUrl;
 }
 
 function showProductFromBarcode(barcode) {
@@ -340,6 +348,18 @@ function handleScannerCode() {
   const barcode = els.scannerInput.value.trim();
   showProductFromBarcode(barcode);
   els.scannerInput.select();
+}
+
+function handleBarcodeFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const barcode = params.get("barcode");
+  if (!barcode) return;
+  els.scannerInput.value = barcode;
+  showProductFromBarcode(barcode);
+  params.delete("barcode");
+  params.delete("format");
+  const cleanUrl = `${window.location.pathname}${params.toString() ? `?${params}` : ""}${window.location.hash}`;
+  window.history.replaceState({}, "", cleanUrl);
 }
 
 function categoryFromProduct(product) {
@@ -1071,4 +1091,4 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-loadProducts();
+loadProducts().then(handleBarcodeFromUrl);
