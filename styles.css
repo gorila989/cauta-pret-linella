@@ -285,6 +285,20 @@ button {
   opacity: 0.6;
 }
 
+.scanner-field {
+  margin-top: 12px;
+  margin-bottom: 0;
+}
+
+.scanner-field span {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.scanner-field input {
+  width: 100%;
+}
+
 .refresh-status {
   min-height: 18px;
   margin-top: 10px;

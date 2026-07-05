@@ -66,8 +66,11 @@
         <button id="scanBarcodeButton" type="button" class="tool">Scaneaza bare</button>
         <button id="refreshButton" type="button" class="tool refresh">Actualizeaza</button>
       </div>
+      <label class="scanner-field" for="scannerCodeInput">
+        <span>Cod de bare scanner</span>
+        <input id="scannerCodeInput" type="text" inputmode="numeric" autocomplete="off" placeholder="Scaneaza aici cu ZXing">
+      </label>
       <input id="excelInput" class="visually-hidden" type="file" accept=".xlsx,.xls,.csv">
-      <input id="barcodeInput" class="visually-hidden" type="file" accept="image/*" capture="environment">
       <p id="refreshStatus" class="refresh-status" aria-live="polite"></p>
     </section>
 

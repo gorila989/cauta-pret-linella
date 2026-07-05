@@ -38,7 +38,7 @@ const els = {
   importExcel: document.getElementById("importExcelButton"),
   excelInput: document.getElementById("excelInput"),
   scanBarcode: document.getElementById("scanBarcodeButton"),
-  barcodeInput: document.getElementById("barcodeInput"),
+  scannerInput: document.getElementById("scannerCodeInput"),
   refresh: document.getElementById("refreshButton"),
   refreshStatus: document.getElementById("refreshStatus"),
   loadMore: document.getElementById("loadMoreButton"),
@@ -285,24 +285,6 @@ function barcodeForProduct(product) {
   return match ? match[0] : "";
 }
 
-async function scanBarcodeFromFile(file) {
-  if (!file) return "";
-  if (!("BarcodeDetector" in window)) {
-    els.refreshStatus.textContent = "Telefonul/browserul nu suporta scanarea codului de bare.";
-    return "";
-  }
-  const bitmap = await createImageBitmap(file);
-  try {
-    const detector = new BarcodeDetector({
-      formats: ["ean_13", "ean_8", "upc_a", "upc_e", "code_128", "qr_code"]
-    });
-    const codes = await detector.detect(bitmap);
-    return codes[0]?.rawValue || "";
-  } finally {
-    bitmap.close();
-  }
-}
-
 function showProductFromProductCode(productCode, barcode) {
   const normalizedProductCode = normalizeProductCodeValue(productCode);
   const product = state.products.find((item) => normalizeProductCodeValue(item.product_code) === normalizedProductCode);
@@ -327,17 +309,14 @@ function showProductFromProductCode(productCode, barcode) {
 }
 
 function startBarcodeScan() {
-  els.barcodeInput.value = "";
-  els.barcodeInput.click();
+  els.scannerInput.focus();
+  els.scannerInput.select();
+  els.refreshStatus.textContent = "Scaneaza codul de bare in campul ZXing.";
 }
 
-async function handleBarcodeFile(file) {
-  if (!file) return;
-  els.refreshStatus.textContent = "Scanez codul de bare...";
-  const barcode = await scanBarcodeFromFile(file).catch(() => "");
-  els.barcodeInput.value = "";
+function showProductFromBarcode(barcode) {
   if (!barcode) {
-    els.refreshStatus.textContent = "Nu am citit codul de bare. Fa poza mai aproape si clar.";
+    els.refreshStatus.textContent = "Scaneaza sau scrie codul de bare.";
     return;
   }
 
@@ -355,6 +334,12 @@ async function handleBarcodeFile(file) {
     els.refreshStatus.textContent = "Produsul nu a fost găsit.";
     return;
   }
+}
+
+function handleScannerCode() {
+  const barcode = els.scannerInput.value.trim();
+  showProductFromBarcode(barcode);
+  els.scannerInput.select();
 }
 
 function categoryFromProduct(product) {
@@ -996,9 +981,12 @@ els.excelInput.addEventListener("change", () => {
   importBarcodeExcel(els.excelInput.files[0]);
 });
 els.scanBarcode.addEventListener("click", () => startBarcodeScan());
-els.barcodeInput.addEventListener("change", () => {
-  handleBarcodeFile(els.barcodeInput.files[0]);
+els.scannerInput.addEventListener("keydown", (event) => {
+  if (event.key !== "Enter") return;
+  event.preventDefault();
+  handleScannerCode();
 });
+els.scannerInput.addEventListener("change", handleScannerCode);
 els.refresh.addEventListener("click", refreshPrices);
 els.loadMore.addEventListener("click", () => {
   state.visibleLimit += 30;
