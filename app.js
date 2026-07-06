@@ -553,7 +553,7 @@ function productCard(product) {
   const promo = product.discount
     ? `<span class="chip promo">${product.discount}</span>`
     : "";
-  const newChip = productIsNew ? `<span class="chip new-chip">Nou</span>` : "";
+  const newChip = productIsNew ? `<span class="chip new-chip">Produs nou</span>` : "";
   const priceChangeChip = priceChange
     ? `<span class="chip ${priceChange.diff > 0 ? "price-up" : "price-down"}">
         ${priceChange.diff > 0 ? "Scumpit" : "Ieftinit"}: ${formatPrice(Math.abs(priceChange.diff))}. Era ${formatPrice(priceChange.previous)}
