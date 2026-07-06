@@ -363,6 +363,135 @@ async function imageSourceToDataUrl(src) {
   return blobToDataUrl(await response.blob());
 }
 
+function canvasBlob(canvas, type = "image/png") {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if (blob) resolve(blob);
+      else reject(new Error("Nu am putut salva cardul ca PNG."));
+    }, type);
+  });
+}
+
+function roundedRectPath(context, x, y, width, height, radius) {
+  const r = Math.min(radius, width / 2, height / 2);
+  context.beginPath();
+  context.moveTo(x + r, y);
+  context.lineTo(x + width - r, y);
+  context.quadraticCurveTo(x + width, y, x + width, y + r);
+  context.lineTo(x + width, y + height - r);
+  context.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+  context.lineTo(x + r, y + height);
+  context.quadraticCurveTo(x, y + height, x, y + height - r);
+  context.lineTo(x, y + r);
+  context.quadraticCurveTo(x, y, x + r, y);
+  context.closePath();
+}
+
+function drawRoundedRect(context, x, y, width, height, radius, fill, stroke) {
+  roundedRectPath(context, x, y, width, height, radius);
+  if (fill) {
+    context.fillStyle = fill;
+    context.fill();
+  }
+  if (stroke) {
+    context.strokeStyle = stroke;
+    context.stroke();
+  }
+}
+
+function colorValue(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+function wrapCanvasText(context, text, maxWidth) {
+  const words = String(text || "").split(/\s+/).filter(Boolean);
+  const lines = [];
+  let line = "";
+  for (const word of words) {
+    const next = line ? `${line} ${word}` : word;
+    if (context.measureText(next).width <= maxWidth || !line) {
+      line = next;
+    } else {
+      lines.push(line);
+      line = word;
+    }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+function drawWrappedText(context, text, x, y, maxWidth, lineHeight, maxLines = 3) {
+  const lines = wrapCanvasText(context, text, maxWidth);
+  const visible = lines.slice(0, maxLines);
+  if (lines.length > maxLines) {
+    let last = visible[visible.length - 1] || "";
+    while (last && context.measureText(`${last}...`).width > maxWidth) {
+      last = last.slice(0, -1).trim();
+    }
+    visible[visible.length - 1] = `${last}...`;
+  }
+  for (const line of visible) {
+    context.fillText(line, x, y);
+    y += lineHeight;
+  }
+  return y;
+}
+
+function chipColors(text) {
+  const lower = normalize(text);
+  if (lower.includes("produs nou")) return { bg: "#176b4d", fg: "#ffffff" };
+  if (lower.includes("reduc") || lower.includes("%")) return { bg: "#ffe8e8", fg: colorValue("--red") || "#ba2f2f" };
+  if (lower.includes("categorie")) return { bg: colorValue("--green-soft") || "#dff2ea", fg: colorValue("--green") || "#176b4d" };
+  return { bg: colorValue("--tool-bg") || "#edf2ef", fg: colorValue("--muted") || "#65736c" };
+}
+
+function drawChips(context, chips, x, y, maxWidth, lineHeight) {
+  context.font = "13px Arial, Helvetica, sans-serif";
+  let cursorX = x;
+  let cursorY = y;
+  for (const chip of chips) {
+    const text = chip.trim();
+    if (!text) continue;
+    const paddingX = 8;
+    const chipWidth = Math.min(context.measureText(text).width + paddingX * 2, maxWidth);
+    if (cursorX > x && cursorX + chipWidth > x + maxWidth) {
+      cursorX = x;
+      cursorY += lineHeight;
+    }
+    const colors = chipColors(text);
+    drawRoundedRect(context, cursorX, cursorY - 16, chipWidth, 24, 12, colors.bg);
+    context.fillStyle = colors.fg;
+    context.fillText(text, cursorX + paddingX, cursorY);
+    cursorX += chipWidth + 8;
+  }
+  return cursorY + lineHeight;
+}
+
+function loadCanvasImage(src) {
+  return new Promise((resolve) => {
+    if (!src) {
+      resolve(null);
+      return;
+    }
+    const image = new Image();
+    image.crossOrigin = "anonymous";
+    image.onload = () => resolve(image);
+    image.onerror = () => resolve(null);
+    image.src = src.startsWith(window.location.origin) || src.startsWith("data:")
+      ? src
+      : `api/image?url=${encodeURIComponent(src)}`;
+  });
+}
+
+function drawContainImage(context, image, x, y, width, height) {
+  drawRoundedRect(context, x, y, width, height, 8, colorValue("--field") || "#fbfdfc", colorValue("--line") || "#dce5df");
+  if (!image) return;
+  const scale = Math.min(width / image.naturalWidth, height / image.naturalHeight);
+  const drawWidth = image.naturalWidth * scale;
+  const drawHeight = image.naturalHeight * scale;
+  context.drawImage(image, x + (width - drawWidth) / 2, y + (height - drawHeight) / 2, drawWidth, drawHeight);
+}
+
 async function inlineImagesForSnapshot(clone) {
   const images = [...clone.querySelectorAll("img")];
   await Promise.all(images.map(async (image) => {
@@ -421,56 +550,87 @@ async function ensureSnapshotProductDetails(card, product) {
   if (state.catalogGeneratedAt) addSnapshotChip(card, `Promo actualizata: ${state.catalogGeneratedAt}`, "promo-date");
 }
 
-async function createProductCardPng(card) {
+async function createProductCardPng(card, product) {
   const rect = card.getBoundingClientRect();
   const width = Math.max(1, Math.ceil(rect.width));
   const height = Math.max(1, Math.ceil(rect.height));
-  const clone = card.cloneNode(true);
-  copyFormValues(card, clone);
-  await inlineImagesForSnapshot(clone);
-  inlineComputedStyles(card, clone);
-  clone.querySelectorAll(".snapshot-hidden").forEach((node) => node.remove());
-  clone.style.width = `${width}px`;
-  clone.style.height = `${height}px`;
-  clone.style.margin = "0";
-  clone.style.boxSizing = "border-box";
-
-  const wrapper = document.createElement("div");
-  wrapper.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
-  wrapper.style.width = `${width}px`;
-  wrapper.style.height = `${height}px`;
-  wrapper.appendChild(clone);
-
   if (document.fonts?.ready) await document.fonts.ready.catch(() => {});
-  const markup = new XMLSerializer().serializeToString(wrapper);
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-      <foreignObject width="100%" height="100%">${markup}</foreignObject>
-    </svg>
-  `;
-  const svgUrl = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml;charset=utf-8" }));
-  try {
-    const image = new Image();
-    const loaded = new Promise((resolve, reject) => {
-      image.onload = resolve;
-      image.onerror = () => reject(new Error("Nu am putut crea imaginea cardului."));
-    });
-    image.src = svgUrl;
-    await loaded;
-    const canvas = document.createElement("canvas");
-    canvas.width = width;
-    canvas.height = height;
-    const context = canvas.getContext("2d");
-    context.drawImage(image, 0, 0);
-    return await new Promise((resolve, reject) => {
-      canvas.toBlob((blob) => {
-        if (blob) resolve(blob);
-        else reject(new Error("Nu am putut salva cardul ca PNG."));
-      }, "image/png");
-    });
-  } finally {
-    URL.revokeObjectURL(svgUrl);
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const context = canvas.getContext("2d");
+  const styles = getComputedStyle(card);
+  const ink = colorValue("--ink") || "#1e2723";
+  const muted = colorValue("--muted") || "#65736c";
+  const line = colorValue("--line") || "#dce5df";
+  const green = colorValue("--green") || "#176b4d";
+  const productBg = styles.backgroundColor || colorValue("--product-bg") || "#ffffff";
+
+  drawRoundedRect(context, 0.5, 0.5, width - 1, height - 1, 8, productBg, line);
+  if (card.classList.contains("new-product")) {
+    context.fillStyle = "#d69617";
+    context.fillRect(0, 0, 8, height);
   }
+
+  const isMobile = width < 520;
+  const padding = 14;
+  const imageSize = isMobile ? 86 : 72;
+  const imageX = padding + (card.classList.contains("new-product") ? 4 : 0);
+  const imageY = padding;
+  const productImage = await loadCanvasImage(product.image_url || card.querySelector("img")?.src || "");
+  drawContainImage(context, productImage, imageX, imageY, imageSize, imageSize);
+
+  const priceText = card.querySelector(".price strong")?.textContent.trim() || "";
+  const oldPriceText = card.querySelector(".price span")?.textContent.trim() || "";
+  const priceWidth = isMobile ? 0 : Math.min(150, Math.max(92, context.measureText(priceText).width + 24));
+  const contentX = isMobile ? padding : imageX + imageSize + 14;
+  let contentY = isMobile ? imageY + imageSize + 18 : padding + 4;
+  const contentWidth = isMobile
+    ? width - padding * 2
+    : width - contentX - priceWidth - padding - 10;
+
+  context.fillStyle = ink;
+  context.font = "700 16px Arial, Helvetica, sans-serif";
+  contentY = drawWrappedText(context, product.name || card.querySelector("h2")?.textContent || "", contentX, contentY + 14, contentWidth, 22, isMobile ? 4 : 3);
+
+  const chips = [...card.querySelectorAll(".details .chip")]
+    .map((chip) => chip.textContent.trim())
+    .filter(Boolean);
+  contentY = drawChips(context, chips, contentX, contentY + 12, contentWidth, 32);
+
+  const kgInput = card.querySelector(".kg-input");
+  const kgTotal = card.querySelector(".kg-total");
+  if (kgInput || kgTotal) {
+    context.fillStyle = muted;
+    context.font = "12px Arial, Helvetica, sans-serif";
+    context.fillText(`kg: ${kgInput?.value || "0.00"}`, contentX, contentY + 8);
+    context.fillStyle = green;
+    context.font = "700 14px Arial, Helvetica, sans-serif";
+    context.fillText(kgTotal?.textContent.trim() || "0.00 lei", contentX + 80, contentY + 8);
+  }
+
+  const priceX = isMobile ? padding : width - padding;
+  const priceY = isMobile ? height - padding - (oldPriceText ? 28 : 8) : padding + 26;
+  context.textAlign = isMobile ? "left" : "right";
+  context.fillStyle = green;
+  context.font = "700 24px Arial, Helvetica, sans-serif";
+  context.fillText(priceText, priceX, priceY);
+  if (oldPriceText) {
+    context.fillStyle = muted;
+    context.font = "12px Arial, Helvetica, sans-serif";
+    const oldY = priceY + 20;
+    context.fillText(oldPriceText, priceX, oldY);
+    const metrics = context.measureText(oldPriceText);
+    const startX = isMobile ? priceX : priceX - metrics.width;
+    context.strokeStyle = muted;
+    context.beginPath();
+    context.moveTo(startX, oldY - 4);
+    context.lineTo(startX + metrics.width, oldY - 4);
+    context.stroke();
+  }
+  context.textAlign = "left";
+
+  return canvasBlob(canvas, "image/png");
 }
 
 async function saveBlobAsFile(blob, filename) {
@@ -509,9 +669,9 @@ async function savePromoProductCardImage(card, product) {
   els.refreshStatus.textContent = "Pregatesc imaginea produsului...";
   try {
     await ensureSnapshotProductDetails(card, product);
-    const blob = await createProductCardPng(card);
+    const blob = await createProductCardPng(card, product);
     await saveBlobAsFile(blob, promoImageFileName(product));
-    els.refreshStatus.textContent = "Imaginea produsului a fost salvat\u0103";
+    els.refreshStatus.textContent = "Imaginea a fost salvat\u0103";
   } catch (error) {
     els.refreshStatus.textContent = `Eroare la salvarea imaginii: ${error.message}`;
   } finally {
@@ -1245,6 +1405,7 @@ async function pollRefreshStatus() {
       if (status.success) {
         try {
           const data = await fetchServerProductsOnly();
+          if (status.finished_at) data.generated_at = status.finished_at;
           await saveOfflineProducts(data);
           applyProducts(data, false);
           els.refreshStatus.textContent = "Baza de date a fost actualizat\u0103";

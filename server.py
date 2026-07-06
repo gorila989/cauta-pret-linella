@@ -231,7 +231,8 @@ def refresh_products(max_pages, sleep_seconds):
         current = load_products_file(PRODUCTS_TMP_FILE)
         if not validate_products_data(current):
             raise ValueError("Baza descarcata nu este valida. Pastrez ultima baza buna.")
-        save_products(current)
+        finished_at = now()
+        current["generated_at"] = finished_at
         changes = write_changes(previous, current)
         count = count_products()
         changed_count = len(changes.get("upserts", []))
@@ -242,7 +243,7 @@ def refresh_products(max_pages, sleep_seconds):
             running=False,
             success=True,
             message=f"Baza de date a fost actualizata. Actualizat: {count} produse. Diferente: {changed_count}, noi: {new_count}, pret schimbat: {price_count}, sterse: {deleted_count}.",
-            finished_at=now(),
+            finished_at=finished_at,
         )
     except subprocess.TimeoutExpired:
         minutes = REFRESH_TIMEOUT_SECONDS // 60
