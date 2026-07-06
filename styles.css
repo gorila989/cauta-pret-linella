@@ -71,6 +71,119 @@ body.modal-open {
   padding: 20px;
 }
 
+.promo-carousel-shell {
+  display: none;
+}
+
+body.banner-only {
+  background: var(--bg);
+}
+
+body.banner-only .app {
+  width: min(1180px, 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+}
+
+body.banner-only .search-panel,
+body.banner-only .summary,
+body.banner-only .results,
+body.banner-only .load-more,
+body.banner-only .empty,
+body.banner-only .scroll-top {
+  display: none !important;
+}
+
+body.banner-only .promo-carousel-shell {
+  display: block;
+  width: 100%;
+}
+
+.promo-carousel {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #eef4ef;
+  box-shadow: 0 18px 60px var(--shadow);
+}
+
+.promo-banner-link {
+  display: block;
+  width: 100%;
+  aspect-ratio: 12 / 5;
+  background: #eef4ef;
+}
+
+.promo-banner-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #eef4ef;
+}
+
+.promo-nav {
+  position: absolute;
+  top: 50%;
+  width: 44px;
+  height: 52px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.88);
+  color: #ed3237;
+  font-size: 42px;
+  line-height: 1;
+  cursor: pointer;
+  transform: translateY(-50%);
+  box-shadow: 0 8px 22px rgba(25, 45, 35, 0.18);
+}
+
+.promo-nav:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+
+.promo-prev {
+  left: 10px;
+}
+
+.promo-next {
+  right: 10px;
+}
+
+.promo-dots {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 8px 0;
+}
+
+.promo-dot {
+  width: 12px;
+  height: 12px;
+  padding: 0;
+  border: 0;
+  border-radius: 2px;
+  background: #0f8b4c;
+  cursor: pointer;
+  transform: rotate(45deg);
+}
+
+.promo-dot.active {
+  background: #ffffff;
+  border: 3px solid #ee4b55;
+}
+
+.promo-carousel-shell.is-empty .promo-carousel {
+  min-height: 220px;
+  box-shadow: none;
+}
+
 .search-panel {
   padding: 20px;
   background: var(--panel);
@@ -628,6 +741,34 @@ body.dark-theme .product.new-product .price strong {
 }
 
 @media (max-width: 560px) {
+  body.banner-only .app {
+    min-height: 100svh;
+    padding: 8px;
+  }
+
+  .promo-banner-link {
+    aspect-ratio: 16 / 9;
+  }
+
+  .promo-nav {
+    width: 38px;
+    height: 46px;
+    font-size: 36px;
+  }
+
+  .promo-prev {
+    left: 6px;
+  }
+
+  .promo-next {
+    right: 6px;
+  }
+
+  .promo-dots {
+    gap: 10px;
+    padding-top: 12px;
+  }
+
   .app {
     padding: 12px;
   }

@@ -11,15 +11,17 @@ import time
 from datetime import datetime, timedelta
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import parse_qs, unquote, urlparse
+from urllib.parse import parse_qs, unquote, urljoin, urlparse
 import scrape_linella
 
 
 ROOT = Path(__file__).resolve().parent
 PRODUCTS_FILE = ROOT / "products.json"
 CHANGES_FILE = ROOT / "changes.json"
+BANNERS_FILE = ROOT / "banners.json"
 SCRAPER_FILE = ROOT / "scrape_linella.py"
 SOURCE_URL = "https://linella.md/ro/catalog"
+PROMO_BANNERS_URL = "https://linella.md/ro/promotii/mega_oferta"
 REFRESH_TIMEOUT_SECONDS = 1800
 REFRESH_IDLE_TIMEOUT_SECONDS = 120
 
@@ -347,6 +349,61 @@ def save_products(data):
     PRODUCTS_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
+def banner_payload(banners, source=PROMO_BANNERS_URL):
+    return {
+        "source": source,
+        "generated_at": now(),
+        "banners": banners,
+    }
+
+
+def extract_promo_banners(html, page_url=PROMO_BANNERS_URL):
+    found = []
+    seen = set()
+    image_pattern = re.compile(
+        r"""(?:(?:src|data-src|href|content)=["']([^"']+\.(?:jpg|jpeg|png|webp)(?:\?[^"']*)?)["']|(/public/menu/[^"')\s]+\.(?:jpg|jpeg|png|webp)(?:\?[^"')\s]*)?))""",
+        re.IGNORECASE,
+    )
+    for match in image_pattern.finditer(html):
+        raw_url = (match.group(1) or match.group(2)).replace("&amp;", "&")
+        lower = raw_url.lower()
+        if "/public/menu/thumbs/" in lower:
+            continue
+        if "/public/products/" in lower or "/public/categories/" in lower:
+            continue
+        if "/public/promotions_pdf/" in lower:
+            continue
+        if "/assets/img/" in lower or "/assets/images/" in lower:
+            continue
+        if "/public/menu/" not in lower and "banner" not in lower and "promo" not in lower:
+            continue
+        image_url = urljoin(page_url, raw_url)
+        if image_url in seen:
+            continue
+        seen.add(image_url)
+        found.append({
+            "image": image_url,
+            "link": page_url,
+        })
+    return found
+
+
+def read_cached_banners():
+    if not BANNERS_FILE.exists():
+        return banner_payload([])
+    with BANNERS_FILE.open("r", encoding="utf-8") as file:
+        return json.load(file)
+
+
+def fetch_promo_banners():
+    html = scrape_linella.fetch(PROMO_BANNERS_URL)
+    banners = extract_promo_banners(html, PROMO_BANNERS_URL)
+    data = banner_payload(banners)
+    if banners:
+        BANNERS_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    return data
+
+
 class Handler(SimpleHTTPRequestHandler):
     def __init__(self, *args, max_pages=300, sleep_seconds=0.1, **kwargs):
         self.max_pages = max_pages
@@ -358,6 +415,14 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         path = urlparse(self.path).path
+        if path == "/api/banners":
+            try:
+                json_response(self, 200, fetch_promo_banners())
+            except Exception as exc:
+                data = read_cached_banners()
+                data["error"] = str(exc)
+                json_response(self, 200 if data.get("banners") else 502, data)
+            return
         if path == "/api/products":
             if not PRODUCTS_FILE.exists():
                 json_response(self, 404, {"error": "products.json nu exista"})
