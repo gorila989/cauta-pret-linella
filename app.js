@@ -13,18 +13,13 @@ const state = {
   priceHistory: {},
   barcodeExcelMap: {},
   promoSnapshot: {},
-  expiredPromos: [],
-  banners: [],
-  bannerIndex: 0,
-  bannerTimer: null
+  expiredPromos: []
 };
 
-const BANNER_ONLY_MODE = true;
 const DB_NAME = "cauta-pret-offline";
 const DB_STORE = "cache";
 const PRODUCTS_CACHE_KEY = "products";
 const NEW_SUBCATEGORY = "__new_products__";
-const BANNERS_CACHE_KEY = "cauta-pret-promo-banners";
 
 const els = {
   meta: document.getElementById("meta"),
@@ -57,14 +52,7 @@ const els = {
   imageModalImg: document.getElementById("imageModalImg"),
   imageModalTitle: document.getElementById("imageModalTitle"),
   imageModalClose: document.getElementById("imageModalClose"),
-  scrollTop: document.getElementById("scrollTopButton"),
-  promoCarousel: document.getElementById("promoCarousel"),
-  promoBannerFrame: document.getElementById("promoBannerFrame"),
-  promoBannerImage: document.getElementById("promoBannerImage"),
-  promoError: document.getElementById("promoError"),
-  promoPrev: document.getElementById("promoPrev"),
-  promoNext: document.getElementById("promoNext"),
-  promoDots: document.getElementById("promoDots")
+  scrollTop: document.getElementById("scrollTopButton")
 };
 
 const THEME_KEY = "cauta-pret-theme";
@@ -121,93 +109,6 @@ function saveJsonStorage(key, value) {
   } catch (error) {
     // Local storage is best effort.
   }
-}
-
-function normalizeBanner(banner) {
-  const image = banner?.image || banner?.src || "";
-  if (!image) return null;
-  return {
-    image,
-    link: banner.link || "https://linella.md/ro/promotii/mega_oferta"
-  };
-}
-
-function cachedBanners() {
-  return loadJsonStorage(BANNERS_CACHE_KEY, []);
-}
-
-function saveBanners(banners) {
-  if (banners.length) saveJsonStorage(BANNERS_CACHE_KEY, banners);
-}
-
-async function loadPromoBanners() {
-  const cached = cachedBanners().map(normalizeBanner).filter(Boolean);
-  if (cached.length) {
-    state.banners = cached;
-    renderBannerCarousel();
-  }
-
-  try {
-    const response = await fetch("api/banners", { cache: "no-store" });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const data = await response.json();
-    const banners = (data.banners || []).map(normalizeBanner).filter(Boolean);
-    if (!banners.length) throw new Error("Nu sunt bannere");
-    state.banners = banners;
-    state.bannerIndex = 0;
-    saveBanners(banners);
-    renderBannerCarousel();
-  } catch (error) {
-    if (!state.banners.length) {
-      state.banners = cached;
-      renderBannerCarousel();
-    }
-  }
-}
-
-function renderBannerCarousel() {
-  if (!els.promoCarousel) return;
-  const hasBanners = state.banners.length > 0;
-  els.promoCarousel.classList.toggle("is-empty", !hasBanners);
-  els.promoPrev.hidden = !hasBanners;
-  els.promoNext.hidden = !hasBanners;
-  els.promoPrev.disabled = state.banners.length <= 1;
-  els.promoNext.disabled = state.banners.length <= 1;
-  if (!hasBanners) {
-    els.promoBannerImage.removeAttribute("src");
-    els.promoBannerImage.hidden = true;
-    els.promoError.hidden = false;
-    els.promoDots.innerHTML = "";
-    return;
-  }
-  showBanner(state.bannerIndex);
-  startBannerAutoplay();
-}
-
-function showBanner(index) {
-  if (!state.banners.length) return;
-  state.bannerIndex = (index + state.banners.length) % state.banners.length;
-  const banner = state.banners[state.bannerIndex];
-  els.promoError.hidden = true;
-  els.promoBannerImage.hidden = false;
-  els.promoBannerImage.src = banner.image;
-  els.promoBannerImage.alt = "";
-  els.promoDots.innerHTML = state.banners.map((_, dotIndex) => (
-    `<button class="promo-dot${dotIndex === state.bannerIndex ? " active" : ""}" type="button" data-banner-index="${dotIndex}" aria-label="Slide ${dotIndex + 1}"></button>`
-  )).join("");
-}
-
-function startBannerAutoplay() {
-  window.clearInterval(state.bannerTimer);
-  if (state.banners.length <= 1) return;
-  state.bannerTimer = window.setInterval(() => {
-    showBanner(state.bannerIndex + 1);
-  }, 4500);
-}
-
-function moveBanner(step) {
-  showBanner(state.bannerIndex + step);
-  startBannerAutoplay();
 }
 
 function loadUserLists() {
@@ -1297,22 +1198,6 @@ els.imageModalClose.addEventListener("click", closeImageModal);
 els.imageModal.addEventListener("click", (event) => {
   if (event.target === els.imageModal) closeImageModal();
 });
-els.promoPrev.addEventListener("click", () => moveBanner(-1));
-els.promoNext.addEventListener("click", () => moveBanner(1));
-els.promoDots.addEventListener("click", (event) => {
-  const dot = event.target.closest("[data-banner-index]");
-  if (!dot) return;
-  showBanner(Number(dot.dataset.bannerIndex));
-  startBannerAutoplay();
-});
-els.promoBannerImage.addEventListener("error", () => {
-  els.promoBannerImage.hidden = true;
-  els.promoError.hidden = false;
-});
-els.promoBannerImage.addEventListener("load", () => {
-  els.promoBannerImage.hidden = false;
-  els.promoError.hidden = true;
-});
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && !els.imageModal.hidden) closeImageModal();
 });
@@ -1344,10 +1229,4 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-if (BANNER_ONLY_MODE) {
-  document.body.classList.add("banner-only");
-  loadPromoBanners();
-} else {
-  document.body.classList.remove("banner-only");
-  loadProducts().then(handleBarcodeFromUrl);
-}
+loadProducts().then(handleBarcodeFromUrl);
