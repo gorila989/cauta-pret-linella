@@ -23,7 +23,8 @@ CHANGES_FILE = ROOT / "changes.json"
 SCRAPER_FILE = ROOT / "scrape_linella.py"
 SOURCE_URL = "https://linella.md/ro/catalog"
 REFRESH_TIMEOUT_SECONDS = 1800
-REFRESH_IDLE_TIMEOUT_SECONDS = 120
+REFRESH_IDLE_TIMEOUT_SECONDS = 300
+REFRESH_STATUS_TICK_SECONDS = 30
 REFRESH_STALE_SECONDS = 300
 
 status_lock = threading.Lock()
@@ -182,6 +183,8 @@ def refresh_products(max_pages, sleep_seconds):
         current_division_index = 0
         total_divisions = 0
         last_line = ""
+        last_progress_at = time.monotonic()
+        last_wait_notice_at = 0
 
         line_queue = queue.Queue()
 
@@ -197,14 +200,22 @@ def refresh_products(max_pages, sleep_seconds):
                 raise subprocess.TimeoutExpired(command, REFRESH_TIMEOUT_SECONDS)
 
             try:
-                raw_line = line_queue.get(timeout=REFRESH_IDLE_TIMEOUT_SECONDS)
+                raw_line = line_queue.get(timeout=REFRESH_STATUS_TICK_SECONDS)
             except queue.Empty:
-                process.kill()
-                raise TimeoutError(
-                    f"Nu am primit progres de {REFRESH_IDLE_TIMEOUT_SECONDS} secunde. Linella sau conexiunea s-a blocat."
-                )
+                waiting_for = int(time.monotonic() - last_progress_at)
+                if waiting_for >= REFRESH_IDLE_TIMEOUT_SECONDS:
+                    process.kill()
+                    raise TimeoutError(
+                        f"Nu am primit progres de {REFRESH_IDLE_TIMEOUT_SECONDS} secunde. Linella sau conexiunea s-a blocat."
+                    )
+                if time.monotonic() - last_wait_notice_at >= REFRESH_STATUS_TICK_SECONDS:
+                    last_wait_notice_at = time.monotonic()
+                    set_status(message=f"Astept raspuns de la Linella... {waiting_for} secunde fara progres nou.")
+                continue
 
             last_line = raw_line.strip()
+            if last_line:
+                last_progress_at = time.monotonic()
 
             if last_line.startswith("Division progress:"):
                 division_match = re.search(r"Division progress:\s*(\d+)/(\d+)\s+(.+)", last_line)
