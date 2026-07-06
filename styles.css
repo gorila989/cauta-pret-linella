@@ -427,6 +427,12 @@ body.dark-theme .product.new-product {
   color: var(--red);
 }
 
+.expired-chip {
+  background: #fff1d6;
+  color: #8a4d00;
+  font-weight: 700;
+}
+
 .new-chip {
   background: #fff0b8;
   color: #735400;

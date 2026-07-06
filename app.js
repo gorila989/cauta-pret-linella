@@ -11,7 +11,9 @@ const state = {
   hasUserFilter: false,
   collectedCodes: new Set(),
   priceHistory: {},
-  barcodeExcelMap: {}
+  barcodeExcelMap: {},
+  promoSnapshot: {},
+  expiredPromos: []
 };
 
 const DB_NAME = "cauta-pret-offline";
@@ -34,6 +36,8 @@ const els = {
   sortPrice: document.getElementById("sortPrice"),
   onlyPromo: document.getElementById("onlyPromo"),
   codes: document.getElementById("codesButton"),
+  expiredPromos: document.getElementById("expiredPromosButton"),
+  clearExpiredPromos: document.getElementById("clearExpiredPromosButton"),
   exportCodes: document.getElementById("exportCodesButton"),
   importExcel: document.getElementById("importExcelButton"),
   excelInput: document.getElementById("excelInput"),
@@ -55,6 +59,8 @@ const THEME_KEY = "cauta-pret-theme";
 const COLLECTED_CODES_KEY = "cauta-pret-collected-codes";
 const PRICE_HISTORY_KEY = "cauta-pret-price-history";
 const BARCODE_EXCEL_MAP_KEY = "cauta-pret-barcode-excel-map";
+const PROMO_SNAPSHOT_KEY = "cauta-pret-promo-snapshot";
+const EXPIRED_PROMOS_KEY = "cauta-pret-expired-promos";
 const XLSX_URL = "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js";
 
 const SITE_CATEGORY_GROUPS = [
@@ -109,6 +115,8 @@ function loadUserLists() {
   state.collectedCodes = new Set(loadJsonStorage(COLLECTED_CODES_KEY, []));
   state.priceHistory = loadJsonStorage(PRICE_HISTORY_KEY, {});
   state.barcodeExcelMap = loadJsonStorage(BARCODE_EXCEL_MAP_KEY, {});
+  state.promoSnapshot = loadJsonStorage(PROMO_SNAPSHOT_KEY, {});
+  state.expiredPromos = loadJsonStorage(EXPIRED_PROMOS_KEY, []);
 }
 
 function saveCollectedCodes() {
@@ -121,6 +129,11 @@ function savePriceHistory() {
 
 function saveBarcodeExcelMap() {
   saveJsonStorage(BARCODE_EXCEL_MAP_KEY, state.barcodeExcelMap);
+}
+
+function savePromoHistory() {
+  saveJsonStorage(PROMO_SNAPSHOT_KEY, state.promoSnapshot);
+  saveJsonStorage(EXPIRED_PROMOS_KEY, state.expiredPromos);
 }
 
 function priceChangeForProduct(product) {
@@ -161,7 +174,15 @@ function setListMode(mode) {
   state.listMode = state.listMode === mode ? "all" : mode;
   state.visibleLimit = 30;
   els.codes.classList.toggle("active", state.listMode === "codes");
+  els.expiredPromos.classList.toggle("active", state.listMode === "expired");
   render();
+}
+
+function clearExpiredPromos() {
+  state.expiredPromos = [];
+  savePromoHistory();
+  els.refreshStatus.textContent = "Istoricul promoțiilor expirate a fost șters.";
+  if (state.listMode === "expired") render();
 }
 
 function csvCell(value) {
@@ -277,12 +298,64 @@ function exportCollectedCodes() {
 }
 
 function barcodeForProduct(product) {
-  const code = normalizeProductCodeValue(product.product_code);
+  return barcodeForProductCode(product.product_code);
+}
+
+function barcodeForProductCode(productCode) {
+  const code = normalizeProductCodeValue(productCode);
   if (!code) return "";
   const match = Object.entries(state.barcodeExcelMap).find(([, productCode]) =>
     normalizeProductCodeValue(productCode) === code
   );
   return match ? match[0] : "";
+}
+
+function isPromoProduct(product) {
+  return Boolean(product.is_promo || product.discount || product.old_price);
+}
+
+function promoSnapshotRecord(product, generatedAt) {
+  const key = productKey(product);
+  const productCode = normalizeProductCodeValue(product.product_code);
+  return {
+    key,
+    name: product.name || "",
+    product_code: productCode,
+    barcode: barcodeForProductCode(productCode),
+    promo_price: Number.isFinite(product.price) ? product.price : null,
+    old_price: Number.isFinite(product.old_price) ? product.old_price : null,
+    discount: product.discount || "",
+    url: product.url || "",
+    last_seen_promo_at: generatedAt || localDateValue(new Date())
+  };
+}
+
+function updateExpiredPromos(products, generatedAt) {
+  const previous = state.promoSnapshot || {};
+  const current = {};
+  for (const product of products) {
+    if (!isPromoProduct(product)) continue;
+    current[productKey(product)] = promoSnapshotRecord(product, generatedAt);
+  }
+
+  const expiredByKey = new Map((state.expiredPromos || []).map((item) => [item.key, item]));
+  for (const key of Object.keys(current)) {
+    expiredByKey.delete(key);
+  }
+  for (const [key, record] of Object.entries(previous)) {
+    if (current[key]) continue;
+    expiredByKey.set(key, {
+      ...record,
+      key,
+      expired_at: generatedAt || localDateValue(new Date()),
+      status: "Promoție expirată"
+    });
+  }
+  state.promoSnapshot = current;
+  state.expiredPromos = [...expiredByKey.values()].sort((a, b) =>
+    catalogTimeValue(b.expired_at) - catalogTimeValue(a.expired_at)
+  );
+  savePromoHistory();
 }
 
 function showProductFromProductCode(productCode, barcode) {
@@ -309,12 +382,7 @@ function showProductFromProductCode(productCode, barcode) {
 }
 
 function startBarcodeScan() {
-  const params = new URLSearchParams(window.location.search);
-  params.delete("barcode");
-  params.delete("format");
-  const existingParams = params.toString();
-  const query = `${existingParams ? `${existingParams}&` : ""}barcode={CODE}&format={FORMAT}`;
-  const returnUrl = `${window.location.origin}${window.location.pathname}?${query}${window.location.hash}`;
+  const returnUrl = `${window.location.origin}${window.location.pathname}${window.location.search}#barcode={CODE}&format={FORMAT}`;
   const zxingUrl = `zxing://scan/?ret=${encodeURIComponent(returnUrl)}`;
   els.scannerInput.focus();
   els.scannerInput.select();
@@ -350,15 +418,26 @@ function handleScannerCode() {
   els.scannerInput.select();
 }
 
-function handleBarcodeFromUrl() {
+function barcodeFromLocation() {
+  const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+  const hashBarcode = hashParams.get("barcode");
+  if (hashBarcode) return hashBarcode;
   const params = new URLSearchParams(window.location.search);
-  const barcode = params.get("barcode");
+  return params.get("barcode") || "";
+}
+
+function handleBarcodeFromUrl() {
+  const barcode = barcodeFromLocation();
   if (!barcode) return;
+  const params = new URLSearchParams(window.location.search);
+  const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
   els.scannerInput.value = barcode;
   showProductFromBarcode(barcode);
   params.delete("barcode");
   params.delete("format");
-  const cleanUrl = `${window.location.pathname}${params.toString() ? `?${params}` : ""}${window.location.hash}`;
+  hashParams.delete("barcode");
+  hashParams.delete("format");
+  const cleanUrl = `${window.location.pathname}${params.toString() ? `?${params}` : ""}${hashParams.toString() ? `#${hashParams}` : ""}`;
   window.history.replaceState({}, "", cleanUrl);
 }
 
@@ -545,6 +624,55 @@ function productCard(product) {
   `;
 }
 
+function expiredPromoCard(item) {
+  const barcode = item.barcode || barcodeForProductCode(item.product_code);
+  const promoPrice = Number.isFinite(item.promo_price) ? formatPrice(item.promo_price) : "-";
+  const source = item.url
+    ? `<a href="${item.url}" target="_blank" rel="noopener">${escapeHtml(item.name)}</a>`
+    : escapeHtml(item.name);
+  return `
+    <article class="product expired-product">
+      <div class="product-image product-image-empty" aria-hidden="true"></div>
+      <div>
+        <h2>${source}</h2>
+        <div class="details">
+          <span class="chip expired-chip">Promoție expirată</span>
+          <span class="chip">Cod: ${escapeHtml(item.product_code || "-")}</span>
+          <span class="chip">Bare: ${escapeHtml(barcode || "-")}</span>
+          <span class="chip">Pret promo vechi: ${escapeHtml(promoPrice)}</span>
+          <span class="chip">Ultima promoție: ${escapeHtml(item.last_seen_promo_at || "-")}</span>
+          <span class="chip">Expirat: ${escapeHtml(item.expired_at || "-")}</span>
+        </div>
+      </div>
+      <div class="price">
+        <strong>${escapeHtml(promoPrice)}</strong>
+        <span>expirat</span>
+      </div>
+    </article>
+  `;
+}
+
+function expiredPromoMatches(item, words) {
+  if (!words.length) return true;
+  const barcode = item.barcode || barcodeForProductCode(item.product_code);
+  const haystack = normalize(`${item.name || ""} ${item.product_code || ""} ${barcode || ""}`);
+  return words.every((word) => haystack.includes(word));
+}
+
+function renderExpiredPromos(words) {
+  const items = [...(state.expiredPromos || [])]
+    .filter((item) => expiredPromoMatches(item, words))
+    .sort((a, b) => catalogTimeValue(b.expired_at) - catalogTimeValue(a.expired_at));
+  const visible = items.slice(0, state.visibleLimit);
+  els.count.textContent = String(items.length);
+  els.results.innerHTML = visible.map(expiredPromoCard).join("");
+  els.empty.hidden = items.length > 0;
+  els.empty.textContent = "Nu există promoții expirate.";
+  els.loadMore.hidden = items.length <= visible.length;
+  els.loadMore.textContent = `Mai multe (${visible.length}/${items.length})`;
+  updateCodesSummary();
+}
+
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (char) => ({
     "&": "&amp;",
@@ -573,6 +701,11 @@ function render() {
     els.empty.hidden = false;
     els.empty.textContent = "Scrie numele produsului sau alege o categorie.";
     updateCodesSummary();
+    return;
+  }
+
+  if (state.listMode === "expired") {
+    renderExpiredPromos(words);
     return;
   }
 
@@ -614,6 +747,7 @@ async function loadProducts() {
   const offlineData = await loadOfflineProducts();
   if (offlineData) {
     applyProducts(offlineData, true);
+    if (barcodeFromLocation()) return;
   }
 
   try {
@@ -693,6 +827,7 @@ function applyProducts(data, offline) {
       search: normalize(`${product.name} ${product.product_code || ""}`)
     };
   }).filter((product) => VISIBLE_MAIN_CATEGORY_SET.has(product.main_category));
+  if (!offline) updateExpiredPromos(state.products, data.generated_at);
   updatePriceHistory(state.products, data.generated_at);
   renderCategories();
   renderSubcategories();
@@ -993,6 +1128,8 @@ els.onlyPromo.addEventListener("click", () => {
   render();
 });
 els.codes.addEventListener("click", () => setListMode("codes"));
+els.expiredPromos.addEventListener("click", () => setListMode("expired"));
+els.clearExpiredPromos.addEventListener("click", clearExpiredPromos);
 els.exportCodes.addEventListener("click", exportCollectedCodes);
 els.importExcel.addEventListener("click", () => {
   els.excelInput.click();
@@ -1016,6 +1153,7 @@ els.scrollTop.addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
 window.addEventListener("scroll", updateScrollTopButton, { passive: true });
+window.addEventListener("hashchange", handleBarcodeFromUrl);
 els.theme.addEventListener("change", () => {
   applyTheme(els.theme.checked ? "dark" : "light");
 });
