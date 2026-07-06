@@ -1490,12 +1490,29 @@ async function pollRefreshStatus() {
   els.refresh.disabled = false;
 }
 
+async function responseJsonOrEmpty(response) {
+  try {
+    return await response.json();
+  } catch (error) {
+    return {};
+  }
+}
+
 async function refreshPrices() {
   els.refresh.disabled = true;
   els.refreshStatus.textContent = "Actualizare pornita...";
   try {
     const response = await apiFetch("api/refresh", { method: "POST" });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    if (response.status === 409) {
+      const status = await responseJsonOrEmpty(response);
+      els.refreshStatus.textContent = status.message || "Actualizarea este deja pornita. Asteapta finalizarea.";
+      await pollRefreshStatus();
+      return;
+    }
+    if (!response.ok) {
+      const payload = await responseJsonOrEmpty(response);
+      throw new Error(payload.message || payload.error || `HTTP ${response.status}`);
+    }
     await pollRefreshStatus();
   } catch (error) {
     els.refresh.disabled = false;

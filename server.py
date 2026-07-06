@@ -24,14 +24,17 @@ SCRAPER_FILE = ROOT / "scrape_linella.py"
 SOURCE_URL = "https://linella.md/ro/catalog"
 REFRESH_TIMEOUT_SECONDS = 1800
 REFRESH_IDLE_TIMEOUT_SECONDS = 120
+REFRESH_STALE_SECONDS = 300
 
 status_lock = threading.Lock()
+active_process = None
 status = {
     "running": False,
     "success": None,
     "message": "Gata pentru actualizare.",
     "started_at": None,
     "finished_at": None,
+    "updated_at": None,
 }
 
 
@@ -80,6 +83,7 @@ def cors_headers(handler):
 
 def set_status(**updates):
     with status_lock:
+        updates.setdefault("updated_at", now())
         status.update(updates)
 
 
@@ -88,7 +92,46 @@ def get_status():
         return dict(status)
 
 
+def parse_status_time(value):
+    if not value:
+        return None
+    try:
+        return datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+    except ValueError:
+        return None
+
+
+def refresh_is_stale(current=None):
+    current = current or get_status()
+    if not current.get("running"):
+        return False
+    reference = parse_status_time(current.get("updated_at")) or parse_status_time(current.get("started_at"))
+    if not reference:
+        return True
+    return (datetime.now() - reference).total_seconds() > REFRESH_STALE_SECONDS
+
+
+def reset_refresh_state(reason="Actualizarea blocata a fost resetata."):
+    global active_process
+    with status_lock:
+        process = active_process
+        active_process = None
+    if process and process.poll() is None:
+        try:
+            process.kill()
+        except Exception as exc:
+            print(f"Eroare cand opresc procesul blocat: {exc}", flush=True)
+    set_status(
+        running=False,
+        success=False,
+        message=reason,
+        finished_at=now(),
+    )
+    print(reason, flush=True)
+
+
 def refresh_products(max_pages, sleep_seconds):
+    global active_process
     set_status(
         running=True,
         success=None,
@@ -126,6 +169,8 @@ def refresh_products(max_pages, sleep_seconds):
             stderr=subprocess.STDOUT,
             bufsize=1,
         )
+        with status_lock:
+            active_process = process
         started = time.monotonic()
         current_page = 0
         total_pages = 0
@@ -253,6 +298,7 @@ def refresh_products(max_pages, sleep_seconds):
             finished_at=finished_at,
         )
     except subprocess.TimeoutExpired:
+        print("Actualizarea a depasit limita de timp.", flush=True)
         minutes = REFRESH_TIMEOUT_SECONDS // 60
         set_status(
             running=False,
@@ -261,6 +307,7 @@ def refresh_products(max_pages, sleep_seconds):
             finished_at=now(),
         )
     except TimeoutError as exc:
+        print(f"Actualizarea s-a blocat: {exc}", flush=True)
         set_status(
             running=False,
             success=False,
@@ -268,8 +315,12 @@ def refresh_products(max_pages, sleep_seconds):
             finished_at=now(),
         )
     except Exception as exc:
+        print(f"Eroare refresh: {exc}", flush=True)
         set_status(running=False, success=False, message=f"Eroare: {exc}", finished_at=now())
     finally:
+        with status_lock:
+            if active_process is process:
+                active_process = None
         try:
             PRODUCTS_TMP_FILE.unlink()
         except FileNotFoundError:
@@ -500,13 +551,33 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_POST(self):
         path = urlparse(self.path).path
+        if path == "/api/reset-refresh":
+            current = get_status()
+            if current.get("running") and not refresh_is_stale(current):
+                json_response(self, 409, {
+                    **current,
+                    "message": "Actualizarea este deja pornita. Asteapta finalizarea.",
+                    "stale": False,
+                })
+                return
+            reset_refresh_state()
+            json_response(self, 200, get_status())
+            return
+
         if path != "/api/refresh":
             json_response(self, 404, {"error": "Not found"})
             return
         current = get_status()
         if current["running"]:
-            json_response(self, 409, current)
-            return
+            if refresh_is_stale(current):
+                reset_refresh_state("Actualizarea precedenta a ramas blocata si a fost resetata.")
+            else:
+                json_response(self, 409, {
+                    **current,
+                    "message": "Actualizarea este deja pornita. Asteapta finalizarea.",
+                    "stale": False,
+                })
+                return
         thread = threading.Thread(
             target=refresh_products,
             args=(self.max_pages, self.sleep_seconds),
