@@ -14,7 +14,8 @@ const state = {
   barcodeExcelMap: {},
   promoSnapshot: {},
   expiredPromos: [],
-  catalogGeneratedAt: ""
+  catalogGeneratedAt: "",
+  backendBase: null
 };
 
 const DB_NAME = "cauta-pret-offline";
@@ -22,6 +23,8 @@ const DB_STORE = "cache";
 const PRODUCTS_CACHE_KEY = "products";
 const CATALOG_META_KEY = "cauta-pret-catalog-meta";
 const NEW_SUBCATEGORY = "__new_products__";
+const BACKEND_URL_KEY = "cauta-pret-backend-url";
+const DEFAULT_BACKEND_URL = "https://cauta-pret-linella.onrender.com";
 
 const els = {
   meta: document.getElementById("meta"),
@@ -111,6 +114,69 @@ function saveJsonStorage(key, value) {
   } catch (error) {
     // Local storage is best effort.
   }
+}
+
+function backendBaseFromStorage() {
+  try {
+    return (localStorage.getItem(BACKEND_URL_KEY) || "").replace(/\/+$/, "");
+  } catch (error) {
+    return "";
+  }
+}
+
+function rememberBackendBase(base) {
+  state.backendBase = base;
+  if (!base) return;
+  try {
+    localStorage.setItem(BACKEND_URL_KEY, base);
+  } catch (error) {
+    // Backend persistence is best effort.
+  }
+}
+
+function backendCandidates() {
+  const values = [
+    state.backendBase,
+    backendBaseFromStorage(),
+    "",
+    DEFAULT_BACKEND_URL
+  ].filter((value) => value !== null && value !== undefined);
+  return [...new Set(values.map((value) => String(value).replace(/\/+$/, "")))];
+}
+
+function apiUrl(base, path) {
+  const cleanPath = String(path).replace(/^\/+/, "");
+  return base ? `${base}/${cleanPath}` : cleanPath;
+}
+
+async function apiFetch(path, options = {}) {
+  const candidates = backendCandidates();
+  let lastError = null;
+  for (const base of candidates) {
+    try {
+      const response = await fetch(apiUrl(base, path), {
+        cache: "no-store",
+        ...options
+      });
+      const contentType = response.headers.get("Content-Type") || "";
+      const expectsApiData = String(path).startsWith("api/") && !String(path).startsWith("api/image");
+      if (response.ok && expectsApiData && !contentType.includes("application/json")) {
+        continue;
+      }
+      if (response.ok) rememberBackendBase(base);
+      if (response.ok || state.backendBase === base || base || ![404, 405].includes(response.status)) {
+        return response;
+      }
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  throw lastError || new Error("Backend indisponibil.");
+}
+
+function apiImageUrl(src) {
+  const path = `api/image?url=${encodeURIComponent(src)}`;
+  return apiUrl(state.backendBase || backendBaseFromStorage() || DEFAULT_BACKEND_URL, path);
 }
 
 function isValidCatalogData(data) {
@@ -358,7 +424,7 @@ async function imageSourceToDataUrl(src) {
   const url = src.startsWith(window.location.origin)
     ? src
     : `api/image?url=${encodeURIComponent(src)}`;
-  const response = await fetch(url, { cache: "no-store" });
+  const response = await apiFetch(url);
   if (!response.ok) throw new Error("Nu am putut incarca poza produsului pentru salvare.");
   return blobToDataUrl(await response.blob());
 }
@@ -479,7 +545,7 @@ function loadCanvasImage(src) {
     image.onerror = () => resolve(null);
     image.src = src.startsWith(window.location.origin) || src.startsWith("data:")
       ? src
-      : `api/image?url=${encodeURIComponent(src)}`;
+      : apiImageUrl(src);
   });
 }
 
@@ -1141,7 +1207,7 @@ async function loadProducts() {
 }
 
 async function syncProducts(offlineData) {
-  const manifestResponse = await fetch("api/manifest", { cache: "no-store" }).catch(() => null);
+  const manifestResponse = await apiFetch("api/manifest").catch(() => null);
   if (manifestResponse && manifestResponse.ok) {
     const manifest = await manifestResponse.json();
     if (offlineData) {
@@ -1152,7 +1218,7 @@ async function syncProducts(offlineData) {
       }
     }
 
-    const changesResponse = await fetch("api/changes", { cache: "no-store" }).catch(() => null);
+    const changesResponse = await apiFetch("api/changes").catch(() => null);
     if (offlineData && changesResponse && changesResponse.ok) {
       const changes = await changesResponse.json();
       if (changes.base_generated_at === offlineData.generated_at) {
@@ -1352,7 +1418,7 @@ function loadVisibleCodes() {
 async function loadProductCode(product) {
   if (product.product_code) return product.product_code;
   if (!product.url) return "";
-  const response = await fetch(`api/code?url=${encodeURIComponent(product.url)}`, { cache: "no-store" });
+  const response = await apiFetch(`api/code?url=${encodeURIComponent(product.url)}`);
   if (!response.ok) return "";
   const data = await response.json();
   if (data.product_code) {
@@ -1380,14 +1446,14 @@ async function fetchProductCode(chip) {
 }
 
 async function fetchProducts(allowAssetsFallback = false) {
-  const apiResponse = await fetch("api/products", { cache: "no-store" }).catch(() => null);
+  const apiResponse = await apiFetch("api/products").catch(() => null);
   if (apiResponse && apiResponse.ok) return apiResponse;
   if (!allowAssetsFallback) throw new Error("Serverul nu a trimis baza actualizata.");
   return fetch("products.json", { cache: "no-store" });
 }
 
 async function fetchServerProductsOnly() {
-  const response = await fetch("api/products", { cache: "no-store" });
+  const response = await apiFetch("api/products");
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
   const data = await response.json();
   if (!isValidCatalogData(data)) throw new Error("Baza actualizata nu este valida.");
@@ -1396,7 +1462,7 @@ async function fetchServerProductsOnly() {
 
 async function pollRefreshStatus() {
   for (let i = 0; i < 360; i += 1) {
-    const response = await fetch("api/status", { cache: "no-store" }).catch(() => null);
+    const response = await apiFetch("api/status").catch(() => null);
     if (!response || !response.ok) break;
     const status = await response.json();
     els.refreshStatus.textContent = status.message || "";
@@ -1428,12 +1494,12 @@ async function refreshPrices() {
   els.refresh.disabled = true;
   els.refreshStatus.textContent = "Actualizare pornita...";
   try {
-    const response = await fetch("api/refresh", { method: "POST" });
+    const response = await apiFetch("api/refresh", { method: "POST" });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     await pollRefreshStatus();
   } catch (error) {
     els.refresh.disabled = false;
-    els.refreshStatus.textContent = "Refresh disponibil doar cand aplicatia ruleaza cu server backend.";
+    els.refreshStatus.textContent = `Nu pot porni actualizarea. Verifica backend-ul Render sau serverul local. ${error.message || ""}`.trim();
   }
 }
 

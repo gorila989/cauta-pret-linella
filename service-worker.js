@@ -1,4 +1,4 @@
-const CACHE_NAME = "cauta-pret-v51";
+const CACHE_NAME = "cauta-pret-v52";
 const ASSETS = [
   "./",
   "./index.html",
