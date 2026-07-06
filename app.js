@@ -13,7 +13,8 @@ const state = {
   priceHistory: {},
   barcodeExcelMap: {},
   promoSnapshot: {},
-  expiredPromos: []
+  expiredPromos: [],
+  catalogGeneratedAt: ""
 };
 
 const DB_NAME = "cauta-pret-offline";
@@ -329,6 +330,195 @@ function isPromoProduct(product) {
   return Boolean(product.is_promo || product.discount || product.old_price);
 }
 
+function safeFilePart(value) {
+  return normalize(String(value || "produs"))
+    .replace(/\s+/g, "_")
+    .replace(/[^a-z0-9_]+/g, "")
+    .replace(/^_+|_+$/g, "")
+    .slice(0, 54) || "produs";
+}
+
+function promoImageFileName(product) {
+  const name = safeFilePart(product.name);
+  const code = safeFilePart(product.product_code || "fara_plu");
+  return `${name}_${code}_${localDateValue(new Date())}.png`;
+}
+
+function blobToDataUrl(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(reader.error || new Error("Nu pot citi imaginea."));
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function imageSourceToDataUrl(src) {
+  if (!src || src.startsWith("data:")) return src;
+  const url = src.startsWith(window.location.origin)
+    ? src
+    : `api/image?url=${encodeURIComponent(src)}`;
+  const response = await fetch(url, { cache: "no-store" });
+  if (!response.ok) throw new Error("Nu am putut incarca poza produsului pentru salvare.");
+  return blobToDataUrl(await response.blob());
+}
+
+async function inlineImagesForSnapshot(clone) {
+  const images = [...clone.querySelectorAll("img")];
+  await Promise.all(images.map(async (image) => {
+    const source = image.currentSrc || image.src;
+    image.removeAttribute("srcset");
+    image.removeAttribute("loading");
+    image.removeAttribute("decoding");
+    image.src = await imageSourceToDataUrl(source);
+  }));
+}
+
+function copyFormValues(source, clone) {
+  const sourceFields = source.querySelectorAll("input, textarea, select");
+  const cloneFields = clone.querySelectorAll("input, textarea, select");
+  sourceFields.forEach((field, index) => {
+    const cloneField = cloneFields[index];
+    if (!cloneField) return;
+    if (field.type === "checkbox" || field.type === "radio") cloneField.checked = field.checked;
+    else cloneField.value = field.value;
+  });
+}
+
+function inlineComputedStyles(source, clone) {
+  const sourceNodes = [source, ...source.querySelectorAll("*")];
+  const cloneNodes = [clone, ...clone.querySelectorAll("*")];
+  sourceNodes.forEach((node, index) => {
+    const cloneNode = cloneNodes[index];
+    if (!cloneNode) return;
+    const computed = window.getComputedStyle(node);
+    const styleText = [...computed].map((name) => `${name}:${computed.getPropertyValue(name)};`).join("");
+    cloneNode.setAttribute("style", styleText);
+  });
+}
+
+function addSnapshotChip(card, text, marker) {
+  if (!text) return;
+  const details = card.querySelector(".details");
+  if (!details || details.querySelector(`[data-snapshot-chip="${marker}"]`)) return;
+  if ([...details.querySelectorAll(".chip")].some((chip) => chip.textContent.trim() === text)) return;
+  const chip = document.createElement("span");
+  chip.className = "chip";
+  chip.dataset.snapshotChip = marker;
+  chip.textContent = text;
+  details.appendChild(chip);
+}
+
+async function ensureSnapshotProductDetails(card, product) {
+  const code = product.product_code || await loadProductCode(product).catch(() => "");
+  if (code) {
+    const codeChip = card.querySelector(".code-chip");
+    if (codeChip) codeChip.textContent = `Cod: ${code}`;
+    addSnapshotChip(card, `Cod: ${code}`, "code");
+  }
+  const barcode = barcodeForProduct(product);
+  if (barcode) addSnapshotChip(card, `Bare: ${barcode}`, "barcode");
+  if (state.catalogGeneratedAt) addSnapshotChip(card, `Promo actualizata: ${state.catalogGeneratedAt}`, "promo-date");
+}
+
+async function createProductCardPng(card) {
+  const rect = card.getBoundingClientRect();
+  const width = Math.max(1, Math.ceil(rect.width));
+  const height = Math.max(1, Math.ceil(rect.height));
+  const clone = card.cloneNode(true);
+  copyFormValues(card, clone);
+  await inlineImagesForSnapshot(clone);
+  inlineComputedStyles(card, clone);
+  clone.querySelectorAll(".snapshot-hidden").forEach((node) => node.remove());
+  clone.style.width = `${width}px`;
+  clone.style.height = `${height}px`;
+  clone.style.margin = "0";
+  clone.style.boxSizing = "border-box";
+
+  const wrapper = document.createElement("div");
+  wrapper.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
+  wrapper.style.width = `${width}px`;
+  wrapper.style.height = `${height}px`;
+  wrapper.appendChild(clone);
+
+  if (document.fonts?.ready) await document.fonts.ready.catch(() => {});
+  const markup = new XMLSerializer().serializeToString(wrapper);
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+      <foreignObject width="100%" height="100%">${markup}</foreignObject>
+    </svg>
+  `;
+  const svgUrl = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml;charset=utf-8" }));
+  try {
+    const image = new Image();
+    const loaded = new Promise((resolve, reject) => {
+      image.onload = resolve;
+      image.onerror = () => reject(new Error("Nu am putut crea imaginea cardului."));
+    });
+    image.src = svgUrl;
+    await loaded;
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const context = canvas.getContext("2d");
+    context.drawImage(image, 0, 0);
+    return await new Promise((resolve, reject) => {
+      canvas.toBlob((blob) => {
+        if (blob) resolve(blob);
+        else reject(new Error("Nu am putut salva cardul ca PNG."));
+      }, "image/png");
+    });
+  } finally {
+    URL.revokeObjectURL(svgUrl);
+  }
+}
+
+async function saveBlobAsFile(blob, filename) {
+  if (window.showSaveFilePicker) {
+    try {
+      const handle = await window.showSaveFilePicker({
+        suggestedName: filename,
+        types: [{ description: "PNG", accept: { "image/png": [".png"] } }]
+      });
+      const writable = await handle.createWritable();
+      await writable.write(blob);
+      await writable.close();
+      return;
+    } catch (error) {
+      if (error?.name === "AbortError") throw new Error("Salvarea a fost anulata.");
+    }
+  }
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+async function savePromoProductCardImage(card, product) {
+  if (!isPromoProduct(product)) {
+    els.refreshStatus.textContent = "Imaginea se poate salva doar pentru produse promotionale.";
+    return;
+  }
+  const button = card.querySelector('[data-action="save-image"]');
+  if (button) button.disabled = true;
+  els.refreshStatus.textContent = "Pregatesc imaginea produsului...";
+  try {
+    await ensureSnapshotProductDetails(card, product);
+    const blob = await createProductCardPng(card);
+    await saveBlobAsFile(blob, promoImageFileName(product));
+    els.refreshStatus.textContent = "Imaginea produsului a fost salvat\u0103";
+  } catch (error) {
+    els.refreshStatus.textContent = `Eroare la salvarea imaginii: ${error.message}`;
+  } finally {
+    if (button) button.disabled = false;
+  }
+}
+
 function promoSnapshotRecord(product, generatedAt) {
   const key = productKey(product);
   const productCode = normalizeProductCodeValue(product.product_code);
@@ -568,6 +758,9 @@ function productCard(product) {
   const promo = product.discount
     ? `<span class="chip promo">${product.discount}</span>`
     : "";
+  const promoDate = isPromoProduct(product) && state.catalogGeneratedAt
+    ? `<span class="chip">Promo actualizata: ${escapeHtml(state.catalogGeneratedAt)}</span>`
+    : "";
   const newChip = productIsNew ? `<span class="chip new-chip">Produs nou</span>` : "";
   const priceChangeChip = priceChange
     ? `<span class="chip ${priceChange.diff > 0 ? "price-up" : "price-down"}">
@@ -607,6 +800,9 @@ function productCard(product) {
         <img class="product-image" src="${escapeHtml(product.image_url)}" alt="${escapeHtml(product.name)}" loading="lazy" decoding="async" fetchpriority="low">
       </button>`
     : `<div class="product-image product-image-empty" aria-hidden="true"></div>`;
+  const saveImageButton = isPromoProduct(product)
+    ? `<button class="mini-action save-image-action snapshot-hidden" type="button" data-action="save-image">Salveaz\u0103 imagine</button>`
+    : "";
 
   return `
     <article class="product${productIsNew ? " new-product" : ""}" data-key="${escapeHtml(key)}">
@@ -620,6 +816,7 @@ function productCard(product) {
           ${category}
           ${subcategory}
           ${promo}
+          ${promoDate}
           ${code}
           ${barcodeChip}
           ${original}
@@ -629,6 +826,7 @@ function productCard(product) {
           <button class="mini-action code-action${collectedCode ? " active" : ""}" type="button" data-action="code">
             ${collectedCode ? "Cod salvat" : "Adauga cod"}
           </button>
+          ${saveImageButton}
         </div>
       </div>
       <div class="price">
@@ -833,6 +1031,7 @@ function applyChanges(baseData, changes) {
 }
 
 function applyProducts(data, offline) {
+  state.catalogGeneratedAt = data.generated_at || "";
   state.products = data.products.map((product) => {
     const categorySlug = product.category_slug || categorySlugFromUrl(product.url);
     const subcategoryName = SUBCATEGORY_LABELS[categorySlug] || product.category || labelFromSlug(categorySlug);
@@ -1224,6 +1423,12 @@ els.results.addEventListener("click", async (event) => {
     const card = action.closest(".product");
     const key = card?.dataset.key;
     if (!key) return;
+    if (action.dataset.action === "save-image") {
+      const product = state.products.find((item) => productKey(item) === key);
+      if (!product) return;
+      await savePromoProductCardImage(card, product);
+      return;
+    }
     if (action.dataset.action === "code") {
       const product = state.products.find((item) => productKey(item) === key);
       if (!product) return;

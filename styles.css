@@ -545,6 +545,16 @@ body.dark-theme .product.new-product .price strong {
   color: var(--panel);
 }
 
+.save-image-action {
+  background: var(--green-soft);
+  color: var(--green);
+  font-weight: 700;
+}
+
+.save-image-action:disabled {
+  opacity: 0.65;
+}
+
 .empty {
   padding: 20px;
   background: var(--product-bg);

@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
+import urllib.request
 import scrape_linella
 
 
@@ -374,6 +375,41 @@ def save_products(data):
     write_json_atomic(PRODUCTS_FILE, data)
 
 
+def image_response(handler, image_url):
+    parsed = urlparse(image_url)
+    if parsed.scheme != "https" or parsed.netloc not in {"linella.md", "www.linella.md"}:
+        json_response(handler, 400, {"error": "URL imagine invalid"})
+        return
+    if not parsed.path.startswith("/public/"):
+        json_response(handler, 400, {"error": "Imaginea nu este permisa"})
+        return
+
+    request = urllib.request.Request(
+        image_url,
+        headers={"User-Agent": getattr(scrape_linella, "USER_AGENT", "Mozilla/5.0")},
+    )
+    with urllib.request.urlopen(request, timeout=30) as response:
+        max_size = 5 * 1024 * 1024
+        content_length = int(response.headers.get("Content-Length") or "0")
+        if content_length > max_size:
+            json_response(handler, 413, {"error": "Imaginea este prea mare"})
+            return
+        body = response.read()
+        if len(body) > max_size:
+            json_response(handler, 413, {"error": "Imaginea este prea mare"})
+            return
+        content_type = response.headers.get("Content-Type", "image/jpeg")
+    if not content_type.startswith("image/"):
+        json_response(handler, 400, {"error": "Fisierul nu este imagine"})
+        return
+    handler.send_response(200)
+    handler.send_header("Content-Type", content_type)
+    handler.send_header("Cache-Control", "no-store")
+    handler.send_header("Content-Length", str(len(body)))
+    handler.end_headers()
+    handler.wfile.write(body)
+
+
 class Handler(SimpleHTTPRequestHandler):
     def __init__(self, *args, max_pages=300, sleep_seconds=0.1, **kwargs):
         self.max_pages = max_pages
@@ -414,6 +450,14 @@ class Handler(SimpleHTTPRequestHandler):
             return
         if path == "/api/status":
             json_response(self, 200, get_status())
+            return
+        if path == "/api/image":
+            params = parse_qs(urlparse(self.path).query)
+            image_url = unquote(params.get("url", [""])[0])
+            try:
+                image_response(self, image_url)
+            except Exception as exc:
+                json_response(self, 502, {"error": str(exc)})
             return
         if path == "/api/code":
             params = parse_qs(urlparse(self.path).query)
