@@ -954,12 +954,12 @@ function renderSubcategories() {
   }
 
   els.subcategory.innerHTML = [
-    `<option value="all">${state.category === "all" ? "Alege categoria" : "Toate diviziunile"}</option>`,
+    `<option value="all">Toate diviziunile</option>`,
     hasNewProducts ? `<option value="${NEW_SUBCATEGORY}">Nou</option>` : "",
     ...subcategories.map(([slug, name]) => `<option value="${escapeHtml(slug)}">${escapeHtml(name)}</option>`)
   ].join("");
   els.subcategory.value = state.subcategory;
-  els.subcategory.disabled = !hasNewProducts && (state.category === "all" || subcategories.length === 0);
+  els.subcategory.disabled = !hasNewProducts && subcategories.length === 0;
 }
 
 function renderDiscountOptions() {
