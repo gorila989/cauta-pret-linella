@@ -1,4 +1,4 @@
-const CACHE_NAME = "cauta-pret-v47";
+const CACHE_NAME = "cauta-pret-v48";
 const ASSETS = [
   "./",
   "./index.html",
@@ -31,19 +31,6 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
   if (event.request.method !== "GET") {
     event.respondWith(fetch(event.request));
-    return;
-  }
-
-  if (url.pathname === "/api/products") {
-    event.respondWith(
-      fetch(event.request, { cache: "no-store" })
-        .then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
-          return response;
-        })
-        .catch(() => caches.match(event.request))
-    );
     return;
   }
 

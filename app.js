@@ -19,6 +19,7 @@ const state = {
 const DB_NAME = "cauta-pret-offline";
 const DB_STORE = "cache";
 const PRODUCTS_CACHE_KEY = "products";
+const CATALOG_META_KEY = "cauta-pret-catalog-meta";
 const NEW_SUBCATEGORY = "__new_products__";
 
 const els = {
@@ -109,6 +110,20 @@ function saveJsonStorage(key, value) {
   } catch (error) {
     // Local storage is best effort.
   }
+}
+
+function isValidCatalogData(data) {
+  return Boolean(data && Array.isArray(data.products));
+}
+
+function saveCatalogMeta(data) {
+  if (!isValidCatalogData(data)) return;
+  saveJsonStorage(CATALOG_META_KEY, {
+    generated_at: data.generated_at || "",
+    source: data.source || "",
+    count: data.products.length,
+    saved_at: new Date().toISOString()
+  });
 }
 
 function loadUserLists() {
@@ -761,6 +776,8 @@ async function loadProducts() {
       els.meta.textContent = "Nu pot incarca baza de produse.";
       els.empty.hidden = false;
       els.empty.textContent = "Deschide aplicatia o data cand serverul merge, ca sa salveze baza pentru offline.";
+    } else {
+      els.refreshStatus.textContent = `Eroare actualizare: ${error.message}`;
     }
   }
 }
@@ -784,11 +801,15 @@ async function syncProducts(offlineData) {
         return applyChanges(offlineData, changes);
       }
     }
+  } else if (offlineData) {
+    return null;
   }
 
-  const response = await fetchProducts();
+  const response = await fetchProducts(!offlineData);
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
-  return response.json();
+  const data = await response.json();
+  if (!isValidCatalogData(data)) throw new Error("Baza descarcata nu este valida.");
+  return data;
 }
 
 function catalogTimeValue(value) {
@@ -851,21 +872,29 @@ function openOfflineDb() {
 }
 
 async function saveOfflineProducts(data) {
+  if (!isValidCatalogData(data)) throw new Error("Baza nu este valida si nu a fost salvata.");
+  let db = null;
   try {
-    const db = await openOfflineDb();
+    db = await openOfflineDb();
     await new Promise((resolve, reject) => {
       const transaction = db.transaction(DB_STORE, "readwrite");
       transaction.objectStore(DB_STORE).put(data, PRODUCTS_CACHE_KEY);
       transaction.oncomplete = resolve;
       transaction.onerror = () => reject(transaction.error);
+      transaction.onabort = () => reject(transaction.error || new Error("Salvarea bazei a fost oprita."));
     });
-    db.close();
+    saveCatalogMeta(data);
+    return;
   } catch (error) {
     try {
       localStorage.setItem(PRODUCTS_CACHE_KEY, JSON.stringify(data));
+      saveCatalogMeta(data);
+      return;
     } catch (localError) {
-      // Offline cache is best effort; the app still works online.
+      throw new Error("Nu am putut salva baza local.");
     }
+  } finally {
+    if (db) db.close();
   }
 }
 
@@ -879,14 +908,15 @@ async function loadOfflineProducts() {
       request.onerror = () => reject(request.error);
     });
     db.close();
-    if (data) return data;
+    if (isValidCatalogData(data)) return data;
   } catch (error) {
     // Fall through to localStorage fallback.
   }
 
   try {
     const raw = localStorage.getItem(PRODUCTS_CACHE_KEY);
-    return raw ? JSON.parse(raw) : null;
+    const data = raw ? JSON.parse(raw) : null;
+    return isValidCatalogData(data) ? data : null;
   } catch (error) {
     return null;
   }
@@ -990,10 +1020,19 @@ async function fetchProductCode(chip) {
   }
 }
 
-async function fetchProducts() {
+async function fetchProducts(allowAssetsFallback = false) {
   const apiResponse = await fetch("api/products", { cache: "no-store" }).catch(() => null);
   if (apiResponse && apiResponse.ok) return apiResponse;
+  if (!allowAssetsFallback) throw new Error("Serverul nu a trimis baza actualizata.");
   return fetch("products.json", { cache: "no-store" });
+}
+
+async function fetchServerProductsOnly() {
+  const response = await fetch("api/products", { cache: "no-store" });
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  const data = await response.json();
+  if (!isValidCatalogData(data)) throw new Error("Baza actualizata nu este valida.");
+  return data;
 }
 
 async function pollRefreshStatus() {
@@ -1004,7 +1043,20 @@ async function pollRefreshStatus() {
     els.refreshStatus.textContent = status.message || "";
     if (!status.running) {
       els.refresh.disabled = false;
-      if (status.success) await loadProducts();
+      if (status.success) {
+        try {
+          const data = await fetchServerProductsOnly();
+          await saveOfflineProducts(data);
+          applyProducts(data, false);
+          els.refreshStatus.textContent = "Baza de date a fost actualizat\u0103";
+        } catch (error) {
+          const offlineData = await loadOfflineProducts();
+          if (offlineData) applyProducts(offlineData, true);
+          els.refreshStatus.textContent = `Eroare la salvarea bazei: ${error.message}`;
+        }
+      } else if (status.message) {
+        els.refreshStatus.textContent = status.message;
+      }
       return;
     }
     await new Promise((resolve) => setTimeout(resolve, 2000));

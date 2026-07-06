@@ -17,6 +17,7 @@ import scrape_linella
 
 ROOT = Path(__file__).resolve().parent
 PRODUCTS_FILE = ROOT / "products.json"
+PRODUCTS_TMP_FILE = ROOT / "products.next.json"
 CHANGES_FILE = ROOT / "changes.json"
 SCRAPER_FILE = ROOT / "scrape_linella.py"
 SOURCE_URL = "https://linella.md/ro/catalog"
@@ -63,6 +64,7 @@ def json_response(handler, code, payload):
     body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
     handler.send_response(code)
     handler.send_header("Content-Type", "application/json; charset=utf-8")
+    handler.send_header("Cache-Control", "no-store")
     handler.send_header("Content-Length", str(len(body)))
     handler.end_headers()
     handler.wfile.write(body)
@@ -87,6 +89,10 @@ def refresh_products(max_pages, sleep_seconds):
         finished_at=None,
     )
     previous = load_products_file()
+    try:
+        PRODUCTS_TMP_FILE.unlink()
+    except FileNotFoundError:
+        pass
     command = [
         sys.executable,
         "-u",
@@ -98,7 +104,7 @@ def refresh_products(max_pages, sleep_seconds):
         "--sleep",
         str(sleep_seconds),
         "--out",
-        str(PRODUCTS_FILE),
+        str(PRODUCTS_TMP_FILE),
     ]
     process = None
     try:
@@ -221,7 +227,10 @@ def refresh_products(max_pages, sleep_seconds):
                 finished_at=now(),
             )
             return
-        current = load_products_file() or {"products": []}
+        current = load_products_file(PRODUCTS_TMP_FILE)
+        if not validate_products_data(current):
+            raise ValueError("Baza descarcata nu este valida. Pastrez ultima baza buna.")
+        save_products(current)
         changes = write_changes(previous, current)
         count = count_products()
         changed_count = len(changes.get("upserts", []))
@@ -231,7 +240,7 @@ def refresh_products(max_pages, sleep_seconds):
         set_status(
             running=False,
             success=True,
-            message=f"Actualizat: {count} produse. Diferente: {changed_count}, noi: {new_count}, pret schimbat: {price_count}, sterse: {deleted_count}.",
+            message=f"Baza de date a fost actualizata. Actualizat: {count} produse. Diferente: {changed_count}, noi: {new_count}, pret schimbat: {price_count}, sterse: {deleted_count}.",
             finished_at=now(),
         )
     except subprocess.TimeoutExpired:
@@ -251,6 +260,11 @@ def refresh_products(max_pages, sleep_seconds):
         )
     except Exception as exc:
         set_status(running=False, success=False, message=f"Eroare: {exc}", finished_at=now())
+    finally:
+        try:
+            PRODUCTS_TMP_FILE.unlink()
+        except FileNotFoundError:
+            pass
 
 
 def count_products():
@@ -261,11 +275,24 @@ def count_products():
     return len(data.get("products", []))
 
 
-def load_products_file():
-    if not PRODUCTS_FILE.exists():
+def write_json_atomic(path, data):
+    temp_path = path.with_suffix(path.suffix + ".tmp")
+    with temp_path.open("w", encoding="utf-8") as file:
+      json.dump(data, file, ensure_ascii=False, indent=2)
+      file.flush()
+      os.fsync(file.fileno())
+    os.replace(temp_path, path)
+
+
+def load_products_file(path=PRODUCTS_FILE):
+    if not path.exists():
         return None
-    with PRODUCTS_FILE.open("r", encoding="utf-8") as file:
+    with path.open("r", encoding="utf-8") as file:
         return json.load(file)
+
+
+def validate_products_data(data):
+    return bool(data and isinstance(data.get("products"), list))
 
 
 def product_key(product):
@@ -317,7 +344,7 @@ def write_changes(previous, current):
         "deleted": deleted,
     }
     save_products(current)
-    CHANGES_FILE.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    write_json_atomic(CHANGES_FILE, payload)
     return payload
 
 
@@ -344,7 +371,7 @@ def find_product_by_url(product_url):
 
 
 def save_products(data):
-    PRODUCTS_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    write_json_atomic(PRODUCTS_FILE, data)
 
 
 class Handler(SimpleHTTPRequestHandler):
