@@ -59,8 +59,9 @@ const els = {
   imageModalClose: document.getElementById("imageModalClose"),
   scrollTop: document.getElementById("scrollTopButton"),
   promoCarousel: document.getElementById("promoCarousel"),
-  promoBannerLink: document.getElementById("promoBannerLink"),
+  promoBannerFrame: document.getElementById("promoBannerFrame"),
   promoBannerImage: document.getElementById("promoBannerImage"),
+  promoError: document.getElementById("promoError"),
   promoPrev: document.getElementById("promoPrev"),
   promoNext: document.getElementById("promoNext"),
   promoDots: document.getElementById("promoDots")
@@ -174,6 +175,8 @@ function renderBannerCarousel() {
   els.promoNext.disabled = state.banners.length <= 1;
   if (!hasBanners) {
     els.promoBannerImage.removeAttribute("src");
+    els.promoBannerImage.hidden = true;
+    els.promoError.hidden = false;
     els.promoDots.innerHTML = "";
     return;
   }
@@ -185,9 +188,10 @@ function showBanner(index) {
   if (!state.banners.length) return;
   state.bannerIndex = (index + state.banners.length) % state.banners.length;
   const banner = state.banners[state.bannerIndex];
+  els.promoError.hidden = true;
+  els.promoBannerImage.hidden = false;
   els.promoBannerImage.src = banner.image;
   els.promoBannerImage.alt = "";
-  els.promoBannerLink.href = banner.link || banner.image;
   els.promoDots.innerHTML = state.banners.map((_, dotIndex) => (
     `<button class="promo-dot${dotIndex === state.bannerIndex ? " active" : ""}" type="button" data-banner-index="${dotIndex}" aria-label="Slide ${dotIndex + 1}"></button>`
   )).join("");
@@ -1300,6 +1304,14 @@ els.promoDots.addEventListener("click", (event) => {
   if (!dot) return;
   showBanner(Number(dot.dataset.bannerIndex));
   startBannerAutoplay();
+});
+els.promoBannerImage.addEventListener("error", () => {
+  els.promoBannerImage.hidden = true;
+  els.promoError.hidden = false;
+});
+els.promoBannerImage.addEventListener("load", () => {
+  els.promoBannerImage.hidden = false;
+  els.promoError.hidden = true;
 });
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && !els.imageModal.hidden) closeImageModal();
