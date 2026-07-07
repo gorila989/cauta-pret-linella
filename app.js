@@ -41,8 +41,6 @@ const els = {
   sortPrice: document.getElementById("sortPrice"),
   onlyPromo: document.getElementById("onlyPromo"),
   codes: document.getElementById("codesButton"),
-  expiredPromos: document.getElementById("expiredPromosButton"),
-  clearExpiredPromos: document.getElementById("clearExpiredPromosButton"),
   exportCodes: document.getElementById("exportCodesButton"),
   importExcel: document.getElementById("importExcelButton"),
   excelInput: document.getElementById("excelInput"),
@@ -256,7 +254,7 @@ function setListMode(mode) {
   state.listMode = state.listMode === mode ? "all" : mode;
   state.visibleLimit = 30;
   els.codes.classList.toggle("active", state.listMode === "codes");
-  els.expiredPromos.classList.toggle("active", state.listMode === "expired");
+  if (els.expiredPromos) els.expiredPromos.classList.toggle("active", state.listMode === "expired");
   render();
 }
 
@@ -1623,8 +1621,8 @@ els.onlyPromo.addEventListener("click", () => {
   render();
 });
 els.codes.addEventListener("click", () => setListMode("codes"));
-els.expiredPromos.addEventListener("click", () => setListMode("expired"));
-els.clearExpiredPromos.addEventListener("click", clearExpiredPromos);
+if (els.expiredPromos) els.expiredPromos.addEventListener("click", () => setListMode("expired"));
+if (els.clearExpiredPromos) els.clearExpiredPromos.addEventListener("click", clearExpiredPromos);
 els.exportCodes.addEventListener("click", exportCollectedCodes);
 els.importExcel.addEventListener("click", () => {
   els.excelInput.click();
