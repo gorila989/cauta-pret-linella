@@ -38,7 +38,6 @@ const els = {
   subcategory: document.getElementById("subcategoryFilter"),
   discount: document.getElementById("discountFilter"),
   sortName: document.getElementById("sortName"),
-  sortPrice: document.getElementById("sortPrice"),
   onlyPromo: document.getElementById("onlyPromo"),
   codes: document.getElementById("codesButton"),
   exportCodes: document.getElementById("exportCodesButton"),
@@ -1599,14 +1598,6 @@ els.sortName.addEventListener("click", () => {
   state.sort = "name";
   state.visibleLimit = 30;
   els.sortName.classList.add("active");
-  els.sortPrice.classList.remove("active");
-  render();
-});
-els.sortPrice.addEventListener("click", () => {
-  state.sort = "price";
-  state.visibleLimit = 30;
-  els.sortPrice.classList.add("active");
-  els.sortName.classList.remove("active");
   render();
 });
 els.onlyPromo.addEventListener("click", () => {
