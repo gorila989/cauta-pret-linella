@@ -637,6 +637,13 @@ body.dark-theme .product.new-product .price strong {
   outline-offset: 3px;
 }
 
+.app-footer {
+  margin: 28px 0 8px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+}
+
 @media (max-width: 560px) {
   .app {
     padding: 12px;
