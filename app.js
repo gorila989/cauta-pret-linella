@@ -1189,8 +1189,8 @@ async function loadProducts() {
   try {
     const data = await syncProducts(offlineData);
     if (data) {
-      await saveOfflineProducts(data);
-      applyProducts(data, false);
+      const savedData = await saveOfflineProducts(data);
+      applyProducts(savedData || data, Boolean(savedData && savedData !== data));
     }
   } catch (error) {
     if (!offlineData) {
@@ -1230,12 +1230,22 @@ async function syncProducts(offlineData) {
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
   const data = await response.json();
   if (!isValidCatalogData(data)) throw new Error("Baza descarcata nu este valida.");
+  if (offlineData && catalogIsOlder(data, offlineData)) return null;
   return data;
 }
 
 function catalogTimeValue(value) {
   const time = Date.parse(String(value || "").replace(" ", "T"));
   return Number.isFinite(time) ? time : 0;
+}
+
+function catalogIsOlder(candidate, current) {
+  if (!isValidCatalogData(candidate) || !isValidCatalogData(current)) return false;
+  const candidateTime = catalogTimeValue(candidate.generated_at);
+  const currentTime = catalogTimeValue(current.generated_at);
+  if (!currentTime) return false;
+  if (!candidateTime) return true;
+  return candidateTime < currentTime;
 }
 
 function applyChanges(baseData, changes) {
@@ -1295,6 +1305,10 @@ function openOfflineDb() {
 
 async function saveOfflineProducts(data) {
   if (!isValidCatalogData(data)) throw new Error("Baza nu este valida si nu a fost salvata.");
+  const existingData = await loadOfflineProducts().catch(() => null);
+  if (existingData && catalogIsOlder(data, existingData)) {
+    return existingData;
+  }
   let db = null;
   try {
     db = await openOfflineDb();
@@ -1305,13 +1319,18 @@ async function saveOfflineProducts(data) {
       transaction.onerror = () => reject(transaction.error);
       transaction.onabort = () => reject(transaction.error || new Error("Salvarea bazei a fost oprita."));
     });
+    try {
+      localStorage.setItem(PRODUCTS_CACHE_KEY, JSON.stringify(data));
+    } catch (error) {
+      // IndexedDB already has the catalog; localStorage is only a backup.
+    }
     saveCatalogMeta(data);
-    return;
+    return data;
   } catch (error) {
     try {
       localStorage.setItem(PRODUCTS_CACHE_KEY, JSON.stringify(data));
       saveCatalogMeta(data);
-      return;
+      return data;
     } catch (localError) {
       throw new Error("Nu am putut salva baza local.");
     }
@@ -1469,9 +1488,11 @@ async function pollRefreshStatus() {
         try {
           const data = await fetchServerProductsOnly();
           if (status.finished_at) data.generated_at = status.finished_at;
-          await saveOfflineProducts(data);
-          applyProducts(data, false);
-          els.refreshStatus.textContent = "Baza de date a fost actualizat\u0103";
+          const savedData = await saveOfflineProducts(data);
+          applyProducts(savedData || data, Boolean(savedData && savedData !== data));
+          els.refreshStatus.textContent = savedData && savedData !== data
+            ? "Am pastrat baza locala mai noua."
+            : "Baza de date a fost actualizat\u0103";
         } catch (error) {
           const offlineData = await loadOfflineProducts();
           if (offlineData) applyProducts(offlineData, true);
