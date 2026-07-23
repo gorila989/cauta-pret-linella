@@ -957,6 +957,7 @@ function localDateValue(date) {
 }
 
 function isNewProduct(product) {
+  if (!isPromoProduct(product)) return false;
   const today = localDateValue(new Date());
   if (product.new_on) return product.new_on === today;
   if (!product.new_until) return false;
@@ -1396,7 +1397,7 @@ function renderSubcategories() {
 
   els.subcategory.innerHTML = [
     `<option value="all">Toate diviziunile</option>`,
-    hasNewProducts ? `<option value="${NEW_SUBCATEGORY}">Nou</option>` : "",
+    hasNewProducts ? `<option value="${NEW_SUBCATEGORY}">Reduceri noi</option>` : "",
     ...subcategories.map(([slug, name]) => `<option value="${escapeHtml(slug)}">${escapeHtml(name)}</option>`)
   ].join("");
   els.subcategory.value = state.subcategory;

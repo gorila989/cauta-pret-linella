@@ -305,7 +305,7 @@ def refresh_products(max_pages, sleep_seconds):
         set_status(
             running=False,
             success=True,
-            message=f"Baza de date a fost actualizata. Actualizat: {count} produse. Diferente: {changed_count}, noi: {new_count}, pret schimbat: {price_count}, sterse: {deleted_count}.",
+            message=f"Baza de date a fost actualizata. Actualizat: {count} produse. Diferente: {changed_count}, reduceri noi: {new_count}, pret schimbat: {price_count}, sterse: {deleted_count}.",
             finished_at=finished_at,
         )
     except subprocess.TimeoutExpired:
@@ -370,6 +370,10 @@ def product_key(product):
     return product.get("url") or product.get("product_code") or product.get("name")
 
 
+def is_promo_product(product):
+    return bool(product.get("is_promo") or product.get("discount") or product.get("old_price"))
+
+
 def write_changes(previous, current):
     previous = previous or {"generated_at": None, "products": []}
     had_previous_catalog = bool(previous.get("generated_at"))
@@ -381,12 +385,14 @@ def write_changes(previous, current):
     price_changed_count = 0
     for key, product in new_by_key.items():
         old_product = old_by_key.get(key)
-        if old_product is None:
-            if had_previous_catalog:
-                product["new_on"] = today()
-                product["new_until"] = end_of_today()
-                new_count += 1
-        elif marker_is_today(old_product):
+        current_is_promo = is_promo_product(product)
+        old_was_promo = is_promo_product(old_product or {})
+        is_new_promo = current_is_promo and had_previous_catalog and (old_product is None or not old_was_promo)
+        if is_new_promo:
+            product["new_on"] = today()
+            product["new_until"] = end_of_today()
+            new_count += 1
+        elif current_is_promo and old_product is not None and marker_is_today(old_product):
             product["new_on"] = old_product.get("new_on") or today()
             product["new_until"] = end_of_today()
         else:
