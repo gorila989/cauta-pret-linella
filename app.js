@@ -45,6 +45,7 @@ const els = {
   excelInput: document.getElementById("excelInput"),
   scanBarcode: document.getElementById("scanBarcodeButton"),
   scannerInput: document.getElementById("scannerCodeInput"),
+  refreshSelected: document.getElementById("refreshSelectedButton"),
   refresh: document.getElementById("refreshButton"),
   refreshStatus: document.getElementById("refreshStatus"),
   loadMore: document.getElementById("loadMoreButton"),
@@ -1508,7 +1509,7 @@ async function pollRefreshStatus() {
     const status = await response.json();
     els.refreshStatus.textContent = status.message || "";
     if (!status.running) {
-      els.refresh.disabled = false;
+      setRefreshDisabled(false);
       if (status.success) {
         try {
           const data = await fetchServerProductsOnly();
@@ -1530,7 +1531,7 @@ async function pollRefreshStatus() {
     }
     await new Promise((resolve) => setTimeout(resolve, 2000));
   }
-  els.refresh.disabled = false;
+  setRefreshDisabled(false);
 }
 
 async function responseJsonOrEmpty(response) {
@@ -1541,11 +1542,47 @@ async function responseJsonOrEmpty(response) {
   }
 }
 
-async function refreshPrices() {
-  els.refresh.disabled = true;
-  els.refreshStatus.textContent = "Actualizare pornita...";
+function setRefreshDisabled(disabled) {
+  els.refresh.disabled = disabled;
+  if (els.refreshSelected) els.refreshSelected.disabled = disabled;
+}
+
+function selectedRefreshPayload() {
+  if (state.subcategory && state.subcategory !== "all" && state.subcategory !== NEW_SUBCATEGORY) {
+    const label = els.subcategory.selectedOptions[0]?.textContent || "diviziunea aleasa";
+    const categorySlugs = [...new Set(
+      state.products
+        .filter((product) =>
+          product.subcategory_key === state.subcategory &&
+          (state.category === "all" || mainCategoryFromProduct(product) === state.category)
+        )
+        .map((product) => product.subcategory_slug || product.category_slug)
+        .filter(Boolean)
+    )];
+    return categorySlugs.length
+      ? { category_slugs: categorySlugs, label }
+      : { categories: [state.category], label };
+  }
+  if (state.category && state.category !== "all") {
+    return { categories: [state.category], label: state.category };
+  }
+  return null;
+}
+
+async function refreshPrices(payload = null) {
+  setRefreshDisabled(true);
+  els.refreshStatus.textContent = payload?.label
+    ? `Actualizare pornita pentru: ${payload.label}...`
+    : "Actualizare totala pornita...";
   try {
-    const response = await apiFetch("api/refresh", { method: "POST" });
+    const options = payload
+      ? {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        }
+      : { method: "POST" };
+    const response = await apiFetch("api/refresh", options);
     if (response.status === 409) {
       const status = await responseJsonOrEmpty(response);
       els.refreshStatus.textContent = status.message || "Actualizarea este deja pornita. Asteapta finalizarea.";
@@ -1558,7 +1595,7 @@ async function refreshPrices() {
     }
     await pollRefreshStatus();
   } catch (error) {
-    els.refresh.disabled = false;
+    setRefreshDisabled(false);
     els.refreshStatus.textContent = `Nu pot porni actualizarea. Verifica backend-ul Render sau serverul local. ${error.message || ""}`.trim();
   }
 }
@@ -1674,7 +1711,15 @@ els.scannerInput.addEventListener("keydown", (event) => {
   handleScannerCode();
 });
 els.scannerInput.addEventListener("change", handleScannerCode);
-els.refresh.addEventListener("click", refreshPrices);
+els.refreshSelected.addEventListener("click", () => {
+  const payload = selectedRefreshPayload();
+  if (!payload) {
+    els.refreshStatus.textContent = "Alege o categorie sau o diviziune, apoi apasa Actualizeaza categoria.";
+    return;
+  }
+  refreshPrices(payload);
+});
+els.refresh.addEventListener("click", () => refreshPrices());
 els.loadMore.addEventListener("click", () => {
   state.visibleLimit += 30;
   render();

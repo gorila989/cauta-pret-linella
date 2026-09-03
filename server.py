@@ -8,6 +8,7 @@ import subprocess
 import sys
 import threading
 import time
+import unicodedata
 from datetime import datetime, timedelta
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -131,12 +132,104 @@ def reset_refresh_state(reason="Actualizarea blocata a fost resetata."):
     print(reason, flush=True)
 
 
-def refresh_products(max_pages, sleep_seconds):
+def normalize_text(value):
+    normalized = unicodedata.normalize("NFD", str(value or ""))
+    without_marks = "".join(char for char in normalized if unicodedata.category(char) != "Mn")
+    return re.sub(r"[^a-z0-9]+", " ", without_marks.lower()).strip()
+
+
+def selected_category_slugs(payload):
+    if not isinstance(payload, dict):
+        return None, "catalogul Linella"
+
+    available_slugs = set(scrape_linella.DEFAULT_CATEGORY_SLUGS)
+    slugs = []
+    labels = []
+
+    for slug in payload.get("category_slugs") or payload.get("subcategories") or []:
+        slug = str(slug or "").strip()
+        if slug in available_slugs and slug not in slugs:
+            slugs.append(slug)
+            labels.append(scrape_linella.CATEGORY_NAMES.get(slug, slug))
+
+    requested_names = list(payload.get("categories") or [])
+    if payload.get("category"):
+        requested_names.append(payload.get("category"))
+
+    groups = [
+        (group_name, group_slugs, normalize_text(group_name))
+        for group_name, group_slugs in scrape_linella.DEFAULT_CATEGORY_GROUPS
+    ]
+    for name in requested_names:
+        key = normalize_text(name)
+        if not key or key == "all":
+            continue
+        for group_name, group_slugs, group_key in groups:
+            key_words = set(key.split())
+            group_words = set(group_key.split())
+            words_match = key_words and group_words and (
+                key_words.issubset(group_words) or group_words.issubset(key_words)
+            )
+            if key == group_key or key in group_key or group_key in key or words_match:
+                for slug in group_slugs:
+                    if slug not in slugs:
+                        slugs.append(slug)
+                if group_name not in labels:
+                    labels.append(group_name)
+                break
+
+    if not slugs:
+        return None, "catalogul Linella"
+    return slugs, ", ".join(labels[:3]) + ("..." if len(labels) > 3 else "")
+
+
+def product_matches_scope(product, category_slugs):
+    slug = product.get("category_slug") or scrape_linella.category_slug_from_url(product.get("url", ""))
+    return slug in set(category_slugs or [])
+
+
+def merge_scoped_catalog(previous, current, category_slugs):
+    if not category_slugs or not validate_products_data(previous):
+        return current
+
+    merged = {}
+    for product in previous.get("products", []):
+        key = product_key(product)
+        if key and not product_matches_scope(product, category_slugs):
+            merged[key] = product
+
+    for product in current.get("products", []):
+        key = product_key(product)
+        if key:
+            merged[key] = product
+
+    return {
+        "source": current.get("source") or previous.get("source") or SOURCE_URL,
+        "generated_at": current.get("generated_at"),
+        "products": sorted(merged.values(), key=lambda item: item.get("name", "").lower()),
+    }
+
+
+def read_json_body(handler):
+    try:
+        length = int(handler.headers.get("Content-Length") or "0")
+    except ValueError:
+        length = 0
+    if length <= 0:
+        return {}
+    try:
+        raw = handler.rfile.read(length).decode("utf-8")
+        return json.loads(raw) if raw.strip() else {}
+    except Exception:
+        return {}
+
+
+def refresh_products(max_pages, sleep_seconds, category_slugs=None, refresh_label="catalogul Linella"):
     global active_process
     set_status(
         running=True,
         success=None,
-        message="Descarc catalogul Linella...",
+        message=f"Descarc {refresh_label}...",
         started_at=now(),
         finished_at=None,
     )
@@ -158,6 +251,8 @@ def refresh_products(max_pages, sleep_seconds):
         "--out",
         str(PRODUCTS_TMP_FILE),
     ]
+    if category_slugs:
+        command.extend(["--category-slugs", ",".join(category_slugs)])
     process = None
     try:
         process = subprocess.Popen(
@@ -294,6 +389,7 @@ def refresh_products(max_pages, sleep_seconds):
         current = load_products_file(PRODUCTS_TMP_FILE)
         if not validate_products_data(current):
             raise ValueError("Baza descarcata nu este valida. Pastrez ultima baza buna.")
+        current = merge_scoped_catalog(previous, current, category_slugs)
         finished_at = now()
         current["generated_at"] = finished_at
         changes = write_changes(previous, current)
@@ -584,6 +680,8 @@ class Handler(SimpleHTTPRequestHandler):
         if path != "/api/refresh":
             json_response(self, 404, {"error": "Not found"})
             return
+        payload = read_json_body(self)
+        category_slugs, refresh_label = selected_category_slugs(payload)
         current = get_status()
         if current["running"]:
             if refresh_is_stale(current):
@@ -597,7 +695,7 @@ class Handler(SimpleHTTPRequestHandler):
                 return
         thread = threading.Thread(
             target=refresh_products,
-            args=(self.max_pages, self.sleep_seconds),
+            args=(self.max_pages, self.sleep_seconds, category_slugs, refresh_label),
             daemon=True,
         )
         thread.start()
