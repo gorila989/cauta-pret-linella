@@ -45,6 +45,7 @@ const els = {
   excelInput: document.getElementById("excelInput"),
   scanBarcode: document.getElementById("scanBarcodeButton"),
   scannerInput: document.getElementById("scannerCodeInput"),
+  refreshCategoryList: document.getElementById("refreshCategoryList"),
   refreshSelected: document.getElementById("refreshSelectedButton"),
   refresh: document.getElementById("refreshButton"),
   refreshStatus: document.getElementById("refreshStatus"),
@@ -119,6 +120,18 @@ const normalize = (value) =>
 
 function productKey(product) {
   return product.url || product.product_code || product.name;
+}
+
+function renderRefreshCategoryList() {
+  if (!els.refreshCategoryList) return;
+  els.refreshCategoryList.innerHTML = VISIBLE_MAIN_CATEGORIES
+    .map((name) => `
+      <label class="refresh-category-choice">
+        <input type="checkbox" value="${escapeHtml(name)}">
+        <span>${escapeHtml(name)}</span>
+      </label>
+    `)
+    .join("");
 }
 
 function loadJsonStorage(key, fallback) {
@@ -1548,6 +1561,16 @@ function setRefreshDisabled(disabled) {
 }
 
 function selectedRefreshPayload() {
+  const checkedCategories = els.refreshCategoryList
+    ? [...els.refreshCategoryList.querySelectorAll("input:checked")].map((input) => input.value)
+    : [];
+  if (checkedCategories.length) {
+    return {
+      categories: checkedCategories,
+      label: checkedCategories.length === 1 ? checkedCategories[0] : `${checkedCategories.length} categorii alese`
+    };
+  }
+
   if (state.subcategory && state.subcategory !== "all" && state.subcategory !== NEW_SUBCATEGORY) {
     const label = els.subcategory.selectedOptions[0]?.textContent || "diviziunea aleasa";
     const categorySlugs = [...new Set(
@@ -1641,6 +1664,7 @@ function updateScrollTopButton() {
 
 loadUserLists();
 applyTheme(loadTheme());
+renderRefreshCategoryList();
 
 els.form.addEventListener("submit", (event) => event.preventDefault());
 els.input.addEventListener("input", () => {
@@ -1714,7 +1738,7 @@ els.scannerInput.addEventListener("change", handleScannerCode);
 els.refreshSelected.addEventListener("click", () => {
   const payload = selectedRefreshPayload();
   if (!payload) {
-    els.refreshStatus.textContent = "Alege o categorie sau o diviziune, apoi apasa Actualizeaza categoria.";
+    els.refreshStatus.textContent = "Bifeaza una sau mai multe categorii, ori alege o categorie/diviziune din meniu.";
     return;
   }
   refreshPrices(payload);
