@@ -16,7 +16,7 @@ DEFAULT_SOURCE_URL = "https://linella.md/ro/catalog"
 USER_AGENT = "Mozilla/5.0 (compatible; CautaPret/1.0; +https://linella.md/)"
 DEFAULT_CATEGORY_GROUPS = [
     ("Back to School", ["papetarie", "accesorii_pentru_desen_", "rechizite_scolare"]),
-    ("Fructe, legume, muraturi", ["fructe", "legume", "salate_i_verdeturi", "muraturi"]),
+    ("Fructe, fructe de padure, Legume, Muraturi", ["fructe", "legume", "salate_i_verdeturi", "muraturi"]),
     ("Culinarie", ["fel_principal", "salate", "fast_food", "placinte"]),
     ("Panificatie", ["paine", "paine_uscata_i_expandata", "colaci", "specialitati_paine", "patiserie", "covrigi", "gogosi"]),
     ("Produse de cofetarie", ["torturi", "prajituri"]),
@@ -48,6 +48,7 @@ DEFAULT_CATEGORY_GROUPS = [
     ("Electrocasnice. Iluminat", ["aparate_de_bucatarie", "electrocasnice", "echipamente_de_frumusete", "produse_electrice", "lampi_de_masa_noptiere__decor_iluminat", "_lanterne", "baterii"]),
     ("Tehnica Audio-Video", ["casti", "bluetooth_boxe__radio", "accesorii_pentru_echipamente_audio-video"]),
     ("Plante de casa. Gradina. Livada", ["plante_de_apartament", "substrat_ingrasamant_pentru_flori", "ghivece_si_accesorii", "inventar_"]),
+    ("Cartele SIM, Bilete de loterie", ["cartele_sim"]),
 ]
 DEFAULT_CATEGORY_SLUGS = [slug for _, slugs in DEFAULT_CATEGORY_GROUPS for slug in slugs]
 DEFAULT_SLUG_GROUP = {slug: group for group, slugs in DEFAULT_CATEGORY_GROUPS for slug in slugs}
@@ -60,10 +61,10 @@ CATEGORY_NAMES = {
     "literatura_pentru_copii": "Carti",
     "literatura_de_dezvoltare_personala": "Carti",
     "romane": "Carti",
-    "legume": "Fructe, legume, muraturi",
-    "fructe": "Fructe, legume, muraturi",
-    "fructe_uscate_532": "Fructe, legume, muraturi",
-    "muraturi": "Fructe, legume, muraturi",
+    "legume": "Legume",
+    "fructe": "Fructe, fructe de padure",
+    "salate_i_verdeturi": "Salate & Verdeturi",
+    "muraturi": "Muraturi, adjika",
     "fel_principal": "Culinarie",
     "patiserie": "Panificatie",
     "paine": "Panificatie",
@@ -246,6 +247,7 @@ CATEGORY_NAMES = {
     "substrat_ingrasamant_pentru_flori": "Substrat. Ingrasamant pentru flori",
     "ghivece_si_accesorii": "Ghivece si Accesorii",
     "inventar_": "Inventar",
+    "cartele_sim": "Cartele SIM, Bilete de loterie",
 }
 
 

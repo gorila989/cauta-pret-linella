@@ -100,7 +100,8 @@ const SITE_CATEGORY_GROUPS = [
   ["Totul pentru masina", ["curatenie auto", "odorizante auto", "accesorii pentru masina"]],
   ["Electrocasnice. Iluminat", ["tehnica de bucatarie", "tehnica pentru casa", "tehnica pentru frumusete", "produse electrice", "lampi de masa", "noptiere", "decor iluminat", "lanterne", "baterii"]],
   ["Tehnica Audio-Video", ["casti", "bluetooth boxe", "radio", "accesorii audio video"]],
-  ["Plante de casa. Gradina. Livada", ["plante de apartament", "substrat", "ingrasamant pentru flori", "ghivece", "accesorii", "inventar"]]
+  ["Plante de casa. Gradina. Livada", ["plante de apartament", "substrat", "ingrasamant pentru flori", "ghivece", "accesorii", "inventar"]],
+  ["Cartele SIM, Bilete de loterie", ["cartele sim", "bilete de loterie"]]
 ];
 
 const VISIBLE_MAIN_CATEGORIES = SITE_CATEGORY_GROUPS.map(([name]) => name);
@@ -950,7 +951,9 @@ function mainCategoryFromName(name) {
 }
 
 function mainCategoryFromProduct(product) {
-  return product.main_category || mainCategoryFromName(categoryFromProduct(product));
+  const directCategory = product.main_category || "";
+  if (VISIBLE_MAIN_CATEGORY_SET.has(directCategory)) return directCategory;
+  return mainCategoryFromName(`${directCategory} ${categoryFromProduct(product)}`);
 }
 
 function formatPrice(value) {
@@ -1307,7 +1310,11 @@ function applyProducts(data, offline) {
   state.products = data.products.map((product) => {
     const categorySlug = product.category_slug || categorySlugFromUrl(product.url);
     const subcategoryName = SUBCATEGORY_LABELS[categorySlug] || product.category || labelFromSlug(categorySlug);
-    const mainCategory = product.main_category || mainCategoryFromName(subcategoryName);
+    const mainCategory = mainCategoryFromProduct({
+      ...product,
+      category: subcategoryName,
+      subcategory_name: subcategoryName
+    });
     return {
       ...product,
       category_slug: categorySlug,
@@ -1403,12 +1410,9 @@ async function loadOfflineProducts() {
 }
 
 function renderCategories() {
-  const available = new Set(state.products.map((product) => mainCategoryFromProduct(product)));
-  const categories = VISIBLE_MAIN_CATEGORIES.filter((name) => available.has(name));
-
   els.category.innerHTML = [
     `<option value="all">Toate categoriile</option>`,
-    ...categories.map((name) => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`)
+    ...VISIBLE_MAIN_CATEGORIES.map((name) => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`)
   ].join("");
   els.category.value = state.category;
 }
