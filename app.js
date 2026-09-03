@@ -66,15 +66,39 @@ const EXPIRED_PROMOS_KEY = "cauta-pret-expired-promos";
 const XLSX_URL = "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js";
 
 const SITE_CATEGORY_GROUPS = [
+  ["Back to School", ["caiete", "blocnotes", "agende", "desen", "creativitate", "rechizite scolare"]],
   ["Fructe, fructe de padure, Legume, Muraturi", ["fructe, legume, muraturi", "fructe", "fructe de padure", "legume", "salate verde", "verdeturi", "muraturi"]],
+  ["Culinarie", ["fel principal", "salate", "zidezi", "to go", "placinde", "placinte", "paine plate", "vertutas"]],
+  ["Panificatie", ["paine", "paine uscata", "expandata", "colaci", "lavas", "pita", "chifle", "croissante", "khachapuri", "covrigi", "gogosi"]],
+  ["Produse de cofetarie", ["torturi", "prajituri"]],
+  ["Mezeluri si crenvursti", ["parizer", "crenvursti", "safalade", "afumaturi", "sunca", "salamuri", "toba", "rulade", "slanina"]],
   ["Produse lactate", ["produse lactate", "lapte", "chefir", "iaurturi", "smantana", "branza de vaci", "branza feta", "tofu", "frisca", "lapte condensat"]],
+  ["Cascaval", ["cascaval", "branza tare", "semi tare", "mozzarella", "mucegai", "tartina de branza", "branza moale", "procesata", "portionat"]],
+  ["Oua", ["oua"]],
+  ["Carne", ["carne proaspata", "carne tocata", "marinate", "carnaciori", "mici"]],
+  ["Peste", ["peste proaspat", "fructe de mare", "peste afumat", "peste sarat", "peste uscat", "icre"]],
   ["Dulciuri", ["dulciuri", "bomboane", "ciocolate", "ciocolata", "batoane", "caramele", "drajeuri", "gume", "biscuiti", "turte", "napolitane", "muffin", "chec", "panettone", "blaturi", "diabetici", "crema de ciocolata"]],
   ["Ceai si cafea", ["ceai", "cafea", "cacao", "cappucinno", "cicoare"]],
+  ["Crupe si boboase", ["orez", "hrisca", "bulgur", "arpacas", "mei", "gris", "arnaut", "malai", "couscous", "griu", "orz", "mazare", "linte", "naut", "fasole", "alte tipuri"]],
+  ["Bacanie", ["sushi", "zahar", "sare", "paste", "faina", "pesmet", "fulgi de ovaz", "cereale", "muesli", "granola", "ulei", "maioneza", "ketchup", "sosuri", "dressing", "bors acru", "otet", "alimente instant", "condimente", "mirodenii", "articole pentru copt", "jeleu", "kissel"]],
+  ["Conserve", ["conserve din carne", "conserve de peste", "conserve din legume", "masline", "pateuri vegetale", "ciuperci", "conserve din fructe", "miere"]],
+  ["Produse congelate", ["unt", "margarina", "unt i margarina", "congelate", "peste congelat", "carne congelata", "legume congelate", "fructe congelate", "aluat congelat", "pizza", "patiserie congelata", "pelmeni", "coltunasi", "inghetata", "gheata"]],
   ["Nuci, fructe uscate si seminte", ["fructe uscate", "nuci", "seminte", "amestecuri de nuci"]],
   ["Snack-uri", ["snack", "chipsuri", "nachos", "sticks", "crackers", "pesmeti", "popcorn", "arahide", "fistic", "gustari"]],
   ["Bauturi nealcoolice", ["apa minerala", "bauturi racoritoare", "suc", "nectar", "energizante"]],
   ["Bauturi alcoolice", ["vin", "divin", "votca", "vodca", "whiskey", "rom", "tequila", "gin", "brandy", "lichior", "balsam", "vermut", "aperol", "bere", "alcoolice"]],
-  ["Produse congelate", ["unt", "margarina", "unt i margarina", "congelate", "peste congelat", "carne congelata", "legume congelate", "fructe congelate", "aluat congelat", "pizza", "patiserie congelata", "pelmeni", "coltunasi", "inghetata", "gheata"]]
+  ["Produse chimice de uz casnic", ["detergenti de vase", "detergenti pentru rufe", "articole pentru curatenia suprafetelor", "produse pentru masina de spalat vase", "produse pentru masina de spalat", "repelente pentru insecte", "odorizanti"]],
+  ["Produse cosmetice", ["machiaj", "creme", "ser", "masti", "plasturi cosmetici", "curatare", "demachiere", "vopsea", "tonice", "seria solara"]],
+  ["Igiena si ingrijire", ["sapun", "ingrijire corp", "ingrijire par", "igiena orala", "igiena intima", "produse din bumbac", "cosmetica barbatilor", "servetele umede", "trusa de prim ajutor"]],
+  ["Lumea copiilor", ["alimentatia copiilor", "produse cosmetice igiena protectie", "scutece", "servetele umede", "produse chimice de uz casnic", "accesorii pentru copii", "produse pentru mamici", "jucarii"]],
+  ["Hrana & Accesorii animale", ["hrana pisici", "hrana caini", "alte produse pentru animale", "asternut igienic", "scutec"]],
+  ["Totul pentru CASA MODERNA", ["depozitare", "organizarea spatiului", "accesorii pentru baie", "decor", "accesorii pentru casa", "lumanari", "flori artificiale"]],
+  ["Bucatarie", ["vesela pentru gatit", "vesela de masa", "vesela pentru copii", "accesorii pentru bucatarie", "vesela de unica folosinta", "depozitarea alimentelor", "termosuri", "cani termice"]],
+  ["Bunuri gospodaresti", ["produse din hartie", "folie", "hartie de copt", "curatenie in casa", "inventar curatenie", "mese de calcat", "uscatoare de rufe", "scari", "unelte", "saci menajeri"]],
+  ["Totul pentru masina", ["curatenie auto", "odorizante auto", "accesorii pentru masina"]],
+  ["Electrocasnice. Iluminat", ["tehnica de bucatarie", "tehnica pentru casa", "tehnica pentru frumusete", "produse electrice", "lampi de masa", "noptiere", "decor iluminat", "lanterne", "baterii"]],
+  ["Tehnica Audio-Video", ["casti", "bluetooth boxe", "radio", "accesorii audio video"]],
+  ["Plante de casa. Gradina. Livada", ["plante de apartament", "substrat", "ingrasamant pentru flori", "ghivece", "accesorii", "inventar"]]
 ];
 
 const VISIBLE_MAIN_CATEGORIES = SITE_CATEGORY_GROUPS.map(([name]) => name);
@@ -1269,7 +1293,7 @@ function applyProducts(data, offline) {
   state.products = data.products.map((product) => {
     const categorySlug = product.category_slug || categorySlugFromUrl(product.url);
     const subcategoryName = SUBCATEGORY_LABELS[categorySlug] || product.category || labelFromSlug(categorySlug);
-    const mainCategory = mainCategoryFromName(subcategoryName);
+    const mainCategory = product.main_category || mainCategoryFromName(subcategoryName);
     return {
       ...product,
       category_slug: categorySlug,
