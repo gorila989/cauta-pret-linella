@@ -8,13 +8,13 @@
   "theme_color": "#176b4d",
   "icons": [
     {
-      "src": "icon-512-v33.png",
+      "src": "atmapp-logo-v68.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icon-512-v33.png",
+      "src": "atmapp-logo-v68.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

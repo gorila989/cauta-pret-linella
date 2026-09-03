@@ -1,11 +1,11 @@
-const CACHE_NAME = "cauta-pret-v65";
+const CACHE_NAME = "cauta-pret-v68";
 const ASSETS = [
   "./",
   "./index.html",
   "./styles.css",
   "./app.js",
   "./manifest.webmanifest",
-  "./icon-512-v33.png"
+  "./atmapp-logo-v68.png"
 ];
 
 self.addEventListener("install", (event) => {
