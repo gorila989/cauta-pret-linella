@@ -1260,7 +1260,7 @@ async function syncProducts(offlineData) {
     const changesResponse = await apiFetch("api/changes").catch(() => null);
     if (offlineData && changesResponse && changesResponse.ok) {
       const changes = await changesResponse.json();
-      if (changes.base_generated_at === offlineData.generated_at) {
+      if (changes.base_generated_at === offlineData.generated_at && changes.generated_at === manifest.generated_at) {
         return applyChanges(offlineData, changes);
       }
     }
@@ -1349,14 +1349,36 @@ function openOfflineDb() {
   });
 }
 
-async function saveOfflineProducts(data) {
+async function clearCatalogCaches() {
+  if (!("caches" in window)) return;
+  try {
+    const cacheNames = await caches.keys();
+    await Promise.all(cacheNames.map(async (cacheName) => {
+      const cache = await caches.open(cacheName);
+      const requests = await cache.keys();
+      await Promise.all(requests.map((request) => {
+        const url = new URL(request.url);
+        if (url.pathname.endsWith("/products.json") || url.pathname.endsWith("/api/products")) {
+          return cache.delete(request);
+        }
+        return Promise.resolve(false);
+      }));
+    }));
+  } catch (error) {
+    // IndexedDB/localStorage keep the real offline catalog.
+  }
+}
+
+async function saveOfflineProducts(data, options = {}) {
   if (!isValidCatalogData(data)) throw new Error("Baza nu este valida si nu a fost salvata.");
-  const existingData = await loadOfflineProducts().catch(() => null);
-  if (existingData && catalogIsOlder(data, existingData)) {
+  const force = Boolean(options.force);
+  const existingData = force ? null : await loadOfflineProducts().catch(() => null);
+  if (!force && existingData && catalogIsOlder(data, existingData)) {
     return existingData;
   }
   let db = null;
   try {
+    await clearCatalogCaches();
     db = await openOfflineDb();
     await new Promise((resolve, reject) => {
       const transaction = db.transaction(DB_STORE, "readwrite");
@@ -1505,14 +1527,14 @@ async function fetchProductCode(chip) {
 }
 
 async function fetchProducts(allowAssetsFallback = false) {
-  const apiResponse = await apiFetch("api/products").catch(() => null);
+  const apiResponse = await apiFetch(`api/products?_=${Date.now()}`).catch(() => null);
   if (apiResponse && apiResponse.ok) return apiResponse;
   if (!allowAssetsFallback) throw new Error("Serverul nu a trimis baza actualizata.");
   return fetch("products.json", { cache: "no-store" });
 }
 
 async function fetchServerProductsOnly() {
-  const response = await apiFetch("api/products");
+  const response = await apiFetch(`api/products?_=${Date.now()}`);
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
   const data = await response.json();
   if (!isValidCatalogData(data)) throw new Error("Baza actualizata nu este valida.");
@@ -1531,11 +1553,9 @@ async function pollRefreshStatus() {
         try {
           const data = await fetchServerProductsOnly();
           if (status.finished_at) data.generated_at = status.finished_at;
-          const savedData = await saveOfflineProducts(data);
+          const savedData = await saveOfflineProducts(data, { force: true });
           applyProducts(savedData || data, Boolean(savedData && savedData !== data));
-          els.refreshStatus.textContent = savedData && savedData !== data
-            ? "Am pastrat baza locala mai noua."
-            : "Baza de date a fost actualizat\u0103";
+          els.refreshStatus.textContent = "Baza de date a fost actualizat\u0103";
         } catch (error) {
           const offlineData = await loadOfflineProducts();
           if (offlineData) applyProducts(offlineData, true);
