@@ -429,7 +429,10 @@ function barcodeForProductCode(productCode) {
 }
 
 function isPromoProduct(product) {
-  return Boolean(product.is_promo || product.discount || product.old_price);
+  if (Object.prototype.hasOwnProperty.call(product, "is_promo")) {
+    return Boolean(product.is_promo);
+  }
+  return Boolean(product.discount || product.old_price);
 }
 
 function safeFilePart(value) {
@@ -1017,13 +1020,14 @@ function productCard(product) {
   const barcode = barcodeForProduct(product);
   const priceChange = priceChangeForProduct(product);
   const pricePerKg = weightedProduce ? product.price / kgUnit : product.price;
-  const oldPrice = product.old_price
+  const productIsPromo = isPromoProduct(product);
+  const oldPrice = productIsPromo && product.old_price
     ? `<span>${formatPrice(weightedProduce ? product.old_price / kgUnit : product.old_price)}</span>`
     : "";
-  const promo = product.discount
+  const promo = productIsPromo && product.discount
     ? `<span class="chip promo">${product.discount}</span>`
     : "";
-  const promoDate = isPromoProduct(product) && state.catalogGeneratedAt
+  const promoDate = productIsPromo && state.catalogGeneratedAt
     ? `<span class="chip">Promo actualizata: ${escapeHtml(state.catalogGeneratedAt)}</span>`
     : "";
   const newChip = productIsNew ? `<span class="chip new-chip">Produs nou</span>` : "";
@@ -1189,7 +1193,7 @@ function render() {
 
   let products = state.products.filter((product) => {
     if (state.listMode === "codes" && !state.collectedCodes.has(product.product_code)) return false;
-    if (state.onlyPromo && !product.discount && !product.old_price) return false;
+    if (state.onlyPromo && !isPromoProduct(product)) return false;
     if (state.discountPercent !== "all" && String(discountPercentFromProduct(product)) !== state.discountPercent) return false;
     if (state.category !== "all" && mainCategoryFromProduct(product) !== state.category) return false;
     if (state.subcategory === NEW_SUBCATEGORY && !isNewProduct(product)) return false;
@@ -1332,7 +1336,7 @@ function applyProducts(data, offline) {
   renderSubcategories();
   renderDiscountOptions();
   const when = data.generated_at ? `Actualizat: ${data.generated_at}` : "Baza incarcata";
-  const promoCount = state.products.filter((product) => product.is_promo || product.discount || product.old_price).length;
+  const promoCount = state.products.filter(isPromoProduct).length;
   const mode = offline ? "Offline" : "Online";
   els.meta.textContent = `${mode}. ${when}. ${state.products.length} produse, ${promoCount} promotionale.`;
   render();

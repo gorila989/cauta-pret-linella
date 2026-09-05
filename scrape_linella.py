@@ -280,6 +280,12 @@ def parse_price_block(block):
     block_text = clean_text(block)
     discount_match = re.search(r"-(\d+)%", block_text)
     discount = f"-{discount_match.group(1)}%" if discount_match else ""
+    has_old_price_marker = bool(re.search(
+        r"(old[_-]?price|price[_-]?old|pret[_-]?vechi|pre[țt][_\s-]?vechi|"
+        r"<del\b|<s\b|line-through|text-decoration\s*:\s*line-through)",
+        block,
+        re.IGNORECASE,
+    ))
 
     unit_match = re.search(r"/\s*([0-9.]+kg|kg|buc|l)\b", block_text, re.IGNORECASE)
     unit = f"/{unit_match.group(1)}" if unit_match else ""
@@ -289,7 +295,7 @@ def parse_price_block(block):
         return None
 
     price = values[-1]
-    old_price = values[0] if len(values) > 1 and values[0] != price else None
+    old_price = values[0] if (discount or has_old_price_marker) and len(values) > 1 and values[0] != price else None
     return price, old_price, discount, unit
 
 

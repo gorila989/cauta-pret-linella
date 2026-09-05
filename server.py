@@ -467,7 +467,9 @@ def product_key(product):
 
 
 def is_promo_product(product):
-    return bool(product.get("is_promo") or product.get("discount") or product.get("old_price"))
+    if "is_promo" in product:
+        return bool(product.get("is_promo"))
+    return bool(product.get("discount") or product.get("old_price"))
 
 
 def write_changes(previous, current):
