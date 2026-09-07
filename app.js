@@ -19,6 +19,7 @@ const state = {
 };
 
 const DB_NAME = "cauta-pret-offline";
+const DB_VERSION = 2;
 const DB_STORE = "cache";
 const PRODUCTS_CACHE_KEY = "products";
 const CATALOG_META_KEY = "cauta-pret-catalog-meta";
@@ -227,6 +228,14 @@ function saveCatalogMeta(data) {
     count: data.products.length,
     saved_at: new Date().toISOString()
   });
+}
+
+function removeLegacyProductBackup() {
+  try {
+    localStorage.removeItem(PRODUCTS_CACHE_KEY);
+  } catch (error) {
+    // Old product backups in localStorage are ignored by the app.
+  }
 }
 
 function loadUserLists() {
@@ -1344,9 +1353,11 @@ function applyProducts(data, offline) {
 
 function openOfflineDb() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, 1);
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
     request.onupgradeneeded = () => {
-      request.result.createObjectStore(DB_STORE);
+      if (!request.result.objectStoreNames.contains(DB_STORE)) {
+        request.result.createObjectStore(DB_STORE);
+      }
     };
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
@@ -1369,7 +1380,7 @@ async function clearCatalogCaches() {
       }));
     }));
   } catch (error) {
-    // IndexedDB/localStorage keep the real offline catalog.
+    // IndexedDB keeps the real offline catalog.
   }
 }
 
@@ -1391,21 +1402,11 @@ async function saveOfflineProducts(data, options = {}) {
       transaction.onerror = () => reject(transaction.error);
       transaction.onabort = () => reject(transaction.error || new Error("Salvarea bazei a fost oprita."));
     });
-    try {
-      localStorage.setItem(PRODUCTS_CACHE_KEY, JSON.stringify(data));
-    } catch (error) {
-      // IndexedDB already has the catalog; localStorage is only a backup.
-    }
+    removeLegacyProductBackup();
     saveCatalogMeta(data);
     return data;
   } catch (error) {
-    try {
-      localStorage.setItem(PRODUCTS_CACHE_KEY, JSON.stringify(data));
-      saveCatalogMeta(data);
-      return data;
-    } catch (localError) {
-      throw new Error("Nu am putut salva baza local.");
-    }
+    throw new Error("Nu am putut salva baza locala in IndexedDB.");
   } finally {
     if (db) db.close();
   }
@@ -1423,16 +1424,10 @@ async function loadOfflineProducts() {
     db.close();
     if (isValidCatalogData(data)) return data;
   } catch (error) {
-    // Fall through to localStorage fallback.
-  }
-
-  try {
-    const raw = localStorage.getItem(PRODUCTS_CACHE_KEY);
-    const data = raw ? JSON.parse(raw) : null;
-    return isValidCatalogData(data) ? data : null;
-  } catch (error) {
     return null;
   }
+  removeLegacyProductBackup();
+  return null;
 }
 
 function renderCategories() {
