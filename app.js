@@ -217,7 +217,10 @@ function apiImageUrl(src) {
 }
 
 function isValidCatalogData(data) {
-  return Boolean(data && Array.isArray(data.products));
+  return Boolean(data && Array.isArray(data.products) && data.products.length &&
+    data.products.every(product => product && typeof product.name === "string" &&
+      product.name.trim() && typeof product.price === "number" &&
+      Number.isFinite(product.price) && product.price >= 0));
 }
 
 function saveCatalogMeta(data) {
@@ -1235,10 +1238,16 @@ function render() {
 }
 
 async function loadProducts() {
-  const offlineData = await loadOfflineProducts();
-  if (offlineData) {
-    applyProducts(offlineData, true);
-    if (barcodeFromLocation()) return;
+  let offlineData;
+  try {
+    offlineData = await loadOfflineProducts();
+    if (offlineData) {
+      applyProducts(offlineData, true);
+      return;
+    }
+  } catch (error) {
+    els.meta.textContent = `Baza persistenta nu poate fi citita: ${error.message}`;
+    return;
   }
 
   try {
@@ -1300,7 +1309,7 @@ function catalogIsOlder(candidate, current) {
   const currentTime = catalogTimeValue(current.generated_at);
   if (!currentTime) return false;
   if (!candidateTime) return true;
-  return candidateTime < currentTime;
+  return candidateTime <= currentTime;
 }
 
 function applyChanges(baseData, changes) {
@@ -1384,27 +1393,41 @@ async function clearCatalogCaches() {
   }
 }
 
-async function saveOfflineProducts(data, options = {}) {
+async function saveOfflineProducts(data) {
   if (!isValidCatalogData(data)) throw new Error("Baza nu este valida si nu a fost salvata.");
-  const force = Boolean(options.force);
-  const existingData = force ? null : await loadOfflineProducts().catch(() => null);
-  if (!force && existingData && catalogIsOlder(data, existingData)) {
-    return existingData;
-  }
   let db = null;
   try {
-    await clearCatalogCaches();
     db = await openOfflineDb();
+    let savedData;
     await new Promise((resolve, reject) => {
       const transaction = db.transaction(DB_STORE, "readwrite");
-      transaction.objectStore(DB_STORE).put(data, PRODUCTS_CACHE_KEY);
+      const store = transaction.objectStore(DB_STORE);
+      const request = store.get(PRODUCTS_CACHE_KEY);
+      request.onsuccess = () => {
+        const existing = request.result;
+        if (existing !== undefined && existing !== null && !isValidCatalogData(existing)) {
+          transaction.abort();
+          return;
+        }
+        if (existing && (!catalogTimeValue(data.generated_at) || catalogIsOlder(data, existing))) {
+          savedData = existing;
+          return;
+        }
+        savedData = data;
+        store.put(data, PRODUCTS_CACHE_KEY);
+        store.put({generated_at: data.generated_at || "", path: `${DB_NAME}/${DB_STORE}/${PRODUCTS_CACHE_KEY}`}, CATALOG_META_KEY);
+      };
       transaction.oncomplete = resolve;
       transaction.onerror = () => reject(transaction.error);
       transaction.onabort = () => reject(transaction.error || new Error("Salvarea bazei a fost oprita."));
     });
     removeLegacyProductBackup();
-    saveCatalogMeta(data);
-    return data;
+    saveCatalogMeta(savedData);
+    await clearCatalogCaches();
+    if (navigator.storage && navigator.storage.persist) {
+      await navigator.storage.persist().catch(() => false);
+    }
+    return savedData;
   } catch (error) {
     throw new Error("Nu am putut salva baza locala in IndexedDB.");
   } finally {
@@ -1413,21 +1436,21 @@ async function saveOfflineProducts(data, options = {}) {
 }
 
 async function loadOfflineProducts() {
+  let db;
   try {
-    const db = await openOfflineDb();
+    db = await openOfflineDb();
     const data = await new Promise((resolve, reject) => {
       const transaction = db.transaction(DB_STORE, "readonly");
       const request = transaction.objectStore(DB_STORE).get(PRODUCTS_CACHE_KEY);
-      request.onsuccess = () => resolve(request.result || null);
+      request.onsuccess = () => resolve(request.result ?? null);
       request.onerror = () => reject(request.error);
     });
-    db.close();
     if (isValidCatalogData(data)) return data;
-  } catch (error) {
+    if (data !== null) throw new Error("Catalogul salvat este invalid; nu va fi suprascris cu baza initiala.");
     return null;
+  } finally {
+    if (db) db.close();
   }
-  removeLegacyProductBackup();
-  return null;
 }
 
 function renderCategories() {
@@ -1551,12 +1574,13 @@ async function pollRefreshStatus() {
       if (status.success) {
         try {
           const data = await fetchServerProductsOnly();
-          if (status.finished_at) data.generated_at = status.finished_at;
-          const savedData = await saveOfflineProducts(data, { force: true });
+          const savedData = await saveOfflineProducts(data);
           applyProducts(savedData || data, Boolean(savedData && savedData !== data));
-          els.refreshStatus.textContent = "Baza de date a fost actualizat\u0103";
+          els.refreshStatus.textContent = savedData === data
+            ? "Baza de date a fost actualizat\u0103"
+            : "Baza primita nu este mai noua. Baza persistenta a fost pastrata.";
         } catch (error) {
-          const offlineData = await loadOfflineProducts();
+          const offlineData = await loadOfflineProducts().catch(() => null);
           if (offlineData) applyProducts(offlineData, true);
           els.refreshStatus.textContent = `Eroare la salvarea bazei: ${error.message}`;
         }
@@ -1625,7 +1649,7 @@ async function refreshPrices(payload = null) {
       ? {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
+          body: JSON.stringify({...payload, base_generated_at: state.catalogGeneratedAt})
         }
       : { method: "POST" };
     const response = await apiFetch("api/refresh", options);

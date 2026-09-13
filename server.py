@@ -18,9 +18,11 @@ import scrape_linella
 
 
 ROOT = Path(__file__).resolve().parent
-PRODUCTS_FILE = ROOT / "products.json"
-PRODUCTS_TMP_FILE = ROOT / "products.next.json"
-CHANGES_FILE = ROOT / "changes.json"
+DATA_ROOT = Path(os.environ.get("CAUTA_PRET_DATA_DIR", str(ROOT))).resolve()
+PRODUCTS_FILE = DATA_ROOT / "products.json"
+PRODUCTS_TMP_FILE = DATA_ROOT / "products.next.json"
+CHANGES_FILE = DATA_ROOT / "changes.json"
+catalog_lock = threading.RLock()
 SCRAPER_FILE = ROOT / "scrape_linella.py"
 SOURCE_URL = "https://linella.md/ro/catalog"
 REFRESH_TIMEOUT_SECONDS = 1800
@@ -451,7 +453,8 @@ def write_json_atomic(path, data):
     os.replace(temp_path, path)
 
 
-def load_products_file(path=PRODUCTS_FILE):
+def load_products_file(path=None):
+    path = path or PRODUCTS_FILE
     if not path.exists():
         return None
     with path.open("r", encoding="utf-8") as file:
@@ -459,7 +462,11 @@ def load_products_file(path=PRODUCTS_FILE):
 
 
 def validate_products_data(data):
-    return bool(data and isinstance(data.get("products"), list))
+    return bool(isinstance(data, dict) and isinstance(data.get("products"), list)
+                and data["products"] and all(
+                    isinstance(p, dict) and isinstance(p.get("name"), str) and p["name"].strip()
+                    and type(p.get("price")) in (int, float) and 0 <= p["price"] < float("inf")
+                    for p in data["products"]))
 
 
 def product_key(product):
@@ -546,7 +553,39 @@ def find_product_by_url(product_url):
 
 
 def save_products(data):
-    write_json_atomic(PRODUCTS_FILE, data)
+    if not validate_products_data(data):
+        raise ValueError("Catalog invalid; baza persistenta ramane neschimbata.")
+    with catalog_lock:
+        current = load_products_file()
+        if current and current.get("generated_at"):
+            candidate_time = datetime.fromisoformat(data.get("generated_at") or "")
+            current_time = datetime.fromisoformat(current["generated_at"])
+            if candidate_time < current_time:
+                raise ValueError("Downgrade refuzat; baza persistenta este mai noua.")
+        write_json_atomic(PRODUCTS_FILE, data)
+
+
+def initialize_catalog():
+    DATA_ROOT.mkdir(parents=True, exist_ok=True)
+    with catalog_lock:
+        if PRODUCTS_FILE.exists():
+            if not validate_products_data(load_products_file()):
+                raise ValueError("Baza persistenta este invalida; restaurarea automata este interzisa.")
+            return
+        seed = load_products_file(ROOT / "products.json")
+        if not validate_products_data(seed):
+            raise ValueError("Baza initiala este invalida.")
+        save_products(seed)
+
+
+def safe_refresh_scope(payload, server_catalog):
+    slugs, label = selected_category_slugs(payload)
+    # Free hosting can restart with the bundled catalog. Never merge a fresh
+    # selected category with stale unselected categories and label it as new.
+    if slugs and (not payload.get("base_generated_at") or
+                  payload["base_generated_at"] != (server_catalog or {}).get("generated_at")):
+        return None, "catalogul complet (resincronizare dupa repornirea serverului)"
+    return slugs, label
 
 
 def image_response(handler, image_url):
@@ -683,7 +722,7 @@ class Handler(SimpleHTTPRequestHandler):
             json_response(self, 404, {"error": "Not found"})
             return
         payload = read_json_body(self)
-        category_slugs, refresh_label = selected_category_slugs(payload)
+        category_slugs, refresh_label = safe_refresh_scope(payload, load_products_file())
         current = get_status()
         if current["running"]:
             if refresh_is_stale(current):
@@ -705,6 +744,7 @@ class Handler(SimpleHTTPRequestHandler):
 
 
 def main():
+    initialize_catalog()
     parser = argparse.ArgumentParser(description="Cauta Pret backend server.")
     parser.add_argument("--host", default="0.0.0.0")
     parser.add_argument("--port", type=int, default=int(os.environ.get("PORT", "8080")))

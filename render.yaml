@@ -2,6 +2,7 @@ services:
   - type: web
     name: cauta-pret-linella
     runtime: python
+    plan: free
     buildCommand: "pip install -r requirements.txt"
     startCommand: "python server.py --host 0.0.0.0 --port $PORT --max-pages 300"
     envVars:
